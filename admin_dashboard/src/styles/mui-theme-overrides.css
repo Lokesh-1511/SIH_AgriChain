@@ -1,0 +1,151 @@
+/* MUI Theme Overrides - Apply our custom theme to Material-UI components */
+
+/* Apply theme colors to MUI components based on CSS variables */
+.MuiCard-root {
+  background-color: var(--color-card-background) !important;
+  color: var(--color-text) !important;
+  border: 1px solid var(--color-border) !important;
+}
+
+.MuiPaper-root {
+  background-color: var(--color-card-background) !important;
+  color: var(--color-text) !important;
+}
+
+.MuiTypography-root {
+  color: var(--color-text) !important;
+}
+
+.MuiTextField-root .MuiOutlinedInput-root {
+  background-color: var(--color-card-background) !important;
+  color: var(--color-text) !important;
+}
+
+.MuiTextField-root .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
+  border-color: var(--color-border) !important;
+}
+
+.MuiTextField-root .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: var(--color-primary) !important;
+}
+
+.MuiTextField-root .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: var(--color-primary) !important;
+}
+
+.MuiTextField-root .MuiInputLabel-root {
+  color: var(--color-text-secondary) !important;
+}
+
+.MuiTextField-root .MuiInputLabel-root.Mui-focused {
+  color: var(--color-primary) !important;
+}
+
+.MuiButton-root {
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+}
+
+.MuiButton-contained {
+  background-color: var(--color-primary) !important;
+  color: white !important;
+}
+
+.MuiButton-outlined {
+  border-color: var(--color-primary) !important;
+  color: var(--color-primary) !important;
+}
+
+.MuiTableContainer-root {
+  background-color: var(--color-card-background) !important;
+}
+
+.MuiTable-root {
+  background-color: var(--color-card-background) !important;
+}
+
+.MuiTableHead-root {
+  background-color: var(--color-background) !important;
+}
+
+.MuiTableCell-root {
+  color: var(--color-text) !important;
+  border-bottom-color: var(--color-border) !important;
+}
+
+.MuiTableCell-head {
+  background-color: var(--color-background) !important;
+  color: var(--color-text) !important;
+  font-weight: 600 !important;
+}
+
+.MuiChip-root {
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+}
+
+.MuiChip-filled {
+  background-color: var(--color-primary) !important;
+  color: white !important;
+}
+
+.MuiDialog-paper {
+  background-color: var(--color-card-background) !important;
+  color: var(--color-text) !important;
+}
+
+.MuiDialogTitle-root {
+  color: var(--color-text) !important;
+}
+
+.MuiDialogContent-root {
+  color: var(--color-text) !important;
+}
+
+.MuiTab-root {
+  color: var(--color-text-secondary) !important;
+}
+
+.MuiTab-root.Mui-selected {
+  color: var(--color-primary) !important;
+}
+
+.MuiTabs-indicator {
+  background-color: var(--color-primary) !important;
+}
+
+.MuiAlert-root {
+  background-color: var(--color-card-background) !important;
+  color: var(--color-text) !important;
+  border: 1px solid var(--color-border) !important;
+}
+
+.MuiIconButton-root {
+  color: var(--color-text) !important;
+}
+
+.MuiIconButton-root:hover {
+  background-color: var(--color-background) !important;
+}
+
+.MuiMenu-paper {
+  background-color: var(--color-card-background) !important;
+  color: var(--color-text) !important;
+  border: 1px solid var(--color-border) !important;
+}
+
+.MuiMenuItem-root {
+  color: var(--color-text) !important;
+}
+
+.MuiMenuItem-root:hover {
+  background-color: var(--color-background) !important;
+}
+
+.MuiLinearProgress-root {
+  background-color: var(--color-background) !important;
+}
+
+.MuiLinearProgress-bar {
+  background-color: var(--color-primary) !important;
+}
