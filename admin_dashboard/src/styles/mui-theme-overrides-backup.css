@@ -59,10 +59,6 @@
   transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
   position: relative !important;
   overflow: hidden !important;
-  white-space: nowrap !important;
-  text-overflow: ellipsis !important;
-  max-width: 200px !important;
-  min-width: fit-content !important;
 }
 
 .MuiButton-root::before {
@@ -149,6 +145,7 @@
 }
 
 /* ========== ENHANCED TABLE COMPONENTS ========== */
+
 .MuiTableContainer-root {
   background: var(--color-gradient-card) !important;
   border-radius: 16px !important;
@@ -207,43 +204,24 @@
   font-weight: 700 !important;
 }
 
-/* ========== ENHANCED NAVIGATION COMPONENTS ========== */
-.MuiAppBar-root {
-  background: var(--color-gradient-hero) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  box-shadow: 
-    0 4px 32px var(--color-shadow),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
-  border-bottom: 1px solid var(--color-border) !important;
-}
-
-.MuiTabs-root {
-  background: transparent !important;
-}
-
-.MuiTab-root {
-  color: var(--color-text-secondary) !important;
-  font-weight: 500 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.5px !important;
-  transition: all 0.3s ease !important;
-}
-
-.MuiTab-root:hover {
-  color: var(--color-primary) !important;
-  background: var(--color-hover) !important;
-}
-
-.MuiTab-root.Mui-selected {
-  color: var(--color-primary) !important;
+/* ========== ENHANCED CHIP COMPONENTS ========== */
+.MuiChip-root {
+  background: var(--color-gradient-accent) !important;
+  color: var(--color-text) !important;
   font-weight: 600 !important;
+  border-radius: 20px !important;
+  transition: all 0.3s ease !important;
+  border: 1px solid var(--color-border) !important;
 }
 
-.MuiTabs-indicator {
+.MuiChip-root:hover {
+  transform: scale(1.05) !important;
+  box-shadow: var(--color-glow-gold) !important;
+}
+
+.MuiChip-filled {
   background: var(--color-gradient-primary) !important;
-  height: 3px !important;
-  border-radius: 2px !important;
+  color: white !important;
 }
 
 /* ========== ENHANCED DIALOG COMPONENTS ========== */
@@ -271,159 +249,29 @@
   color: var(--color-text) !important;
 }
 
-/* ========== ENHANCED MENU COMPONENTS ========== */
-.MuiMenu-paper {
-  background: var(--color-gradient-card) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  border-radius: 12px !important;
-  border: 1px solid var(--color-border) !important;
-  box-shadow: 
-    0 12px 48px var(--color-shadow),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
-  min-width: 200px !important;
-  max-width: 280px !important;
-}
-
-.MuiMenuItem-root {
-  color: var(--color-text) !important;
-  transition: all 0.3s ease !important;
-  border-radius: 8px !important;
-  margin: 4px 8px !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  max-width: 250px !important;
-  min-height: 40px !important;
-  padding: 8px 16px !important;
-  justify-content: flex-start !important;
-}
-
-.MuiMenuItem-root:hover {
-  background: var(--color-hover) !important;
-  color: var(--color-primary) !important;
-  transform: translateX(4px) !important;
-}
-
-/* ========== ENHANCED CHIP COMPONENTS ========== */
-.MuiChip-root {
-  background: var(--color-gradient-accent) !important;
-  color: var(--color-text) !important;
-  font-weight: 600 !important;
-  border-radius: 20px !important;
-  transition: all 0.3s ease !important;
-  border: 1px solid var(--color-border) !important;
-}
-
-.MuiChip-root:hover {
-  transform: scale(1.05) !important;
-  box-shadow: var(--color-glow-gold) !important;
-}
-
-.MuiChip-filled {
-  background: var(--color-gradient-primary) !important;
-  color: white !important;
-}
-
-/* ========== ENHANCED PROGRESS COMPONENTS ========== */
-.MuiLinearProgress-root {
-  height: 8px !important;
-  border-radius: 4px !important;
-  background: var(--color-border) !important;
-  overflow: hidden !important;
-}
-
-.MuiLinearProgress-bar {
-  background: var(--color-gradient-primary) !important;
-  border-radius: 4px !important;
-  animation: progressPulse 2s ease-in-out infinite alternate !important;
-}
-
-.MuiCircularProgress-root {
-  color: var(--color-primary) !important;
-}
-
-.MuiCircularProgress-circle {
-  stroke: var(--color-primary) !important;
-  filter: drop-shadow(0 0 8px var(--color-primary)) !important;
-}
-
-/* ========== ENHANCED FORM CONTROL COMPONENTS ========== */
-.MuiFormControl-root {
-  margin-bottom: 16px !important;
-}
-
-.MuiFormLabel-root {
+/* ========== ENHANCED TAB COMPONENTS ========== */
+.MuiTab-root {
   color: var(--color-text-secondary) !important;
   font-weight: 500 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  transition: all 0.3s ease !important;
 }
 
-.MuiFormLabel-root.Mui-focused {
+.MuiTab-root:hover {
   color: var(--color-primary) !important;
-}
-
-.MuiFormHelperText-root {
-  color: var(--color-text-secondary) !important;
-}
-
-.MuiFormHelperText-root.Mui-error {
-  color: var(--color-error) !important;
-}
-
-/* ========== ENHANCED SELECT COMPONENTS ========== */
-.MuiSelect-root {
-  color: var(--color-text) !important;
-}
-
-.MuiSelect-icon {
-  color: var(--color-primary) !important;
-}
-
-.MuiSelect-select:focus {
-  background: transparent !important;
-}
-
-/* ========== ENHANCED CHECKBOX & RADIO COMPONENTS ========== */
-.MuiCheckbox-root {
-  color: var(--color-primary) !important;
-}
-
-.MuiCheckbox-root:hover {
   background: var(--color-hover) !important;
 }
 
-.MuiRadio-root {
+.MuiTab-root.Mui-selected {
   color: var(--color-primary) !important;
+  font-weight: 600 !important;
 }
 
-.MuiRadio-root:hover {
-  background: var(--color-hover) !important;
-}
-
-/* ========== ENHANCED SWITCH COMPONENTS ========== */
-.MuiSwitch-root {
-  padding: 12px !important;
-}
-
-.MuiSwitch-switchBase.Mui-checked {
-  color: var(--color-primary) !important;
-}
-
-.MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track {
-  background: var(--color-primary) !important;
-  opacity: 0.5 !important;
-}
-
-.MuiSwitch-track {
-  background: var(--color-border) !important;
-  border-radius: 12px !important;
-}
-
-.MuiSwitch-thumb {
-  background: white !important;
-  box-shadow: 
-    0 2px 8px rgba(0, 0, 0, 0.15),
-    0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+.MuiTabs-indicator {
+  background: var(--color-gradient-primary) !important;
+  height: 3px !important;
+  border-radius: 2px !important;
 }
 
 /* ========== ENHANCED ALERT COMPONENTS ========== */
@@ -471,7 +319,56 @@
   box-shadow: var(--color-glow-green) !important;
 }
 
-/* ========== KEYFRAME ANIMATIONS FOR MUI ========== */
+/* ========== ENHANCED PROGRESS COMPONENTS ========== */
+.MuiLinearProgress-root {
+  height: 8px !important;
+  border-radius: 4px !important;
+  background: var(--color-border) !important;
+  overflow: hidden !important;
+}
+
+.MuiLinearProgress-bar {
+  background: var(--color-gradient-primary) !important;
+  border-radius: 4px !important;
+  animation: progressPulse 2s ease-in-out infinite alternate !important;
+}
+
+.MuiCircularProgress-root {
+  color: var(--color-primary) !important;
+}
+
+.MuiCircularProgress-circle {
+  stroke: var(--color-primary) !important;
+  filter: drop-shadow(0 0 8px var(--color-primary)) !important;
+}
+
+/* ========== ENHANCED FORM CONTROLS ========== */
+.MuiCheckbox-root {
+  color: var(--color-primary) !important;
+}
+
+.MuiCheckbox-root:hover {
+  background: var(--color-hover) !important;
+}
+
+.MuiRadio-root {
+  color: var(--color-primary) !important;
+}
+
+.MuiRadio-root:hover {
+  background: var(--color-hover) !important;
+}
+
+.MuiSwitch-switchBase.Mui-checked {
+  color: var(--color-primary) !important;
+}
+
+.MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track {
+  background: var(--color-primary) !important;
+  opacity: 0.5 !important;
+}
+
+/* ========== KEYFRAME ANIMATIONS ========== */
 @keyframes progressPulse {
   0% { opacity: 1; }
   100% { opacity: 0.7; }
@@ -490,4 +387,32 @@
   .MuiTableBody-root .MuiTableRow-root:hover {
     transform: none !important;
   }
+}
+  color: var(--color-text) !important;
+}
+
+.MuiIconButton-root:hover {
+  background-color: var(--color-background) !important;
+}
+
+.MuiMenu-paper {
+  background-color: var(--color-card-background) !important;
+  color: var(--color-text) !important;
+  border: 1px solid var(--color-border) !important;
+}
+
+.MuiMenuItem-root {
+  color: var(--color-text) !important;
+}
+
+.MuiMenuItem-root:hover {
+  background-color: var(--color-background) !important;
+}
+
+.MuiLinearProgress-root {
+  background-color: var(--color-background) !important;
+}
+
+.MuiLinearProgress-bar {
+  background-color: var(--color-primary) !important;
 }

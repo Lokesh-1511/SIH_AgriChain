@@ -32,9 +32,6 @@ import {
   Search,
   FilterList,
   MoreVert,
-  CheckCircle,
-  Cancel,
-  Visibility,
   AccountBalanceWallet,
   LocationOn,
   CalendarToday,
@@ -49,19 +46,14 @@ const RoleChip = ({ role }) => {
     Consumer: 'secondary',
   };
   
-  const icons = {
-    Farmer: '👨‍🌾',
-    Distributor: '🚛',
-    Retailer: '🏪',
-    Consumer: '👤',
-  };
+ 
 
   return (
     <Chip
       label={role}
       color={colors[role] || 'default'}
       size="small"
-      icon={<span>{icons[role]}</span>}
+      
     />
   );
 };
@@ -166,16 +158,29 @@ const RoleDetailsDialog = ({ role, open, onClose, onApprove, onReject }) => {
         )}
       </DialogContent>
       
-      <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={onClose} variant="outlined">
+      <DialogActions sx={{ px: 3, pb: 2, gap: 1, flexWrap: 'wrap' }}>
+        <Button 
+          onClick={onClose} 
+          variant="outlined"
+          sx={{ 
+            minWidth: '80px',
+            whiteSpace: 'nowrap',
+            fontSize: '0.875rem'
+          }}
+        >
           Close
         </Button>
         {role.status === 'Pending' && (
-          <>
+          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
             <Button 
               onClick={() => onReject(role.id)} 
               color="error" 
               variant="outlined"
+              sx={{ 
+                minWidth: '80px',
+                whiteSpace: 'nowrap',
+                fontSize: '0.875rem'
+              }}
             >
               Reject
             </Button>
@@ -183,10 +188,15 @@ const RoleDetailsDialog = ({ role, open, onClose, onApprove, onReject }) => {
               onClick={() => onApprove(role.id)} 
               color="success" 
               variant="contained"
+              sx={{ 
+                minWidth: '90px',
+                whiteSpace: 'nowrap',
+                fontSize: '0.875rem'
+              }}
             >
               Approve
             </Button>
-          </>
+          </Box>
         )}
       </DialogActions>
     </Dialog>
@@ -450,24 +460,48 @@ const RoleManagement = () => {
             const role = roles.find(r => r.id === selectedRowId);
             handleViewDetails(role);
           }}
+          sx={{
+            minHeight: '40px',
+            '& .MuiTypography-root': {
+              fontSize: '0.875rem',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis'
+            }
+          }}
         >
-          <Visibility sx={{ mr: 1 }} />
           View Details
         </MenuItem>
         {roles.find(r => r.id === selectedRowId)?.status === 'Pending' && (
           <>
             <MenuItem 
               onClick={() => handleApprove(selectedRowId)}
-              sx={{ color: 'success.main' }}
+              sx={{ 
+                color: 'success.main',
+                minHeight: '40px',
+                '& .MuiTypography-root': {
+                  fontSize: '0.875rem',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
+                }
+              }}
             >
-              <CheckCircle sx={{ mr: 1 }} />
               Approve
             </MenuItem>
             <MenuItem 
               onClick={() => handleReject(selectedRowId)}
-              sx={{ color: 'error.main' }}
+              sx={{ 
+                color: 'error.main',
+                minHeight: '40px',
+                '& .MuiTypography-root': {
+                  fontSize: '0.875rem',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
+                }
+              }}
             >
-              <Cancel sx={{ mr: 1 }} />
               Reject
             </MenuItem>
           </>

@@ -163,6 +163,163 @@
   font-weight: 500;
 }
 
+.tooltip-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  min-width: 120px;
+}
+
+.tooltip-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs);
+}
+
+.tooltip-entry {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.tooltip-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.tooltip-name {
+  font-size: 0.875rem;
+  color: var(--color-textSecondary);
+  flex: 1;
+}
+
+.tooltip-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* Legend Styles */
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--color-border);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 0.875rem;
+  color: var(--color-textSecondary);
+  cursor: pointer;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-md);
+  transition: var(--transition-fast);
+}
+
+.legend-item:hover {
+  background: var(--color-hover);
+  color: var(--color-text);
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-text {
+  font-weight: 500;
+}
+
+/* Chart-specific Styles */
+
+/* Bar Chart Enhancements */
+.chart-container .recharts-bar-rectangle {
+  transition: var(--transition-fast);
+}
+
+.chart-container .recharts-bar-rectangle:hover {
+  opacity: 0.8;
+  filter: brightness(1.1);
+}
+
+/* Line Chart Enhancements */
+.chart-container .recharts-line-curve {
+  filter: drop-shadow(0 2px 4px var(--color-shadow));
+}
+
+.chart-container .recharts-line-dot {
+  filter: drop-shadow(0 1px 2px var(--color-shadow));
+}
+
+.chart-container .recharts-active-dot {
+  animation: dotPulse 1.5s infinite;
+}
+
+/* Pie Chart Enhancements */
+.chart-container .recharts-pie-sector {
+  transition: var(--transition-fast);
+  cursor: pointer;
+}
+
+.chart-container .recharts-pie-sector:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
+/* Grid and Axis Styles */
+.chart-container .recharts-cartesian-grid line {
+  stroke: var(--color-border);
+  opacity: 0.3;
+}
+
+.chart-container .recharts-xAxis .recharts-cartesian-axis-line,
+.chart-container .recharts-yAxis .recharts-cartesian-axis-line {
+  stroke: var(--color-border);
+}
+
+.chart-container .recharts-xAxis .recharts-cartesian-axis-tick-line,
+.chart-container .recharts-yAxis .recharts-cartesian-axis-tick-line {
+  stroke: var(--color-border);
+}
+
+.chart-container .recharts-text {
+  fill: var(--color-textSecondary);
+  font-size: 12px;
+  font-family: inherit;
+}
+
+/* Loading State */
+.chart-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--color-textSecondary);
+}
+
+.chart-loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--color-border);
+  border-top: 3px solid var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: var(--spacing-md);
+}
+
 /* ========== ENHANCED LEGEND STYLES ========== */
 .agri-chart-legend {
   display: flex;
@@ -244,39 +401,6 @@
 }
 
 /* ========== KEYFRAME ANIMATIONS ========== */
-@keyframes fadeInUp {
-  0% {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes tooltipSlideIn {
-  0% {
-    opacity: 0;
-    transform: translateY(10px) scale(0.95);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes colorPulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.2);
-    opacity: 0.8;
-  }
-}
-
 @keyframes legendColorPulse {
   0%, 100% {
     transform: scale(1);
@@ -294,110 +418,107 @@
     transform: translateY(-10px);
   }
 }
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--color-error);
+  text-align: center;
+  padding: var(--spacing-lg);
+}
 
-/* ========== RESPONSIVE DESIGN ========== */
+.chart-error-icon {
+  font-size: 3rem;
+  margin-bottom: var(--spacing-md);
+  opacity: 0.5;
+}
+
+.chart-error-message {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: var(--spacing-sm);
+}
+
+.chart-error-details {
+  font-size: 0.875rem;
+  color: var(--color-textSecondary);
+}
+
+/* Animations */
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dotPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-  .agri-chart-container {
-    padding: 16px;
+  .chart-container {
+    padding: var(--spacing-md);
   }
   
-  .agri-chart-header {
-    gap: 8px;
+  .chart-title {
+    font-size: 1.125rem;
+    margin-bottom: var(--spacing-md);
   }
   
-  .agri-chart-icon {
-    width: 28px;
-    height: 28px;
-    font-size: 14px;
+  .chart-legend {
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
+    padding-top: var(--spacing-sm);
   }
   
-  .agri-chart-title {
-    font-size: 1.2rem;
+  .legend-item {
+    font-size: 0.75rem;
+    padding: 2px var(--spacing-xs);
   }
   
-  .agri-chart-legend {
-    gap: 8px;
-    flex-direction: column;
-    align-items: center;
+  .tooltip-content {
+    min-width: 100px;
   }
   
-  .agri-legend-item {
-    font-size: 12px;
-    padding: 6px 10px;
-  }
-  
-  .agri-chart-container:hover {
-    transform: translateY(-2px) scale(1.005);
+  .tooltip-label,
+  .tooltip-name,
+  .tooltip-value {
+    font-size: 0.75rem;
   }
 }
 
 @media (max-width: 480px) {
-  .agri-chart-container {
-    padding: 12px;
+  .chart-container {
+    padding: var(--spacing-sm);
   }
   
-  .agri-chart-title {
+  .chart-title {
     font-size: 1rem;
   }
   
-  .agri-chart-tooltip {
-    min-width: 150px;
-    padding: 12px;
+  .chart-legend {
+    flex-direction: column;
+    align-items: center;
   }
-}
-
-/* ========== LEGACY SUPPORT (for backward compatibility) ========== */
-.chart-container {
-  background: var(--color-gradient-card);
-  border: 1px solid transparent;
-  border-radius: 16px;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: 
-    0 8px 32px var(--color-shadow),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  padding: 24px;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  height: 100%;
-  overflow: hidden;
-  position: relative;
-}
-
-.chart-container:hover {
-  transform: translateY(-4px) scale(1.01);
-  box-shadow: 
-    0 16px 64px var(--color-shadow),
-    var(--color-glow-green);
-}
-
-.chart-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  background: var(--color-gradient-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin: 0 0 20px 0;
-  text-align: center;
-  letter-spacing: 0.5px;
-}
-
-.chart-wrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.chart-tooltip {
-  background: var(--color-gradient-card);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  box-shadow: 
-    0 12px 48px var(--color-shadow),
-    var(--color-glow-green);
-  padding: 16px;
-  animation: tooltipSlideIn 0.3s ease;
-  z-index: 1000;
+  
+  .legend-item {
+    justify-content: center;
+  }
 }
