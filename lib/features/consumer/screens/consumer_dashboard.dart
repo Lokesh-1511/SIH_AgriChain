@@ -3,6 +3,9 @@ import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../common/screens/landing_screen.dart';
+import '../../common/screens/profile_screen.dart';
+import '../../common/screens/settings_screen.dart';
+import '../../common/screens/notifications_screen.dart';
 import '../widgets/product_card.dart';
 import '../widgets/category_chip.dart';
 import '../../common/widgets/floating_chat_button.dart';
@@ -204,21 +207,24 @@ class _ConsumerDashboardState extends State<ConsumerDashboard> {
   }
 
   void _showNotifications(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Notifications feature coming soon!')),
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const NotificationsScreen()),
     );
   }
 
   void _handleMenuAction(String action) {
     switch (action) {
       case 'profile':
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile screen coming soon!')),
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const ProfileScreen()),
         );
         break;
       case 'settings':
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Settings screen coming soon!')),
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const SettingsScreen()),
         );
         break;
       case 'logout':
