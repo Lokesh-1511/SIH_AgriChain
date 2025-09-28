@@ -7,6 +7,23 @@ import PieChart from '../components/charts/PieChart';
 import BarChart from '../components/charts/BarChart';
 import LineChart from '../components/charts/LineChart';
 import { BlockchainService } from '../services/mockData';
+import { 
+  Dialog, 
+  DialogTitle, 
+  DialogContent, 
+  DialogActions, 
+  Button, 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableContainer, 
+  TableHead, 
+  TableRow, 
+  Paper,
+  Chip,
+  IconButton
+} from '@mui/material';
+import { Close as CloseIcon } from '@mui/icons-material';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -17,6 +34,8 @@ const Dashboard = () => {
     analytics: {},
     loading: true
   });
+  const [showAllTransactions, setShowAllTransactions] = useState(false);
+  const [allTransactions, setAllTransactions] = useState([]);
 
   useEffect(() => {
     const loadDashboardData = async () => {
@@ -78,6 +97,37 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, [colors]);
 
+  const handleViewAllTransactions = async () => {
+    try {
+      const allTx = await BlockchainService.getTransactions();
+      setAllTransactions(allTx);
+      setShowAllTransactions(true);
+    } catch (error) {
+      console.error('Failed to load all transactions:', error);
+    }
+  };
+
+  // StatCard click handlers
+  const handleTotalBatchesClick = () => {
+    // Navigate to supply chain monitoring with filter for all batches
+    window.location.href = '/supply-chain';
+  };
+
+  const handleActiveShipmentsClick = () => {
+    // Navigate to supply chain monitoring with filter for active batches
+    window.location.href = '/supply-chain?filter=active';
+  };
+
+  const handleTotalValueClick = () => {
+    // Navigate to reports page with financial summary
+    window.location.href = '/reports?view=financial';
+  };
+
+  const handleSuccessRateClick = () => {
+    // Navigate to reports page with delivery analytics
+    window.location.href = '/reports?view=delivery';
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'Delivered': return colors.success;
@@ -105,8 +155,75 @@ const Dashboard = () => {
     );
   }
 
+  // All Transactions Modal Component
+  const AllTransactionsModal = () => (
+    <Dialog 
+      open={showAllTransactions} 
+      onClose={() => setShowAllTransactions(false)}
+      maxWidth="lg"
+      fullWidth
+    >
+      <DialogTitle>
+        All Transactions
+        <IconButton
+          aria-label="close"
+          onClick={() => setShowAllTransactions(false)}
+          sx={{ position: 'absolute', right: 8, top: 8 }}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <DialogContent>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Transaction ID</TableCell>
+                <TableCell>Batch ID</TableCell>
+                <TableCell>Type</TableCell>
+                <TableCell>Timestamp</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Amount</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {allTransactions.map((tx) => (
+                <TableRow key={tx.id}>
+                  <TableCell>{tx.id}</TableCell>
+                  <TableCell>{tx.batchId}</TableCell>
+                  <TableCell>{tx.type}</TableCell>
+                  <TableCell>{new Date(tx.timestamp).toLocaleString()}</TableCell>
+                  <TableCell>
+                    <Chip 
+                      label={tx.status} 
+                      size="small"
+                      style={{ 
+                        backgroundColor: getStatusColor(tx.status),
+                        color: 'white'
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    {tx.amount ? formatCurrency(tx.amount) : 'N/A'}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => setShowAllTransactions(false)}>
+          Close
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+
   return (
     <div className="dashboard-container">
+      <AllTransactionsModal />
+      
       <div className="dashboard-header">
         <h1 className="dashboard-title">AgriChain Dashboard</h1>
         <p className="dashboard-subtitle">Real-time supply chain monitoring and analytics</p>
@@ -125,6 +242,7 @@ const Dashboard = () => {
               color="primary"
               gradient={true}
               animated={true}
+              onClick={handleTotalBatchesClick}
             />
           </AnimatedCard>
           
@@ -137,6 +255,7 @@ const Dashboard = () => {
               trend={{ direction: 'up', value: '+8%' }}
               color="secondary"
               animated={true}
+              onClick={handleActiveShipmentsClick}
             />
           </AnimatedCard>
           
@@ -150,6 +269,7 @@ const Dashboard = () => {
               color="success"
               gradient={true}
               animated={true}
+              onClick={handleTotalValueClick}
             />
           </AnimatedCard>
           
@@ -162,6 +282,7 @@ const Dashboard = () => {
               trend={{ direction: 'up', value: '+2.1%' }}
               color="info"
               animated={true}
+              onClick={handleSuccessRateClick}
             />
           </AnimatedCard>
         </StaggeredList>
@@ -250,7 +371,10 @@ const Dashboard = () => {
               </div>
               
               <div className="feed-footer">
-                <button className="btn btn-secondary">
+                <button 
+                  className="btn btn-secondary"
+                  onClick={handleViewAllTransactions}
+                >
                   View All Transactions
                 </button>
               </div>
