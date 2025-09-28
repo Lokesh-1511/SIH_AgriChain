@@ -172,13 +172,22 @@ class _LoginScreenState extends State<LoginScreen> {
               TextFormField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
+                style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(
                   labelText: 'Email',
+                  labelStyle: TextStyle(color: Colors.black),
                   prefixIcon: Icon(Icons.email_outlined, color: _roleColor),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  
+                  enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                   borderSide: BorderSide(color: _roleColor, width: 1), // light grey border
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: _roleColor, width: 2), // colored border when focused
                   ),
                 ),
+                
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your email';
@@ -196,12 +205,14 @@ class _LoginScreenState extends State<LoginScreen> {
               TextFormField(
                 controller: _passwordController,
                 obscureText: !_isPasswordVisible,
+                style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(
                   labelText: 'Password',
+                  labelStyle: TextStyle(color: Colors.black),
                   prefixIcon: Icon(Icons.lock_outline, color: _roleColor),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
+                      _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
                       color: AppColors.textSecondary,
                     ),
                     onPressed: () {
@@ -210,8 +221,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       });
                     },
                   ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                   borderSide: BorderSide(color: _roleColor, width: 1), // light grey border
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: _roleColor, width: 2), // colored border when focused
                   ),
                 ),
                 validator: (value) {
