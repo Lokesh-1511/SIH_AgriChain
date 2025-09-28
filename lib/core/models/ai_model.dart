@@ -220,10 +220,7 @@ class PricePoint {
   final DateTime date;
   final double price;
 
-  PricePoint({
-    required this.date,
-    required this.price,
-  });
+  PricePoint({required this.date, required this.price});
 
   factory PricePoint.fromJson(Map<String, dynamic> json) {
     return PricePoint(
@@ -233,10 +230,7 @@ class PricePoint {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'date': date.toIso8601String(),
-      'price': price,
-    };
+    return {'date': date.toIso8601String(), 'price': price};
   }
 }
 

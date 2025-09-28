@@ -5,12 +5,14 @@ class DistributorAnalyticsScreen extends StatefulWidget {
   const DistributorAnalyticsScreen({super.key});
 
   @override
-  State<DistributorAnalyticsScreen> createState() => _DistributorAnalyticsScreenState();
+  State<DistributorAnalyticsScreen> createState() =>
+      _DistributorAnalyticsScreenState();
 }
 
-class _DistributorAnalyticsScreenState extends State<DistributorAnalyticsScreen> {
+class _DistributorAnalyticsScreenState
+    extends State<DistributorAnalyticsScreen> {
   String _selectedPeriod = 'This Month';
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,12 +47,20 @@ class _DistributorAnalyticsScreenState extends State<DistributorAnalyticsScreen>
                   child: DropdownButton<String>(
                     value: _selectedPeriod,
                     isExpanded: true,
-                    items: ['This Week', 'This Month', 'Last 3 Months', 'This Year']
-                        .map((period) => DropdownMenuItem(
-                              value: period,
-                              child: Text(period),
-                            ))
-                        .toList(),
+                    items:
+                        [
+                              'This Week',
+                              'This Month',
+                              'Last 3 Months',
+                              'This Year',
+                            ]
+                            .map(
+                              (period) => DropdownMenuItem(
+                                value: period,
+                                child: Text(period),
+                              ),
+                            )
+                            .toList(),
                     onChanged: (value) {
                       setState(() {
                         _selectedPeriod = value!;
@@ -83,10 +93,34 @@ class _DistributorAnalyticsScreenState extends State<DistributorAnalyticsScreen>
               mainAxisSpacing: 12,
               childAspectRatio: 1.2,
               children: [
-                _buildMetricCard('Total Revenue', '₹2.4L', '+12.5%', AppColors.success, Icons.currency_rupee),
-                _buildMetricCard('Deliveries', '156', '+8.2%', AppColors.info, Icons.local_shipping),
-                _buildMetricCard('Customers', '84', '+15.3%', AppColors.distributorPrimary, Icons.people),
-                _buildMetricCard('Avg Rating', '4.7★', '+0.2', AppColors.warning, Icons.star),
+                _buildMetricCard(
+                  'Total Revenue',
+                  '₹2.4L',
+                  '+12.5%',
+                  AppColors.success,
+                  Icons.currency_rupee,
+                ),
+                _buildMetricCard(
+                  'Deliveries',
+                  '156',
+                  '+8.2%',
+                  AppColors.info,
+                  Icons.local_shipping,
+                ),
+                _buildMetricCard(
+                  'Customers',
+                  '84',
+                  '+15.3%',
+                  AppColors.distributorPrimary,
+                  Icons.people,
+                ),
+                _buildMetricCard(
+                  'Avg Rating',
+                  '4.7★',
+                  '+0.2',
+                  AppColors.warning,
+                  Icons.star,
+                ),
               ],
             ),
 
@@ -196,7 +230,9 @@ class _DistributorAnalyticsScreenState extends State<DistributorAnalyticsScreen>
                 ],
               ),
               child: Column(
-                children: _topProducts.map((product) => _buildTopProductItem(product)).toList(),
+                children: _topProducts
+                    .map((product) => _buildTopProductItem(product))
+                    .toList(),
               ),
             ),
 
@@ -215,9 +251,21 @@ class _DistributorAnalyticsScreenState extends State<DistributorAnalyticsScreen>
 
             Row(
               children: [
-                Expanded(child: _buildDeliveryMetric('On Time', '92%', AppColors.success)),
+                Expanded(
+                  child: _buildDeliveryMetric(
+                    'On Time',
+                    '92%',
+                    AppColors.success,
+                  ),
+                ),
                 const SizedBox(width: 12),
-                Expanded(child: _buildDeliveryMetric('Delayed', '8%', AppColors.warning)),
+                Expanded(
+                  child: _buildDeliveryMetric(
+                    'Delayed',
+                    '8%',
+                    AppColors.warning,
+                  ),
+                ),
               ],
             ),
 
@@ -247,7 +295,9 @@ class _DistributorAnalyticsScreenState extends State<DistributorAnalyticsScreen>
                     ),
                   ),
                   const SizedBox(height: 12),
-                  ..._deliveryRoutes.map((route) => _buildRouteAnalytics(route)).toList(),
+                  ..._deliveryRoutes.map(
+                    (route) => _buildRouteAnalytics(route),
+                  ),
                 ],
               ),
             ),
@@ -346,9 +396,15 @@ class _DistributorAnalyticsScreenState extends State<DistributorAnalyticsScreen>
     );
   }
 
-  Widget _buildMetricCard(String title, String value, String change, Color color, IconData icon) {
+  Widget _buildMetricCard(
+    String title,
+    String value,
+    String change,
+    Color color,
+    IconData icon,
+  ) {
     bool isPositive = change.startsWith('+');
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -372,7 +428,8 @@ class _DistributorAnalyticsScreenState extends State<DistributorAnalyticsScreen>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: (isPositive ? AppColors.success : AppColors.error).withOpacity(0.1),
+                  color: (isPositive ? AppColors.success : AppColors.error)
+                      .withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -397,10 +454,7 @@ class _DistributorAnalyticsScreenState extends State<DistributorAnalyticsScreen>
           ),
           Text(
             title,
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 12,
-            ),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
           ),
         ],
       ),
@@ -411,7 +465,9 @@ class _DistributorAnalyticsScreenState extends State<DistributorAnalyticsScreen>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: AppColors.textSecondary.withOpacity(0.1))),
+        border: Border(
+          bottom: BorderSide(color: AppColors.textSecondary.withOpacity(0.1)),
+        ),
       ),
       child: Row(
         children: [
@@ -457,10 +513,7 @@ class _DistributorAnalyticsScreenState extends State<DistributorAnalyticsScreen>
               ),
               Text(
                 '+${product['growth']}%',
-                style: TextStyle(
-                  color: AppColors.success,
-                  fontSize: 11,
-                ),
+                style: TextStyle(color: AppColors.success, fontSize: 11),
               ),
             ],
           ),
@@ -496,10 +549,7 @@ class _DistributorAnalyticsScreenState extends State<DistributorAnalyticsScreen>
           const SizedBox(height: 4),
           Text(
             label,
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 12,
-            ),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
           ),
         ],
       ),
@@ -515,19 +565,13 @@ class _DistributorAnalyticsScreenState extends State<DistributorAnalyticsScreen>
             flex: 2,
             child: Text(
               route['name'],
-              style: TextStyle(
-                color: AppColors.textPrimary,
-                fontSize: 13,
-              ),
+              style: TextStyle(color: AppColors.textPrimary, fontSize: 13),
             ),
           ),
           Expanded(
             child: Text(
               '${route['deliveries']} trips',
-              style: TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: 12,
-              ),
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
             ),
           ),
           Text(
@@ -556,10 +600,7 @@ class _DistributorAnalyticsScreenState extends State<DistributorAnalyticsScreen>
         ),
         Text(
           rating,
-          style: TextStyle(
-            color: AppColors.textSecondary,
-            fontSize: 11,
-          ),
+          style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
         ),
       ],
     );
@@ -592,7 +633,9 @@ class _DistributorAnalyticsScreenState extends State<DistributorAnalyticsScreen>
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Schedule Report'),
-        content: const Text('Automated report scheduling will be available soon!'),
+        content: const Text(
+          'Automated report scheduling will be available soon!',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

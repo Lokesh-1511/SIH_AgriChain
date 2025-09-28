@@ -26,10 +26,7 @@ class _AvailableBatchesScreenState extends State<AvailableBatchesScreen> {
             onPressed: _showFilterDialog,
             icon: const Icon(Icons.filter_list),
           ),
-          IconButton(
-            onPressed: _showSortDialog,
-            icon: const Icon(Icons.sort),
-          ),
+          IconButton(onPressed: _showSortDialog, icon: const Icon(Icons.sort)),
         ],
       ),
       body: Column(
@@ -61,15 +58,27 @@ class _AvailableBatchesScreenState extends State<AvailableBatchesScreen> {
             child: Row(
               children: [
                 Expanded(
-                  child: _buildStatCard('Total Batches', '48', AppColors.distributorPrimary),
+                  child: _buildStatCard(
+                    'Total Batches',
+                    '48',
+                    AppColors.distributorPrimary,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: _buildStatCard('Avg Quality', '87%', AppColors.success),
+                  child: _buildStatCard(
+                    'Avg Quality',
+                    '87%',
+                    AppColors.success,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: _buildStatCard('Total Value', '₹12.5L', AppColors.info),
+                  child: _buildStatCard(
+                    'Total Value',
+                    '₹12.5L',
+                    AppColors.info,
+                  ),
                 ),
               ],
             ),
@@ -109,11 +118,15 @@ class _AvailableBatchesScreenState extends State<AvailableBatchesScreen> {
       backgroundColor: Colors.white,
       selectedColor: AppColors.distributorPrimary.withOpacity(0.2),
       labelStyle: TextStyle(
-        color: isSelected ? AppColors.distributorPrimary : AppColors.textSecondary,
+        color: isSelected
+            ? AppColors.distributorPrimary
+            : AppColors.textSecondary,
         fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
       ),
       side: BorderSide(
-        color: isSelected ? AppColors.distributorPrimary : AppColors.textSecondary.withOpacity(0.3),
+        color: isSelected
+            ? AppColors.distributorPrimary
+            : AppColors.textSecondary.withOpacity(0.3),
       ),
     );
   }
@@ -145,10 +158,7 @@ class _AvailableBatchesScreenState extends State<AvailableBatchesScreen> {
           const SizedBox(height: 4),
           Text(
             title,
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 12,
-            ),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
             textAlign: TextAlign.center,
           ),
         ],
@@ -276,7 +286,10 @@ class _AvailableBatchesScreenState extends State<AvailableBatchesScreen> {
             Text('Total Value: ₹${batch['totalValue']}'),
             const SizedBox(height: 16),
             const Text('Estimated pickup time:'),
-            const Text('Tomorrow 9:00 AM', style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text(
+              'Tomorrow 9:00 AM',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ],
         ),
         actions: [
@@ -288,11 +301,20 @@ class _AvailableBatchesScreenState extends State<AvailableBatchesScreen> {
             onPressed: () {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('${batch['product']} batch accepted! Pickup scheduled.')),
+                SnackBar(
+                  content: Text(
+                    '${batch['product']} batch accepted! Pickup scheduled.',
+                  ),
+                ),
               );
             },
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.distributorPrimary),
-            child: const Text('Confirm Accept', style: TextStyle(color: Colors.white)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.distributorPrimary,
+            ),
+            child: const Text(
+              'Confirm Accept',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),

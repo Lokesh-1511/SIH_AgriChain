@@ -35,7 +35,11 @@ class LoanScreen extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.account_balance, color: Colors.white, size: 24),
+                      Icon(
+                        Icons.account_balance,
+                        color: Colors.white,
+                        size: 24,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         'Current Loan Status',
@@ -94,7 +98,11 @@ class LoanScreen extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: _buildStatCard('Credit Score', '785', AppColors.success),
+                  child: _buildStatCard(
+                    'Credit Score',
+                    '785',
+                    AppColors.success,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -102,7 +110,11 @@ class LoanScreen extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: _buildStatCard('Tenure Left', '18 months', AppColors.info),
+                  child: _buildStatCard(
+                    'Tenure Left',
+                    '18 months',
+                    AppColors.info,
+                  ),
                 ),
               ],
             ),
@@ -120,7 +132,9 @@ class LoanScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Loan Schemes
-            ..._loanSchemes.map((scheme) => _buildLoanSchemeCard(context, scheme)).toList(),
+            ..._loanSchemes.map(
+              (scheme) => _buildLoanSchemeCard(context, scheme),
+            ),
 
             const SizedBox(height: 24),
 
@@ -202,10 +216,7 @@ class LoanScreen extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             title,
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 11,
-            ),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
             textAlign: TextAlign.center,
           ),
         ],
@@ -213,7 +224,10 @@ class LoanScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLoanSchemeCard(BuildContext context, Map<String, dynamic> scheme) {
+  Widget _buildLoanSchemeCard(
+    BuildContext context,
+    Map<String, dynamic> scheme,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -239,10 +253,7 @@ class LoanScreen extends StatelessWidget {
                   color: AppColors.farmerPrimary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
-                  scheme['icon'],
-                  color: AppColors.farmerPrimary,
-                ),
+                child: Icon(scheme['icon'], color: AppColors.farmerPrimary),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -269,7 +280,9 @@ class LoanScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: _getInterestRateColor(scheme['interestRate']).withOpacity(0.1),
+                  color: _getInterestRateColor(
+                    scheme['interestRate'],
+                  ).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -294,32 +307,35 @@ class LoanScreen extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             scheme['description'],
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 13,
-            ),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
           ),
           const SizedBox(height: 12),
           Row(
             children: [
-              ...scheme['features'].take(2).map<Widget>((feature) => 
-                Container(
-                  margin: const EdgeInsets.only(right: 8),
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: AppColors.success.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    feature,
-                    style: TextStyle(
-                      color: AppColors.success,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500,
+              ...scheme['features']
+                  .take(2)
+                  .map<Widget>(
+                    (feature) => Container(
+                      margin: const EdgeInsets.only(right: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.success.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        feature,
+                        style: TextStyle(
+                          color: AppColors.success,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ).toList(),
+                  )
+                  .toList(),
             ],
           ),
           const SizedBox(height: 12),
@@ -347,10 +363,7 @@ class LoanScreen extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(
-            color: AppColors.textSecondary,
-            fontSize: 11,
-          ),
+          style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
         ),
         Text(
           value,
@@ -401,9 +414,7 @@ class LoanScreen extends StatelessWidget {
                 child: _buildCalculatorField('Loan Amount', '₹5,00,000'),
               ),
               const SizedBox(width: 12),
-              Expanded(
-                child: _buildCalculatorField('Interest Rate', '7%'),
-              ),
+              Expanded(child: _buildCalculatorField('Interest Rate', '7%')),
             ],
           ),
           const SizedBox(height: 12),
@@ -448,10 +459,7 @@ class LoanScreen extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(
-            color: AppColors.textSecondary,
-            fontSize: 12,
-          ),
+          style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
         ),
         const SizedBox(height: 4),
         Container(
@@ -484,7 +492,9 @@ class LoanScreen extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Pay EMI'),
-        content: const Text('You will be redirected to the payment gateway to pay your EMI of ₹15,600.'),
+        content: const Text(
+          'You will be redirected to the payment gateway to pay your EMI of ₹15,600.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -494,7 +504,9 @@ class LoanScreen extends StatelessWidget {
             onPressed: () {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Payment gateway integration coming soon!')),
+                const SnackBar(
+                  content: Text('Payment gateway integration coming soon!'),
+                ),
               );
             },
             child: const Text('Pay Now'),
@@ -509,7 +521,9 @@ class LoanScreen extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Apply for New Loan'),
-        content: const Text('Choose from the available loan schemes below or contact our loan officer for personalized assistance.'),
+        content: const Text(
+          'Choose from the available loan schemes below or contact our loan officer for personalized assistance.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -534,8 +548,10 @@ class LoanScreen extends StatelessWidget {
             Text('Tenure: Up to ${scheme['maxTenure']}'),
             const SizedBox(height: 12),
             const Text('Required Documents:'),
-            const Text('• Aadhar Card\n• Land Records\n• Bank Statements\n• Income Proof', 
-                style: TextStyle(fontSize: 12)),
+            const Text(
+              '• Aadhar Card\n• Land Records\n• Bank Statements\n• Income Proof',
+              style: TextStyle(fontSize: 12),
+            ),
           ],
         ),
         actions: [
@@ -547,7 +563,11 @@ class LoanScreen extends StatelessWidget {
             onPressed: () {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Loan application process will be available soon!')),
+                const SnackBar(
+                  content: Text(
+                    'Loan application process will be available soon!',
+                  ),
+                ),
               );
             },
             child: const Text('Apply'),
@@ -564,7 +584,8 @@ class LoanScreen extends StatelessWidget {
       'maxAmount': '₹3,00,000',
       'maxTenure': '5 years',
       'interestRate': 4.0,
-      'description': 'Flexible credit facility for crop cultivation and related activities.',
+      'description':
+          'Flexible credit facility for crop cultivation and related activities.',
       'icon': Icons.credit_card,
       'features': ['Flexible repayment', 'Lower interest', 'No collateral'],
     },
@@ -574,7 +595,8 @@ class LoanScreen extends StatelessWidget {
       'maxAmount': '₹10,00,000',
       'maxTenure': '7 years',
       'interestRate': 7.5,
-      'description': 'Long-term loan for farm mechanization, irrigation, and infrastructure.',
+      'description':
+          'Long-term loan for farm mechanization, irrigation, and infrastructure.',
       'icon': Icons.agriculture,
       'features': ['Long tenure', 'Asset creation', 'Tax benefits'],
     },
@@ -584,7 +606,8 @@ class LoanScreen extends StatelessWidget {
       'maxAmount': '₹50,000',
       'maxTenure': '3 years',
       'interestRate': 6.5,
-      'description': 'Small loans through self-help groups for agricultural activities.',
+      'description':
+          'Small loans through self-help groups for agricultural activities.',
       'icon': Icons.group,
       'features': ['Group guarantee', 'Easy approval', 'Community support'],
     },

@@ -19,7 +19,10 @@ class CropAdvisoryScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [AppColors.warning, AppColors.warning.withOpacity(0.8)],
+                  colors: [
+                    AppColors.warning,
+                    AppColors.warning.withOpacity(0.8),
+                  ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -68,7 +71,7 @@ class CropAdvisoryScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Today's Tasks
-            ..._todaysTasks.map((task) => _buildTaskCard(task)).toList(),
+            ..._todaysTasks.map((task) => _buildTaskCard(task)),
 
             const SizedBox(height: 24),
 
@@ -83,7 +86,7 @@ class CropAdvisoryScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Crop Health Cards
-            ..._cropHealth.map((crop) => _buildCropHealthCard(crop)).toList(),
+            ..._cropHealth.map((crop) => _buildCropHealthCard(crop)),
 
             const SizedBox(height: 24),
 
@@ -98,7 +101,7 @@ class CropAdvisoryScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Articles
-            ..._articles.map((article) => _buildArticleCard(article)).toList(),
+            ..._articles.map((article) => _buildArticleCard(article)),
           ],
         ),
       ),
@@ -107,7 +110,7 @@ class CropAdvisoryScreen extends StatelessWidget {
 
   Widget _buildTaskCard(Map<String, dynamic> task) {
     Color priorityColor = _getPriorityColor(task['priority']);
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -155,7 +158,11 @@ class CropAdvisoryScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Icon(Icons.access_time, size: 14, color: AppColors.textSecondary),
+                    Icon(
+                      Icons.access_time,
+                      size: 14,
+                      color: AppColors.textSecondary,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       task['time'],
@@ -166,7 +173,10 @@ class CropAdvisoryScreen extends StatelessWidget {
                     ),
                     const SizedBox(width: 16),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: priorityColor.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
@@ -197,7 +207,7 @@ class CropAdvisoryScreen extends StatelessWidget {
 
   Widget _buildCropHealthCard(Map<String, dynamic> crop) {
     Color healthColor = _getHealthColor(crop['health']);
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -256,7 +266,10 @@ class CropAdvisoryScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: healthColor.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
@@ -306,10 +319,7 @@ class CropAdvisoryScreen extends StatelessWidget {
                   Expanded(
                     child: Text(
                       crop['issues'],
-                      style: TextStyle(
-                        color: AppColors.error,
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: AppColors.error, fontSize: 12),
                     ),
                   ),
                 ],
@@ -503,21 +513,24 @@ class CropAdvisoryScreen extends StatelessWidget {
   static final List<Map<String, dynamic>> _articles = [
     {
       'title': 'Integrated Pest Management for Vegetable Crops',
-      'summary': 'Learn sustainable pest control methods that protect your crops and the environment.',
+      'summary':
+          'Learn sustainable pest control methods that protect your crops and the environment.',
       'author': 'Dr. Agricultural Expert',
       'readTime': '5 min read',
       'icon': Icons.eco,
     },
     {
       'title': 'Optimizing Irrigation for Better Yields',
-      'summary': 'Water management techniques to maximize crop productivity while conserving resources.',
+      'summary':
+          'Water management techniques to maximize crop productivity while conserving resources.',
       'author': 'Irrigation Specialist',
       'readTime': '7 min read',
       'icon': Icons.water_drop,
     },
     {
       'title': 'Organic Fertilizers: Benefits and Application',
-      'summary': 'How to use organic fertilizers effectively for healthier soil and better crops.',
+      'summary':
+          'How to use organic fertilizers effectively for healthier soil and better crops.',
       'author': 'Soil Science Expert',
       'readTime': '6 min read',
       'icon': Icons.grass,

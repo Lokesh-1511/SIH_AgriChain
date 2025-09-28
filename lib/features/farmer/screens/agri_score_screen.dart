@@ -19,7 +19,10 @@ class AgriScoreScreen extends StatelessWidget {
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [AppColors.farmerPrimary, AppColors.farmerPrimary.withOpacity(0.8)],
+                  colors: [
+                    AppColors.farmerPrimary,
+                    AppColors.farmerPrimary.withOpacity(0.8),
+                  ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -41,7 +44,10 @@ class AgriScoreScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white.withOpacity(0.3), width: 3),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.3),
+                        width: 3,
+                      ),
                     ),
                     child: const Center(
                       child: Text(
@@ -88,7 +94,7 @@ class AgriScoreScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Score Factors
-            ..._scoreFactors.map((factor) => _buildScoreFactorCard(factor)).toList(),
+            ..._scoreFactors.map((factor) => _buildScoreFactorCard(factor)),
 
             const SizedBox(height: 24),
 
@@ -103,7 +109,7 @@ class AgriScoreScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Tips
-            ..._improvementTips.map((tip) => _buildTipCard(tip)).toList(),
+            ..._improvementTips.map((tip) => _buildTipCard(tip)),
 
             const SizedBox(height: 24),
 
@@ -130,10 +136,11 @@ class AgriScoreScreen extends StatelessWidget {
                       const SizedBox(width: 8),
                       Text(
                         'Score Benefits',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textPrimary,
+                            ),
                       ),
                     ],
                   ),
@@ -209,7 +216,10 @@ class AgriScoreScreen extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: _getRatingColor(factor['rating']).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
@@ -312,10 +322,7 @@ class AgriScoreScreen extends StatelessWidget {
           Expanded(
             child: Text(
               benefit,
-              style: TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: 14,
-              ),
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
             ),
           ),
         ],
@@ -379,7 +386,8 @@ class AgriScoreScreen extends StatelessWidget {
   static final List<Map<String, dynamic>> _improvementTips = [
     {
       'title': 'Get Quality Certifications',
-      'description': 'Obtain organic or quality certifications for your products',
+      'description':
+          'Obtain organic or quality certifications for your products',
       'points': '25',
     },
     {

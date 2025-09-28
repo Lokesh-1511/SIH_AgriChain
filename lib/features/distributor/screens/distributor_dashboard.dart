@@ -53,10 +53,7 @@ class _DistributorDashboardState extends State<DistributorDashboard> {
         backgroundColor: Colors.white,
         elevation: 8,
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(
             icon: Icon(Icons.local_shipping),
             label: 'Delivery',
@@ -256,21 +253,36 @@ class DistributorHomeTab extends StatelessWidget {
                 'Available Batches',
                 Icons.agriculture,
                 AppColors.distributorPrimary,
-                () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AvailableBatchesScreen())),
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const AvailableBatchesScreen(),
+                  ),
+                ),
               ),
               _buildQuickActionCard(
                 context,
                 'Cost Prediction',
                 Icons.analytics,
                 AppColors.info,
-                () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CostPredictionScreen())),
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const CostPredictionScreen(),
+                  ),
+                ),
               ),
               _buildQuickActionCard(
                 context,
                 'Vehicle Management',
                 Icons.local_shipping,
                 AppColors.warning,
-                () => Navigator.push(context, MaterialPageRoute(builder: (_) => const VehicleManagementScreen())),
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const VehicleManagementScreen(),
+                  ),
+                ),
               ),
               _buildQuickActionCard(
                 context,
@@ -278,7 +290,9 @@ class DistributorHomeTab extends StatelessWidget {
                 Icons.route,
                 AppColors.success,
                 () => ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Route Optimizer screen coming soon!')),
+                  const SnackBar(
+                    content: Text('Route Optimizer screen coming soon!'),
+                  ),
                 ),
               ),
             ],
@@ -297,11 +311,15 @@ class DistributorHomeTab extends StatelessWidget {
           const SizedBox(height: 16),
 
           // Mock batch requests
-          ..._pendingBatches.take(3).map((batch) => BatchRequestCard(
-            batch: batch,
-            onAccept: () => _acceptBatch(context, batch),
-            onReject: () => _rejectBatch(context, batch),
-          )).toList(),
+          ..._pendingBatches
+              .take(3)
+              .map(
+                (batch) => BatchRequestCard(
+                  batch: batch,
+                  onAccept: () => _acceptBatch(context, batch),
+                  onReject: () => _rejectBatch(context, batch),
+                ),
+              ),
         ],
       ),
     );
@@ -346,8 +364,11 @@ class DistributorHomeTab extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
+                fontSize: 14, // Explicit font size
               ),
               textAlign: TextAlign.center,
+              maxLines: 2, // Allow 2 lines for longer titles
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

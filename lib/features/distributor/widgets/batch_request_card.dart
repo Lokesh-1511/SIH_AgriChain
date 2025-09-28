@@ -112,20 +112,18 @@ class BatchRequestCard extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 'Harvest: ${batch['harvestDate']}',
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
               ),
               const Spacer(),
-              Icon(Icons.local_shipping, size: 14, color: AppColors.textSecondary),
+              Icon(
+                Icons.local_shipping,
+                size: 14,
+                color: AppColors.textSecondary,
+              ),
               const SizedBox(width: 4),
               Text(
                 'Distance: ${batch['distance']}',
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
               ),
             ],
           ),
@@ -153,10 +151,7 @@ class BatchRequestCard extends StatelessWidget {
                   const Spacer(),
                   Text(
                     'AI Predicted Shelf Life: ${batch['shelfLife']} days',
-                    style: TextStyle(
-                      color: AppColors.info,
-                      fontSize: 11,
-                    ),
+                    style: TextStyle(color: AppColors.info, fontSize: 11),
                   ),
                 ],
               ),

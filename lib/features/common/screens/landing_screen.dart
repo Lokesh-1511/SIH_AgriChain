@@ -4,7 +4,9 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../common/providers/language_provider.dart';
 import '../../auth/screens/login_screen.dart';
-import '../../auth/screens/role_selection_screen.dart';
+import 'about_screen.dart';
+import 'contact_screen.dart';
+import 'privacy_policy_screen.dart';
 
 class LandingScreen extends StatefulWidget {
   const LandingScreen({super.key});
@@ -31,36 +33,30 @@ class _LandingScreenState extends State<LandingScreen>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeIn,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeIn),
+    );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+        );
 
     _animationController.forward();
   }
 
   void _navigateToLogin(String role) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => LoginScreen(role: role),
-      ),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => LoginScreen(role: role)));
   }
 
   void _showLanguagePicker() {
-    final languageProvider = Provider.of<LanguageProvider>(context, listen: false);
-    
+    final languageProvider = Provider.of<LanguageProvider>(
+      context,
+      listen: false,
+    );
+
     showModalBottomSheet(
       context: context,
       builder: (context) => Container(
@@ -71,9 +67,9 @@ class _LandingScreenState extends State<LandingScreen>
           children: [
             Text(
               'Select Language',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             ...languageProvider.supportedLanguages.map(
@@ -114,7 +110,9 @@ class _LandingScreenState extends State<LandingScreen>
                 onPressed: _showLanguagePicker,
                 icon: const Icon(Icons.language, color: AppColors.primary),
                 label: Text(
-                  languageProvider.getLanguageName(languageProvider.currentLanguageCode),
+                  languageProvider.getLanguageName(
+                    languageProvider.currentLanguageCode,
+                  ),
                   style: const TextStyle(color: AppColors.primary),
                 ),
               );
@@ -135,7 +133,7 @@ class _LandingScreenState extends State<LandingScreen>
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const SizedBox(height: 40),
-                    
+
                     // Logo and Title
                     Container(
                       width: 100,
@@ -157,9 +155,9 @@ class _LandingScreenState extends State<LandingScreen>
                         color: Colors.white,
                       ),
                     ),
-                    
+
                     const SizedBox(height: 24),
-                    
+
                     Text(
                       AppConstants.appName,
                       style: Theme.of(context).textTheme.displaySmall?.copyWith(
@@ -168,9 +166,9 @@ class _LandingScreenState extends State<LandingScreen>
                         letterSpacing: 1,
                       ),
                     ),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     Text(
                       AppConstants.appTagline,
                       textAlign: TextAlign.center,
@@ -179,26 +177,26 @@ class _LandingScreenState extends State<LandingScreen>
                         height: 1.5,
                       ),
                     ),
-                    
+
                     const SizedBox(height: 64),
-                    
+
                     // Role Selection Cards
                     Text(
                       'Choose Your Role',
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
                     ),
-                    
+
                     const SizedBox(height: 32),
-                    
+
                     // Role Cards
                     _buildRoleGrid(),
-                    
+
                     const SizedBox(height: 48),
-                   
-                    
+
                     // Footer Links
                     _buildFooter(),
                   ],
@@ -249,8 +247,8 @@ class _LandingScreenState extends State<LandingScreen>
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-        childAspectRatio: 0.85,
+        mainAxisSpacing: 24, // More spacing for title + description below
+        childAspectRatio: 0.75, // Taller to accommodate text below card
       ),
       itemCount: roles.length,
       itemBuilder: (context, index) {
@@ -275,56 +273,67 @@ class _LandingScreenState extends State<LandingScreen>
   }) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 15,
-              offset: const Offset(0, 5),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Card with ONLY icon - guaranteed no overflow
+          Container(
+            width: double.infinity,
+            height: 80, // Fixed compact height for icon only
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Icon(
-                icon,
-                size: 32,
-                color: color,
-              ),
-            ),
-            
-            const SizedBox(height: 16),
-            
-            Text(
-              title,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+            child: Center(
+              child: Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, size: 28, color: color),
               ),
             ),
-            
-            const SizedBox(height: 8),
-            
-            Text(
-              subtitle,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.textSecondary,
-              ),
+          ),
+          
+          const SizedBox(height: 12),
+          
+          // Title below the card
+          Text(
+            title,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+              fontSize: 16,
             ),
-          ],
-        ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          
+          const SizedBox(height: 4),
+          
+          // Description below the title
+          Text(
+            subtitle,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 12,
+              height: 1.3,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       ),
     );
   }
@@ -337,34 +346,49 @@ class _LandingScreenState extends State<LandingScreen>
           children: [
             TextButton(
               onPressed: () {
-                // Navigate to About page
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AboutScreen(),
+                  ),
+                );
               },
               child: const Text('About'),
             ),
             const Text(' • '),
             TextButton(
               onPressed: () {
-                // Navigate to Contact page
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ContactScreen(),
+                  ),
+                );
               },
               child: const Text('Contact'),
             ),
             const Text(' • '),
             TextButton(
               onPressed: () {
-                // Navigate to Policy page
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PrivacyPolicyScreen(),
+                  ),
+                );
               },
               child: const Text('Privacy Policy'),
             ),
           ],
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         Text(
           '© 2025 AGRICHAIN. All rights reserved.',
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: AppColors.textHint,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall?.copyWith(color: AppColors.textHint),
         ),
       ],
     );

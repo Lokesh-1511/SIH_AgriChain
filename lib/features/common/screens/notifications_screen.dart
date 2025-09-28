@@ -13,12 +13,13 @@ class NotificationsScreen extends StatefulWidget {
 class _NotificationsScreenState extends State<NotificationsScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  
+
   final List<NotificationItem> _notifications = [
     NotificationItem(
       id: '1',
       title: 'New Batch Available',
-      message: 'Fresh tomatoes batch from Krishna Farms is now available for bidding.',
+      message:
+          'Fresh tomatoes batch from Krishna Farms is now available for bidding.',
       timestamp: DateTime.now().subtract(const Duration(minutes: 15)),
       type: NotificationType.batch,
       isRead: false,
@@ -81,9 +82,9 @@ class _NotificationsScreenState extends State<NotificationsScreen>
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
     final user = authProvider.currentUser;
-    
+
     Color primaryColor = _getPrimaryColorForRole(user?.role ?? 'consumer');
-    
+
     final unreadNotifications = _notifications.where((n) => !n.isRead).toList();
 
     return Scaffold(
@@ -112,10 +113,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
               onPressed: _markAllAsRead,
               child: const Text(
                 'Mark all read',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: Colors.white, fontSize: 12),
               ),
             ),
           PopupMenuButton<String>(
@@ -147,8 +145,8 @@ class _NotificationsScreenState extends State<NotificationsScreen>
           indicatorColor: Colors.white,
           tabs: [
             Tab(
-              text: unreadNotifications.isNotEmpty 
-                  ? 'Unread (${unreadNotifications.length})' 
+              text: unreadNotifications.isNotEmpty
+                  ? 'Unread (${unreadNotifications.length})'
                   : 'Unread',
             ),
             const Tab(text: 'All'),
@@ -160,12 +158,18 @@ class _NotificationsScreenState extends State<NotificationsScreen>
         children: [
           // Unread Tab
           unreadNotifications.isEmpty
-              ? _buildEmptyState('No unread notifications', Icons.notifications_none)
+              ? _buildEmptyState(
+                  'No unread notifications',
+                  Icons.notifications_none,
+                )
               : _buildNotificationsList(unreadNotifications),
-          
+
           // All Tab
           _notifications.isEmpty
-              ? _buildEmptyState('No notifications yet', Icons.notifications_none)
+              ? _buildEmptyState(
+                  'No notifications yet',
+                  Icons.notifications_none,
+                )
               : _buildNotificationsList(_notifications),
         ],
       ),
@@ -187,11 +191,13 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: notification.isRead ? Colors.white : Colors.blue.withOpacity(0.05),
+        color: notification.isRead
+            ? Colors.white
+            : Colors.blue.withOpacity(0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: notification.isRead 
-              ? AppColors.border 
+          color: notification.isRead
+              ? AppColors.border
               : Colors.blue.withOpacity(0.2),
         ),
         boxShadow: [
@@ -224,7 +230,9 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                 notification.title,
                 style: TextStyle(
                   fontSize: 16,
-                  fontWeight: notification.isRead ? FontWeight.w500 : FontWeight.bold,
+                  fontWeight: notification.isRead
+                      ? FontWeight.w500
+                      : FontWeight.bold,
                   color: AppColors.textPrimary,
                 ),
               ),
@@ -299,18 +307,11 @@ class _NotificationsScreenState extends State<NotificationsScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            icon,
-            size: 64,
-            color: AppColors.textSecondary.withOpacity(0.5),
-          ),
+          Icon(icon, size: 64, color: AppColors.textSecondary.withOpacity(0.5)),
           const SizedBox(height: 16),
           Text(
             message,
-            style: TextStyle(
-              fontSize: 16,
-              color: AppColors.textSecondary,
-            ),
+            style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
           ),
           const SizedBox(height: 8),
           Text(
@@ -397,7 +398,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
         notification.isRead = true;
       }
     });
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('All notifications marked as read'),
@@ -450,7 +451,9 @@ class _NotificationsScreenState extends State<NotificationsScreen>
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Clear All Notifications'),
-        content: const Text('Are you sure you want to clear all notifications? This action cannot be undone.'),
+        content: const Text(
+          'Are you sure you want to clear all notifications? This action cannot be undone.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -467,7 +470,10 @@ class _NotificationsScreenState extends State<NotificationsScreen>
               );
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Clear All', style: TextStyle(color: Colors.white)),
+            child: const Text(
+              'Clear All',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),
@@ -539,17 +545,6 @@ class NotificationItem {
   });
 }
 
-enum NotificationType {
-  batch,
-  order,
-  price,
-  weather,
-  system,
-  promotion,
-}
+enum NotificationType { batch, order, price, weather, system, promotion }
 
-enum NotificationPriority {
-  low,
-  medium,
-  high,
-}
+enum NotificationPriority { low, medium, high }

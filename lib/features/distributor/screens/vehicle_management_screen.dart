@@ -27,11 +27,25 @@ class VehicleManagementScreen extends StatelessWidget {
             // Fleet Overview
             Row(
               children: [
-                Expanded(child: _buildFleetStatCard('Total Vehicles', '8', AppColors.distributorPrimary)),
+                Expanded(
+                  child: _buildFleetStatCard(
+                    'Total Vehicles',
+                    '8',
+                    AppColors.distributorPrimary,
+                  ),
+                ),
                 const SizedBox(width: 12),
-                Expanded(child: _buildFleetStatCard('Active', '6', AppColors.success)),
+                Expanded(
+                  child: _buildFleetStatCard('Active', '6', AppColors.success),
+                ),
                 const SizedBox(width: 12),
-                Expanded(child: _buildFleetStatCard('Maintenance', '2', AppColors.warning)),
+                Expanded(
+                  child: _buildFleetStatCard(
+                    'Maintenance',
+                    '2',
+                    AppColors.warning,
+                  ),
+                ),
               ],
             ),
 
@@ -48,7 +62,7 @@ class VehicleManagementScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Vehicle List
-            ..._vehicles.map((vehicle) => _buildVehicleCard(context, vehicle)).toList(),
+            ..._vehicles.map((vehicle) => _buildVehicleCard(context, vehicle)),
           ],
         ),
       ),
@@ -82,10 +96,7 @@ class VehicleManagementScreen extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             title,
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 12,
-            ),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
             textAlign: TextAlign.center,
           ),
         ],
@@ -95,7 +106,7 @@ class VehicleManagementScreen extends StatelessWidget {
 
   Widget _buildVehicleCard(BuildContext context, Map<String, dynamic> vehicle) {
     Color statusColor = _getStatusColor(vehicle['status']);
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -208,7 +219,10 @@ class VehicleManagementScreen extends StatelessWidget {
                   if (vehicle['status'] == 'Active') ...[
                     TextButton(
                       onPressed: () => _trackVehicle(context, vehicle),
-                      child: const Text('Track', style: TextStyle(fontSize: 12)),
+                      child: const Text(
+                        'Track',
+                        style: TextStyle(fontSize: 12),
+                      ),
                     ),
                   ],
                 ],
@@ -286,7 +300,9 @@ class VehicleManagementScreen extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Add New Vehicle'),
-        content: const Text('Vehicle registration feature will be available soon!'),
+        content: const Text(
+          'Vehicle registration feature will be available soon!',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -361,9 +377,9 @@ class VehicleManagementScreen extends StatelessWidget {
           children: [
             Text(
               'Manage ${vehicle['plateNumber']}',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             ListTile(
@@ -372,7 +388,9 @@ class VehicleManagementScreen extends StatelessWidget {
               onTap: () {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Maintenance scheduling coming soon!')),
+                  const SnackBar(
+                    content: Text('Maintenance scheduling coming soon!'),
+                  ),
                 );
               },
             ),
@@ -382,7 +400,9 @@ class VehicleManagementScreen extends StatelessWidget {
               onTap: () {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Driver assignment coming soon!')),
+                  const SnackBar(
+                    content: Text('Driver assignment coming soon!'),
+                  ),
                 );
               },
             ),

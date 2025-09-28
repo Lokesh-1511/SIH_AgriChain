@@ -5,7 +5,7 @@ import '../../auth/providers/auth_provider.dart';
 import '../screens/consumer_dashboard.dart';
 
 class ConsumerRegistrationScreen extends StatefulWidget {
-  const ConsumerRegistrationScreen({Key? key}) : super(key: key);
+  const ConsumerRegistrationScreen({super.key});
 
   @override
   State<ConsumerRegistrationScreen> createState() =>
@@ -116,7 +116,7 @@ class _ConsumerRegistrationScreenState
   }
 
   Future<void> _completeRegistration() async {
-    if (!_formKey.currentState!.validate()) return;
+    // Skip form validation for Aadhaar step (no form fields on step 2)
     if (!_isAadhaarVerified) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please verify your Aadhaar first')),
@@ -251,15 +251,27 @@ class _ConsumerRegistrationScreenState
   bool _validateCurrentStep() {
     switch (_currentStep) {
       case 0:
-        return _nameController.text.isNotEmpty &&
-            _phoneController.text.isNotEmpty &&
-            _emailController.text.isNotEmpty &&
-            _passwordController.text.isNotEmpty &&
-            _confirmPasswordController.text.isNotEmpty &&
-            _passwordController.text == _confirmPasswordController.text &&
-            _addressController.text.isNotEmpty;
+        // First validate the form to show error messages
+        if (!_formKey.currentState!.validate()) {
+          return false;
+        }
+        // Then check if passwords match
+        if (_passwordController.text != _confirmPasswordController.text) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Passwords do not match')),
+          );
+          return false;
+        }
+        return true;
       case 1:
-        return _isAadhaarVerified;
+        // For Aadhaar verification step, only check if Aadhaar is verified
+        if (!_isAadhaarVerified) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please verify your Aadhaar first')),
+          );
+          return false;
+        }
+        return true;
       default:
         return false;
     }
@@ -364,9 +376,10 @@ class _ConsumerRegistrationScreenState
       padding: const EdgeInsets.all(16),
       child: Form(
         key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
             Text(
               'Personal Information',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -378,9 +391,22 @@ class _ConsumerRegistrationScreenState
 
             TextFormField(
               controller: _nameController,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
                 labelText: 'Full Name *',
-                prefixIcon: Icon(Icons.person),
+                labelStyle: TextStyle(color: AppColors.textSecondary),
+                prefixIcon: Icon(Icons.person, color: AppColors.consumerPrimary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.consumerPrimary, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.consumerPrimary, width: 2),
+                ),
               ),
               validator: (value) =>
                   value?.isEmpty ?? true ? 'Please enter your name' : null,
@@ -389,34 +415,86 @@ class _ConsumerRegistrationScreenState
 
             TextFormField(
               controller: _phoneController,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
                 labelText: 'Phone Number *',
-                prefixIcon: Icon(Icons.phone),
+                labelStyle: TextStyle(color: AppColors.textSecondary),
+                prefixIcon: Icon(Icons.phone, color: AppColors.consumerPrimary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.consumerPrimary, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.consumerPrimary, width: 2),
+                ),
               ),
               keyboardType: TextInputType.phone,
-              validator: (value) => value?.isEmpty ?? true
-                  ? 'Please enter your phone number'
-                  : null,
+              validator: (value) {
+                if (value?.isEmpty ?? true) {
+                  return 'Please enter your phone number';
+                }
+                if (value!.length < 10) {
+                  return 'Please enter a valid 10-digit phone number';
+                }
+                return null;
+              },
             ),
             const SizedBox(height: 16),
 
             TextFormField(
               controller: _emailController,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
                 labelText: 'Email Address *',
-                prefixIcon: Icon(Icons.email),
+                labelStyle: TextStyle(color: AppColors.textSecondary),
+                prefixIcon: Icon(Icons.email, color: AppColors.consumerPrimary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.consumerPrimary, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.consumerPrimary, width: 2),
+                ),
               ),
               keyboardType: TextInputType.emailAddress,
-              validator: (value) =>
-                  value?.isEmpty ?? true ? 'Please enter your email' : null,
+              validator: (value) {
+                if (value?.isEmpty ?? true) {
+                  return 'Please enter your email';
+                }
+                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value!)) {
+                  return 'Please enter a valid email address';
+                }
+                return null;
+              },
             ),
             const SizedBox(height: 16),
 
             TextFormField(
               controller: _addressController,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
                 labelText: 'Address *',
-                prefixIcon: Icon(Icons.location_on),
+                labelStyle: TextStyle(color: AppColors.textSecondary),
+                prefixIcon: Icon(Icons.location_on, color: AppColors.consumerPrimary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.consumerPrimary, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.consumerPrimary, width: 2),
+                ),
                 hintText: 'Enter your full address',
               ),
               maxLines: 3,
@@ -427,32 +505,69 @@ class _ConsumerRegistrationScreenState
 
             TextFormField(
               controller: _passwordController,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
                 labelText: 'Password *',
-                prefixIcon: Icon(Icons.lock),
+                labelStyle: TextStyle(color: AppColors.textSecondary),
+                prefixIcon: Icon(Icons.lock, color: AppColors.consumerPrimary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.consumerPrimary, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.consumerPrimary, width: 2),
+                ),
               ),
               obscureText: true,
-              validator: (value) =>
-                  value?.isEmpty ?? true ? 'Please enter a password' : null,
+              validator: (value) {
+                if (value?.isEmpty ?? true) {
+                  return 'Please enter a password';
+                }
+                if (value!.length < 6) {
+                  return 'Password must be at least 6 characters';
+                }
+                return null;
+              },
             ),
             const SizedBox(height: 16),
 
             TextFormField(
               controller: _confirmPasswordController,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
                 labelText: 'Confirm Password *',
-                prefixIcon: Icon(Icons.lock_outline),
+                labelStyle: TextStyle(color: AppColors.textSecondary),
+                prefixIcon: Icon(Icons.lock_outline, color: AppColors.consumerPrimary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.consumerPrimary, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.consumerPrimary, width: 2),
+                ),
               ),
               obscureText: true,
               validator: (value) {
-                if (value?.isEmpty ?? true)
+                if (value?.isEmpty ?? true) {
                   return 'Please confirm your password';
-                if (value != _passwordController.text)
+                }
+                if (value != _passwordController.text) {
                   return 'Passwords do not match';
+                }
                 return null;
               },
             ),
+            const SizedBox(height: 100), // Extra padding for scrolling
           ],
+          ),
         ),
       ),
     );
@@ -461,9 +576,10 @@ class _ConsumerRegistrationScreenState
   Widget _buildAadhaarVerificationStep() {
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
           Text(
             'Aadhaar Verification',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -475,9 +591,22 @@ class _ConsumerRegistrationScreenState
 
           TextFormField(
             controller: _aadhaarController,
-            decoration: const InputDecoration(
+            style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
               labelText: 'Aadhaar Number *',
-              prefixIcon: Icon(Icons.credit_card),
+              labelStyle: TextStyle(color: AppColors.textSecondary),
+                prefixIcon: Icon(Icons.credit_card, color: AppColors.consumerPrimary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.consumerPrimary, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.consumerPrimary, width: 2),
+                ),
               hintText: 'Enter 12-digit Aadhaar number',
             ),
             keyboardType: TextInputType.number,
@@ -501,9 +630,22 @@ class _ConsumerRegistrationScreenState
           if (_otpSent && !_isAadhaarVerified) ...[
             TextFormField(
               controller: _otpController,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
                 labelText: 'Enter OTP *',
-                prefixIcon: Icon(Icons.sms),
+                labelStyle: TextStyle(color: AppColors.textSecondary),
+                prefixIcon: Icon(Icons.sms, color: AppColors.consumerPrimary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.consumerPrimary, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.consumerPrimary, width: 2),
+                ),
                 hintText: 'Enter 6-digit OTP',
               ),
               keyboardType: TextInputType.number,
@@ -545,7 +687,9 @@ class _ConsumerRegistrationScreenState
                 ],
               ),
             ),
+            const SizedBox(height: 100), // Extra padding for scrolling
         ],
+        ),
       ),
     );
   }

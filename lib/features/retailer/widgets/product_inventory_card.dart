@@ -26,7 +26,7 @@ class ProductInventoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isLowStock = stock <= minStock;
-    
+
     return Container(
       width: width,
       margin: margin ?? const EdgeInsets.all(8),
@@ -34,7 +34,9 @@ class ProductInventoryCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: isLowStock ? Border.all(color: AppColors.warning, width: 2) : null,
+        border: isLowStock
+            ? Border.all(color: AppColors.warning, width: 2)
+            : null,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -56,10 +58,7 @@ class ProductInventoryCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Center(
-                  child: Text(
-                    image,
-                    style: const TextStyle(fontSize: 20),
-                  ),
+                  child: Text(image, style: const TextStyle(fontSize: 20)),
                 ),
               ),
               const SizedBox(width: 12),
@@ -78,19 +77,16 @@ class ProductInventoryCard extends StatelessWidget {
                     ),
                     Text(
                       category,
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
                     ),
                   ],
                 ),
               ),
             ],
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           Text(
             '₹${price.toStringAsFixed(0)}/kg',
             style: TextStyle(
@@ -99,9 +95,9 @@ class ProductInventoryCard extends StatelessWidget {
               fontSize: 16,
             ),
           ),
-          
+
           const SizedBox(height: 8),
-          
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -110,10 +106,7 @@ class ProductInventoryCard extends StatelessWidget {
                 children: [
                   Text(
                     'Stock',
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 11,
-                    ),
+                    style: TextStyle(color: Colors.grey[600], fontSize: 11),
                   ),
                   Text(
                     '$stock kg',
@@ -127,7 +120,10 @@ class ProductInventoryCard extends StatelessWidget {
               ),
               if (isLowStock)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.warning.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -143,9 +139,9 @@ class ProductInventoryCard extends StatelessWidget {
                 ),
             ],
           ),
-          
+
           const SizedBox(height: 8),
-          
+
           LinearProgressIndicator(
             value: (stock / (minStock * 2)).clamp(0.0, 1.0),
             backgroundColor: Colors.grey[200],

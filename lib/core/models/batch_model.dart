@@ -44,15 +44,15 @@ class Batch {
       currentPrice: json['current_price']?.toDouble(),
       status: json['status'],
       createdAt: DateTime.parse(json['created_at']),
-      harvestedAt: json['harvested_at'] != null 
-          ? DateTime.parse(json['harvested_at']) 
+      harvestedAt: json['harvested_at'] != null
+          ? DateTime.parse(json['harvested_at'])
           : null,
       imageUrl: json['image_url'],
       qualityMetrics: json['quality_metrics'],
       distributorId: json['distributor_id'],
       retailerId: json['retailer_id'],
-      deliveredAt: json['delivered_at'] != null 
-          ? DateTime.parse(json['delivered_at']) 
+      deliveredAt: json['delivered_at'] != null
+          ? DateTime.parse(json['delivered_at'])
           : null,
     );
   }
@@ -200,8 +200,8 @@ class DeliveryTracking {
       distributorId: json['distributor_id'],
       status: json['status'],
       startTime: DateTime.parse(json['start_time']),
-      endTime: json['end_time'] != null 
-          ? DateTime.parse(json['end_time']) 
+      endTime: json['end_time'] != null
+          ? DateTime.parse(json['end_time'])
           : null,
       route: json['route'],
       vehicleId: json['vehicle_id'],

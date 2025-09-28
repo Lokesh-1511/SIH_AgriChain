@@ -7,13 +7,15 @@ import '../../auth/providers/auth_provider.dart';
 import '../screens/distributor_dashboard.dart';
 
 class DistributorRegistrationScreen extends StatefulWidget {
-  const DistributorRegistrationScreen({Key? key}) : super(key: key);
+  const DistributorRegistrationScreen({super.key});
 
   @override
-  State<DistributorRegistrationScreen> createState() => _DistributorRegistrationScreenState();
+  State<DistributorRegistrationScreen> createState() =>
+      _DistributorRegistrationScreenState();
 }
 
-class _DistributorRegistrationScreenState extends State<DistributorRegistrationScreen> {
+class _DistributorRegistrationScreenState
+    extends State<DistributorRegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
   final _pageController = PageController();
   int _currentStep = 0;
@@ -78,16 +80,18 @@ class _DistributorRegistrationScreenState extends State<DistributorRegistrationS
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error picking image: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error picking image: $e')));
     }
   }
 
   Future<void> _sendAadhaarOTP() async {
     if (_aadhaarController.text.length != 12) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid 12-digit Aadhaar number')),
+        const SnackBar(
+          content: Text('Please enter a valid 12-digit Aadhaar number'),
+        ),
       );
       return;
     }
@@ -97,20 +101,20 @@ class _DistributorRegistrationScreenState extends State<DistributorRegistrationS
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       await authProvider.sendAadhaarOTP(_aadhaarController.text);
-      
+
       setState(() {
         _otpSent = true;
         _isLoading = false;
       });
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('OTP sent to registered mobile number')),
       );
     } catch (e) {
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error sending OTP: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error sending OTP: $e')));
     }
   }
 
@@ -126,26 +130,29 @@ class _DistributorRegistrationScreenState extends State<DistributorRegistrationS
 
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      await authProvider.verifyAadhaarOTP(_aadhaarController.text, _otpController.text);
-      
+      await authProvider.verifyAadhaarOTP(
+        _aadhaarController.text,
+        _otpController.text,
+      );
+
       setState(() {
         _isAadhaarVerified = true;
         _isLoading = false;
       });
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Aadhaar verified successfully')),
       );
     } catch (e) {
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error verifying OTP: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error verifying OTP: $e')));
     }
   }
 
   Future<void> _completeRegistration() async {
-    if (!_formKey.currentState!.validate()) return;
+    // Skip form validation for final step (no form fields on step 2)  
     if (!_isAadhaarVerified) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please verify your Aadhaar first')),
@@ -163,10 +170,11 @@ class _DistributorRegistrationScreenState extends State<DistributorRegistrationS
 
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      
+
       // Generate Unique Distributor ID
-      _generatedDistributorId = 'DIST${DateTime.now().millisecondsSinceEpoch.toString().substring(8)}';
-      
+      _generatedDistributorId =
+          'DIST${DateTime.now().millisecondsSinceEpoch.toString().substring(8)}';
+
       final userData = {
         'name': _nameController.text,
         'phone': _phoneController.text,
@@ -186,17 +194,16 @@ class _DistributorRegistrationScreenState extends State<DistributorRegistrationS
       };
 
       await authProvider.register(userData);
-      
+
       setState(() => _isLoading = false);
-      
+
       // Show success dialog with generated ID
       _showSuccessDialog();
-      
     } catch (e) {
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Registration failed: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Registration failed: $e')));
     }
   }
 
@@ -210,7 +217,9 @@ class _DistributorRegistrationScreenState extends State<DistributorRegistrationS
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Your distributor account has been created successfully.'),
+            const Text(
+              'Your distributor account has been created successfully.',
+            ),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
@@ -253,7 +262,9 @@ class _DistributorRegistrationScreenState extends State<DistributorRegistrationS
             onPressed: () {
               Navigator.of(context).pop();
               Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const DistributorDashboard()),
+                MaterialPageRoute(
+                  builder: (context) => const DistributorDashboard(),
+                ),
               );
             },
             child: const Text('Continue to Dashboard'),
@@ -291,21 +302,22 @@ class _DistributorRegistrationScreenState extends State<DistributorRegistrationS
     switch (_currentStep) {
       case 0:
         return _nameController.text.isNotEmpty &&
-               _phoneController.text.isNotEmpty &&
-               _emailController.text.isNotEmpty &&
-               _passwordController.text.isNotEmpty &&
-               _confirmPasswordController.text.isNotEmpty &&
-               _passwordController.text == _confirmPasswordController.text;
+            _phoneController.text.isNotEmpty &&
+            _emailController.text.isNotEmpty &&
+            _passwordController.text.isNotEmpty &&
+            _confirmPasswordController.text.isNotEmpty &&
+            _passwordController.text == _confirmPasswordController.text;
       case 1:
         return _businessNameController.text.isNotEmpty &&
-               _businessAddressController.text.isNotEmpty &&
-               _vehicleCountController.text.isNotEmpty &&
-               _warehouseCapacityController.text.isNotEmpty &&
-               _serviceAreasController.text.isNotEmpty;
+            _businessAddressController.text.isNotEmpty &&
+            _vehicleCountController.text.isNotEmpty &&
+            _warehouseCapacityController.text.isNotEmpty &&
+            _serviceAreasController.text.isNotEmpty;
       case 2:
         return _isAadhaarVerified;
       case 3:
-        return _licenseNumberController.text.isNotEmpty && _licenseImage != null;
+        return _licenseNumberController.text.isNotEmpty &&
+            _licenseImage != null;
       default:
         return false;
     }
@@ -346,7 +358,7 @@ class _DistributorRegistrationScreenState extends State<DistributorRegistrationS
               }),
             ),
           ),
-          
+
           // Step Content
           Expanded(
             child: PageView(
@@ -360,7 +372,7 @@ class _DistributorRegistrationScreenState extends State<DistributorRegistrationS
               ],
             ),
           ),
-          
+
           // Navigation Buttons
           Container(
             padding: const EdgeInsets.all(16),
@@ -387,10 +399,16 @@ class _DistributorRegistrationScreenState extends State<DistributorRegistrationS
                             height: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
                             ),
                           )
-                        : Text(_currentStep == 3 ? 'Complete Registration' : 'Next'),
+                        : Text(
+                            _currentStep == 3
+                                ? 'Complete Registration'
+                                : 'Next',
+                          ),
                   ),
                 ),
               ],
@@ -413,64 +431,183 @@ class _DistributorRegistrationScreenState extends State<DistributorRegistrationS
               'Personal Information',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppColors.distributorPrimary,
+                color: AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: 24),
-            
+
             TextFormField(
               controller: _nameController,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
                 labelText: 'Full Name *',
-                prefixIcon: Icon(Icons.person),
+                labelStyle: TextStyle(color: AppColors.textSecondary),
+                prefixIcon: Icon(
+                  Icons.person,
+                  color: AppColors.distributorPrimary,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: AppColors.textPrimary,
+                    width: 1,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: AppColors.textPrimary,
+                    width: 2,
+                  ),
+                ),
               ),
-              validator: (value) => value?.isEmpty ?? true ? 'Please enter your name' : null,
+              validator: (value) =>
+                  value?.isEmpty ?? true ? 'Please enter your name' : null,
             ),
             const SizedBox(height: 16),
-            
+
             TextFormField(
               controller: _phoneController,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
                 labelText: 'Phone Number *',
-                prefixIcon: Icon(Icons.phone),
+                labelStyle: TextStyle(color: AppColors.textSecondary),
+                prefixIcon: Icon(
+                  Icons.phone,
+                  color: AppColors.distributorPrimary,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: AppColors.textPrimary,
+                    width: 1,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: AppColors.textPrimary,
+                    width: 2,
+                  ),
+                ),
               ),
               keyboardType: TextInputType.phone,
-              validator: (value) => value?.isEmpty ?? true ? 'Please enter your phone number' : null,
+              validator: (value) => value?.isEmpty ?? true
+                  ? 'Please enter your phone number'
+                  : null,
             ),
             const SizedBox(height: 16),
-            
+
             TextFormField(
               controller: _emailController,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
                 labelText: 'Email Address *',
-                prefixIcon: Icon(Icons.email),
+                labelStyle: TextStyle(color: AppColors.textSecondary),
+                prefixIcon: Icon(
+                  Icons.email,
+                  color: AppColors.distributorPrimary,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: AppColors.textPrimary,
+                    width: 1,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: AppColors.textPrimary,
+                    width: 2,
+                  ),
+                ),
               ),
               keyboardType: TextInputType.emailAddress,
-              validator: (value) => value?.isEmpty ?? true ? 'Please enter your email' : null,
+              validator: (value) =>
+                  value?.isEmpty ?? true ? 'Please enter your email' : null,
             ),
             const SizedBox(height: 16),
-            
+
             TextFormField(
               controller: _passwordController,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
                 labelText: 'Password *',
-                prefixIcon: Icon(Icons.lock),
+                labelStyle: TextStyle(color: AppColors.textSecondary),
+                prefixIcon: Icon(
+                  Icons.lock,
+                  color: AppColors.distributorPrimary,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: AppColors.textPrimary,
+                    width: 1,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: AppColors.textPrimary,
+                    width: 2,
+                  ),
+                ),
               ),
               obscureText: true,
-              validator: (value) => value?.isEmpty ?? true ? 'Please enter a password' : null,
+              validator: (value) =>
+                  value?.isEmpty ?? true ? 'Please enter a password' : null,
             ),
             const SizedBox(height: 16),
-            
+
             TextFormField(
               controller: _confirmPasswordController,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
                 labelText: 'Confirm Password *',
-                prefixIcon: Icon(Icons.lock_outline),
+                labelStyle: TextStyle(color: AppColors.textSecondary),
+                prefixIcon: Icon(
+                  Icons.lock_outline,
+                  color: AppColors.distributorPrimary,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: AppColors.textPrimary,
+                    width: 1,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: AppColors.textPrimary,
+                    width: 2,
+                  ),
+                ),
               ),
               obscureText: true,
               validator: (value) {
-                if (value?.isEmpty ?? true) return 'Please confirm your password';
-                if (value != _passwordController.text) return 'Passwords do not match';
+                if (value?.isEmpty ?? true) {
+                  return 'Please confirm your password';
+                }
+                if (value != _passwordController.text) {
+                  return 'Passwords do not match';
+                }
                 return null;
               },
             ),
@@ -490,55 +627,132 @@ class _DistributorRegistrationScreenState extends State<DistributorRegistrationS
             'Business Information',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
-              color: AppColors.distributorPrimary,
+              color: AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 24),
-          
+
           TextFormField(
             controller: _businessNameController,
-            decoration: const InputDecoration(
+            style: const TextStyle(color: Colors.black),
+            decoration: InputDecoration(
               labelText: 'Business Name *',
-              prefixIcon: Icon(Icons.business),
+              labelStyle: TextStyle(color: AppColors.textSecondary),
+              prefixIcon: Icon(
+                Icons.business,
+                color: AppColors.distributorPrimary,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.textPrimary, width: 1),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.textPrimary, width: 2),
+              ),
             ),
           ),
           const SizedBox(height: 16),
-          
+
           TextFormField(
             controller: _businessAddressController,
-            decoration: const InputDecoration(
+            style: const TextStyle(color: Colors.black),
+            decoration: InputDecoration(
               labelText: 'Business Address *',
-              prefixIcon: Icon(Icons.location_on),
+              labelStyle: TextStyle(color: AppColors.textSecondary),
+              prefixIcon: Icon(
+                Icons.location_on,
+                color: AppColors.distributorPrimary,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.textPrimary, width: 1),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.textPrimary, width: 2),
+              ),
             ),
             maxLines: 3,
           ),
           const SizedBox(height: 16),
-          
+
           TextFormField(
             controller: _vehicleCountController,
-            decoration: const InputDecoration(
+            style: const TextStyle(color: Colors.black),
+            decoration: InputDecoration(
               labelText: 'Number of Vehicles *',
-              prefixIcon: Icon(Icons.local_shipping),
+              labelStyle: TextStyle(color: AppColors.textSecondary),
+              prefixIcon: Icon(
+                Icons.local_shipping,
+                color: AppColors.distributorPrimary,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.textPrimary, width: 1),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.textPrimary, width: 2),
+              ),
             ),
             keyboardType: TextInputType.number,
           ),
           const SizedBox(height: 16),
-          
+
           TextFormField(
             controller: _warehouseCapacityController,
-            decoration: const InputDecoration(
+            style: const TextStyle(color: Colors.black),
+            decoration: InputDecoration(
               labelText: 'Warehouse Capacity *',
-              prefixIcon: Icon(Icons.warehouse),
+              labelStyle: TextStyle(color: AppColors.textSecondary),
+              prefixIcon: Icon(
+                Icons.warehouse,
+                color: AppColors.distributorPrimary,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.textPrimary, width: 1),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.textPrimary, width: 2),
+              ),
               hintText: 'e.g., 1000 tons',
             ),
           ),
           const SizedBox(height: 16),
-          
+
           TextFormField(
             controller: _serviceAreasController,
-            decoration: const InputDecoration(
+            style: const TextStyle(color: Colors.black),
+            decoration: InputDecoration(
               labelText: 'Service Areas *',
-              prefixIcon: Icon(Icons.map),
+              labelStyle: TextStyle(color: AppColors.textSecondary),
+              prefixIcon: Icon(Icons.map, color: AppColors.distributorPrimary),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.textPrimary, width: 1),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.textPrimary, width: 2),
+              ),
               hintText: 'Cities/regions you serve',
             ),
             maxLines: 2,
@@ -558,16 +772,32 @@ class _DistributorRegistrationScreenState extends State<DistributorRegistrationS
             'Aadhaar Verification',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
-              color: AppColors.distributorPrimary,
+              color: AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 24),
-          
+
           TextFormField(
             controller: _aadhaarController,
-            decoration: const InputDecoration(
+            style: const TextStyle(color: Colors.black),
+            decoration: InputDecoration(
               labelText: 'Aadhaar Number *',
-              prefixIcon: Icon(Icons.credit_card),
+              labelStyle: TextStyle(color: AppColors.textSecondary),
+              prefixIcon: Icon(
+                Icons.credit_card,
+                color: AppColors.distributorPrimary,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.textPrimary, width: 1),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.textPrimary, width: 2),
+              ),
               hintText: 'Enter 12-digit Aadhaar number',
             ),
             keyboardType: TextInputType.number,
@@ -575,7 +805,7 @@ class _DistributorRegistrationScreenState extends State<DistributorRegistrationS
             enabled: !_isAadhaarVerified,
           ),
           const SizedBox(height: 16),
-          
+
           if (!_otpSent && !_isAadhaarVerified)
             SizedBox(
               width: double.infinity,
@@ -587,20 +817,42 @@ class _DistributorRegistrationScreenState extends State<DistributorRegistrationS
                 child: const Text('Send OTP'),
               ),
             ),
-          
+
           if (_otpSent && !_isAadhaarVerified) ...[
             TextFormField(
               controller: _otpController,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
                 labelText: 'Enter OTP *',
-                prefixIcon: Icon(Icons.sms),
+                labelStyle: TextStyle(color: AppColors.textSecondary),
+                prefixIcon: Icon(
+                  Icons.sms,
+                  color: AppColors.distributorPrimary,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: AppColors.textPrimary,
+                    width: 1,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: AppColors.textPrimary,
+                    width: 2,
+                  ),
+                ),
                 hintText: 'Enter 6-digit OTP',
               ),
               keyboardType: TextInputType.number,
               maxLength: 6,
             ),
             const SizedBox(height: 16),
-            
+
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -612,7 +864,7 @@ class _DistributorRegistrationScreenState extends State<DistributorRegistrationS
               ),
             ),
           ],
-          
+
           if (_isAadhaarVerified)
             Container(
               padding: const EdgeInsets.all(16),
@@ -650,30 +902,43 @@ class _DistributorRegistrationScreenState extends State<DistributorRegistrationS
             'License Verification',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
-              color: AppColors.distributorPrimary,
+              color: AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 24),
-          
+
           TextFormField(
             controller: _licenseNumberController,
-            decoration: const InputDecoration(
+            style: const TextStyle(color: Colors.black),
+            decoration: InputDecoration(
               labelText: 'License Number *',
-              prefixIcon: Icon(Icons.assignment),
+              labelStyle: TextStyle(color: AppColors.textSecondary),
+              prefixIcon: Icon(
+                Icons.assignment,
+                color: AppColors.distributorPrimary,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.textPrimary, width: 1),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.textPrimary, width: 2),
+              ),
               hintText: 'Enter your business/transport license number',
             ),
           ),
           const SizedBox(height: 24),
-          
+
           const Text(
             'Upload License Document *',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 12),
-          
+
           GestureDetector(
             onTap: _pickLicenseImage,
             child: Container(
@@ -719,26 +984,16 @@ class _DistributorRegistrationScreenState extends State<DistributorRegistrationS
                   : const Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.cloud_upload,
-                          size: 48,
-                          color: Colors.grey,
-                        ),
+                        Icon(Icons.cloud_upload, size: 48, color: Colors.grey),
                         SizedBox(height: 16),
                         Text(
                           'Tap to upload license document',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 16,
-                          ),
+                          style: TextStyle(color: Colors.grey, fontSize: 16),
                         ),
                         SizedBox(height: 8),
                         Text(
                           'Supported formats: JPG, PNG, PDF',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 12,
-                          ),
+                          style: TextStyle(color: Colors.grey, fontSize: 12),
                         ),
                       ],
                     ),

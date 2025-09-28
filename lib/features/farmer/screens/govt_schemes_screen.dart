@@ -24,7 +24,10 @@ class GovtSchemesScreen extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [AppColors.success, AppColors.success.withOpacity(0.8)],
+                  colors: [
+                    AppColors.success,
+                    AppColors.success.withOpacity(0.8),
+                  ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -35,7 +38,11 @@ class GovtSchemesScreen extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.account_balance, color: Colors.white, size: 24),
+                      Icon(
+                        Icons.account_balance,
+                        color: Colors.white,
+                        size: 24,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         'Your Benefits',
@@ -133,7 +140,7 @@ class GovtSchemesScreen extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Schemes List
-            ..._schemes.map((scheme) => _buildSchemeCard(context, scheme)).toList(),
+            ..._schemes.map((scheme) => _buildSchemeCard(context, scheme)),
 
             const SizedBox(height: 24),
 
@@ -225,14 +232,16 @@ class GovtSchemesScreen extends StatelessWidget {
         fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
       ),
       side: BorderSide(
-        color: isSelected ? AppColors.farmerPrimary : AppColors.textSecondary.withOpacity(0.3),
+        color: isSelected
+            ? AppColors.farmerPrimary
+            : AppColors.textSecondary.withOpacity(0.3),
       ),
     );
   }
 
   Widget _buildSchemeCard(BuildContext context, Map<String, dynamic> scheme) {
     Color statusColor = _getStatusColor(scheme['status']);
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -306,10 +315,7 @@ class GovtSchemesScreen extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             scheme['description'],
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 13,
-            ),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
           ),
           const SizedBox(height: 12),
           Row(
@@ -343,10 +349,7 @@ class GovtSchemesScreen extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     scheme['eligibility'],
-                    style: TextStyle(
-                      color: AppColors.info,
-                      fontSize: 12,
-                    ),
+                    style: TextStyle(color: AppColors.info, fontSize: 12),
                   ),
                 ],
               ),
@@ -401,10 +404,7 @@ class GovtSchemesScreen extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(
-            color: AppColors.textSecondary,
-            fontSize: 11,
-          ),
+          style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
         ),
         Text(
           value,
@@ -466,7 +466,9 @@ class GovtSchemesScreen extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Apply for ${scheme['name']}'),
-        content: const Text('Would you like to apply for this scheme? You will be redirected to the application portal.'),
+        content: const Text(
+          'Would you like to apply for this scheme? You will be redirected to the application portal.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -476,7 +478,9 @@ class GovtSchemesScreen extends StatelessWidget {
             onPressed: () {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Application process will be available soon!')),
+                const SnackBar(
+                  content: Text('Application process will be available soon!'),
+                ),
               );
             },
             child: const Text('Apply'),
@@ -494,12 +498,14 @@ class GovtSchemesScreen extends StatelessWidget {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: scheme['documents'].map<Widget>((doc) => 
-            Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Text('• $doc', style: const TextStyle(fontSize: 14)),
-            )
-          ).toList(),
+          children: scheme['documents']
+              .map<Widget>(
+                (doc) => Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Text('• $doc', style: const TextStyle(fontSize: 14)),
+                ),
+              )
+              .toList(),
         ),
         actions: [
           TextButton(
@@ -515,7 +521,8 @@ class GovtSchemesScreen extends StatelessWidget {
     {
       'name': 'PM-KISAN',
       'ministry': 'Ministry of Agriculture',
-      'description': 'Direct income support to farmers - ₹6,000 per year in three equal installments.',
+      'description':
+          'Direct income support to farmers - ₹6,000 per year in three equal installments.',
       'benefit': '₹6,000/year',
       'status': 'Active',
       'icon': Icons.currency_rupee,
@@ -525,17 +532,24 @@ class GovtSchemesScreen extends StatelessWidget {
     {
       'name': 'Pradhan Mantri Fasal Bima Yojana',
       'ministry': 'Ministry of Agriculture',
-      'description': 'Crop insurance scheme providing financial support to farmers suffering crop loss.',
+      'description':
+          'Crop insurance scheme providing financial support to farmers suffering crop loss.',
       'benefit': 'Up to ₹2 lakh',
       'status': 'Active',
       'icon': Icons.security,
       'eligibility': 'All farmers growing notified crops',
-      'documents': ['Aadhar Card', 'Land Records', 'Bank Account Details', 'Sowing Certificate'],
+      'documents': [
+        'Aadhar Card',
+        'Land Records',
+        'Bank Account Details',
+        'Sowing Certificate',
+      ],
     },
     {
       'name': 'Soil Health Card Scheme',
       'ministry': 'Ministry of Agriculture',
-      'description': 'Provides soil health cards to farmers for appropriate nutrient management.',
+      'description':
+          'Provides soil health cards to farmers for appropriate nutrient management.',
       'benefit': 'Free soil testing',
       'status': 'Available',
       'icon': Icons.eco,
@@ -546,7 +560,8 @@ class GovtSchemesScreen extends StatelessWidget {
     {
       'name': 'Pradhan Mantri Krishi Sinchai Yojana',
       'ministry': 'Ministry of Agriculture',
-      'description': 'Irrigation scheme to improve water use efficiency and expand irrigation coverage.',
+      'description':
+          'Irrigation scheme to improve water use efficiency and expand irrigation coverage.',
       'benefit': '75% subsidy',
       'status': 'Available',
       'icon': Icons.water_drop,
@@ -567,7 +582,8 @@ class GovtSchemesScreen extends StatelessWidget {
     {
       'name': 'Kisan Credit Card',
       'ministry': 'Department of Financial Services',
-      'description': 'Credit facility for farmers to meet their agricultural and consumption needs.',
+      'description':
+          'Credit facility for farmers to meet their agricultural and consumption needs.',
       'benefit': 'Up to ₹3 lakh',
       'status': 'Applied',
       'icon': Icons.credit_card,

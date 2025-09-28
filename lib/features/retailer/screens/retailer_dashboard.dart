@@ -53,10 +53,7 @@ class _RetailerDashboardState extends State<RetailerDashboard> {
         backgroundColor: Colors.white,
         elevation: 8,
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(
             icon: Icon(Icons.inventory),
             label: 'Inventory',
@@ -223,10 +220,7 @@ class RetailerHomeTab extends StatelessWidget {
                     children: [
                       const Text(
                         "Today's Sales",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                        ),
+                        style: TextStyle(color: Colors.white, fontSize: 14),
                       ),
                       const SizedBox(height: 8),
                       const Text(
@@ -340,21 +334,34 @@ class RetailerHomeTab extends StatelessWidget {
                 'QR Generator',
                 Icons.qr_code,
                 AppColors.info,
-                () => Navigator.push(context, MaterialPageRoute(builder: (_) => const QRGeneratorScreen())),
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const QRGeneratorScreen()),
+                ),
               ),
               _buildQuickActionCard(
                 context,
                 'Sales Tracking',
                 Icons.trending_up,
                 AppColors.success,
-                () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SalesTrackingScreen())),
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const SalesTrackingScreen(),
+                  ),
+                ),
               ),
               _buildQuickActionCard(
                 context,
                 'Suppliers',
                 Icons.business,
                 AppColors.warning,
-                () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SupplierManagementScreen())),
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const SupplierManagementScreen(),
+                  ),
+                ),
               ),
               _buildQuickActionCard(
                 context,
@@ -383,7 +390,7 @@ class RetailerHomeTab extends StatelessWidget {
               ),
               TextButton(
                 onPressed: () => Navigator.push(
-                  context, 
+                  context,
                   MaterialPageRoute(builder: (_) => const InventoryScreen()),
                 ),
                 child: const Text('View All'),
@@ -460,6 +467,8 @@ class RetailerHomeTab extends StatelessWidget {
                 fontSize: 12,
               ),
               textAlign: TextAlign.center,
+              maxLines: 2, // Allow 2 lines for longer titles
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

@@ -4,10 +4,7 @@ import '../../../core/theme/app_colors.dart';
 class RouteOptimizationCard extends StatelessWidget {
   final Map<String, dynamic> route;
 
-  const RouteOptimizationCard({
-    super.key,
-    required this.route,
-  });
+  const RouteOptimizationCard({super.key, required this.route});
 
   @override
   Widget build(BuildContext context) {
@@ -165,10 +162,7 @@ class RouteOptimizationCard extends StatelessWidget {
         ),
         Text(
           label,
-          style: TextStyle(
-            color: AppColors.textSecondary,
-            fontSize: 10,
-          ),
+          style: TextStyle(color: AppColors.textSecondary, fontSize: 10),
           textAlign: TextAlign.center,
         ),
       ],

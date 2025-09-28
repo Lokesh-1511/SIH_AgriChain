@@ -5,7 +5,8 @@ class CustomerAnalyticsScreen extends StatefulWidget {
   const CustomerAnalyticsScreen({super.key});
 
   @override
-  State<CustomerAnalyticsScreen> createState() => _CustomerAnalyticsScreenState();
+  State<CustomerAnalyticsScreen> createState() =>
+      _CustomerAnalyticsScreenState();
 }
 
 class _CustomerAnalyticsScreenState extends State<CustomerAnalyticsScreen> {
@@ -45,12 +46,20 @@ class _CustomerAnalyticsScreenState extends State<CustomerAnalyticsScreen> {
                   child: DropdownButton<String>(
                     value: _selectedPeriod,
                     isExpanded: true,
-                    items: ['This Week', 'This Month', 'Last 3 Months', 'This Year']
-                        .map((period) => DropdownMenuItem(
-                              value: period,
-                              child: Text(period),
-                            ))
-                        .toList(),
+                    items:
+                        [
+                              'This Week',
+                              'This Month',
+                              'Last 3 Months',
+                              'This Year',
+                            ]
+                            .map(
+                              (period) => DropdownMenuItem(
+                                value: period,
+                                child: Text(period),
+                              ),
+                            )
+                            .toList(),
                     onChanged: (value) {
                       setState(() {
                         _selectedPeriod = value!;
@@ -84,11 +93,37 @@ class _CustomerAnalyticsScreenState extends State<CustomerAnalyticsScreen> {
               ),
               child: Row(
                 children: [
-                  Expanded(child: _buildSummaryItem('Total Customers', '1,234', Icons.people)),
-                  Container(width: 1, height: 40, color: Colors.white.withOpacity(0.3)),
-                  Expanded(child: _buildSummaryItem('New This Month', '87', Icons.person_add)),
-                  Container(width: 1, height: 40, color: Colors.white.withOpacity(0.3)),
-                  Expanded(child: _buildSummaryItem('Retention Rate', '78%', Icons.repeat)),
+                  Expanded(
+                    child: _buildSummaryItem(
+                      'Total Customers',
+                      '1,234',
+                      Icons.people,
+                    ),
+                  ),
+                  Container(
+                    width: 1,
+                    height: 40,
+                    color: Colors.white.withOpacity(0.3),
+                  ),
+                  Expanded(
+                    child: _buildSummaryItem(
+                      'New This Month',
+                      '87',
+                      Icons.person_add,
+                    ),
+                  ),
+                  Container(
+                    width: 1,
+                    height: 40,
+                    color: Colors.white.withOpacity(0.3),
+                  ),
+                  Expanded(
+                    child: _buildSummaryItem(
+                      'Retention Rate',
+                      '78%',
+                      Icons.repeat,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -114,10 +149,30 @@ class _CustomerAnalyticsScreenState extends State<CustomerAnalyticsScreen> {
               mainAxisSpacing: 12,
               childAspectRatio: 1.2,
               children: [
-                _buildSegmentCard('Regular Customers', '456', '37%', AppColors.success),
-                _buildSegmentCard('Occasional Buyers', '543', '44%', AppColors.info),
-                _buildSegmentCard('New Customers', '178', '14%', AppColors.warning),
-                _buildSegmentCard('VIP Customers', '57', '5%', AppColors.retailerPrimary),
+                _buildSegmentCard(
+                  'Regular Customers',
+                  '456',
+                  '37%',
+                  AppColors.success,
+                ),
+                _buildSegmentCard(
+                  'Occasional Buyers',
+                  '543',
+                  '44%',
+                  AppColors.info,
+                ),
+                _buildSegmentCard(
+                  'New Customers',
+                  '178',
+                  '14%',
+                  AppColors.warning,
+                ),
+                _buildSegmentCard(
+                  'VIP Customers',
+                  '57',
+                  '5%',
+                  AppColors.retailerPrimary,
+                ),
               ],
             ),
 
@@ -147,7 +202,9 @@ class _CustomerAnalyticsScreenState extends State<CustomerAnalyticsScreen> {
                 ],
               ),
               child: Column(
-                children: _topCustomers.map((customer) => _buildCustomerItem(customer)).toList(),
+                children: _topCustomers
+                    .map((customer) => _buildCustomerItem(customer))
+                    .toList(),
               ),
             ),
 
@@ -231,10 +288,7 @@ class _CustomerAnalyticsScreenState extends State<CustomerAnalyticsScreen> {
                   const SizedBox(height: 8),
                   const Text(
                     'Average Rating',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -272,7 +326,7 @@ class _CustomerAnalyticsScreenState extends State<CustomerAnalyticsScreen> {
 
             const SizedBox(height: 16),
 
-            ..._recentFeedback.map((feedback) => _buildFeedbackCard(feedback)).toList(),
+            ..._recentFeedback.map((feedback) => _buildFeedbackCard(feedback)),
 
             const SizedBox(height: 24),
 
@@ -325,17 +379,19 @@ class _CustomerAnalyticsScreenState extends State<CustomerAnalyticsScreen> {
         ),
         Text(
           title,
-          style: TextStyle(
-            color: Colors.white.withOpacity(0.9),
-            fontSize: 11,
-          ),
+          style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 11),
           textAlign: TextAlign.center,
         ),
       ],
     );
   }
 
-  Widget _buildSegmentCard(String title, String count, String percentage, Color color) {
+  Widget _buildSegmentCard(
+    String title,
+    String count,
+    String percentage,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -402,7 +458,9 @@ class _CustomerAnalyticsScreenState extends State<CustomerAnalyticsScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: AppColors.textSecondary.withOpacity(0.1))),
+        border: Border(
+          bottom: BorderSide(color: AppColors.textSecondary.withOpacity(0.1)),
+        ),
       ),
       child: Row(
         children: [
@@ -423,9 +481,7 @@ class _CustomerAnalyticsScreenState extends State<CustomerAnalyticsScreen> {
               children: [
                 Text(
                   customer['name'],
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
                 Text(
                   '${customer['visits']} visits • ${customer['category']}',
@@ -449,10 +505,7 @@ class _CustomerAnalyticsScreenState extends State<CustomerAnalyticsScreen> {
               ),
               Text(
                 'Total spent',
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 10,
-                ),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 10),
               ),
             ],
           ),
@@ -467,10 +520,7 @@ class _CustomerAnalyticsScreenState extends State<CustomerAnalyticsScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: TextStyle(color: AppColors.textSecondary),
-          ),
+          Text(label, style: TextStyle(color: AppColors.textSecondary)),
           Text(
             value,
             style: TextStyle(
@@ -557,11 +607,16 @@ class _CustomerAnalyticsScreenState extends State<CustomerAnalyticsScreen> {
                     ),
                     Row(
                       children: [
-                        ...List.generate(5, (index) => Icon(
-                          index < feedback['rating'] ? Icons.star : Icons.star_border,
-                          size: 16,
-                          color: AppColors.warning,
-                        )),
+                        ...List.generate(
+                          5,
+                          (index) => Icon(
+                            index < feedback['rating']
+                                ? Icons.star
+                                : Icons.star_border,
+                            size: 16,
+                            color: AppColors.warning,
+                          ),
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           feedback['date'],
@@ -642,19 +697,22 @@ class _CustomerAnalyticsScreenState extends State<CustomerAnalyticsScreen> {
     {
       'customerName': 'Arjun Mehta',
       'rating': 5,
-      'comment': 'Great quality products and excellent service! Fresh vegetables always available.',
+      'comment':
+          'Great quality products and excellent service! Fresh vegetables always available.',
       'date': '2 days ago',
     },
     {
       'customerName': 'Kavita Joshi',
       'rating': 4,
-      'comment': 'Good variety of products. Could improve packaging for fragile items.',
+      'comment':
+          'Good variety of products. Could improve packaging for fragile items.',
       'date': '1 week ago',
     },
     {
       'customerName': 'Rohit Das',
       'rating': 5,
-      'comment': 'Best prices in the area. Staff is very helpful and knowledgeable.',
+      'comment':
+          'Best prices in the area. Staff is very helpful and knowledgeable.',
       'date': '1 week ago',
     },
   ];

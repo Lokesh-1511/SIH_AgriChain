@@ -9,7 +9,7 @@ class ShoppingCartScreen extends StatefulWidget {
 }
 
 class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
-  List<Map<String, dynamic>> _cartItems = [
+  final List<Map<String, dynamic>> _cartItems = [
     {
       'id': '1',
       'name': 'Alphonso Mango',
@@ -36,7 +36,10 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
     },
   ];
 
-  double get _subtotal => _cartItems.fold(0, (sum, item) => sum + (item['price'] * item['quantity']));
+  double get _subtotal => _cartItems.fold(
+    0,
+    (sum, item) => sum + (item['price'] * item['quantity']),
+  );
   double get _deliveryFee => _subtotal > 500 ? 0 : 40;
   double get _tax => _subtotal * 0.05;
   double get _total => _subtotal + _deliveryFee + _tax;
@@ -54,15 +57,14 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
           if (_cartItems.isNotEmpty)
             TextButton(
               onPressed: _showClearCartDialog,
-              child: const Text(
-                'Clear',
-                style: TextStyle(color: Colors.white),
-              ),
+              child: const Text('Clear', style: TextStyle(color: Colors.white)),
             ),
         ],
       ),
       body: _cartItems.isEmpty ? _buildEmptyCart() : _buildCartContent(),
-      bottomNavigationBar: _cartItems.isNotEmpty ? _buildCheckoutButton() : null,
+      bottomNavigationBar: _cartItems.isNotEmpty
+          ? _buildCheckoutButton()
+          : null,
     );
   }
 
@@ -95,10 +97,7 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
           const SizedBox(height: 8),
           Text(
             'Add some delicious items to get started!',
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 16,
-            ),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),
@@ -127,7 +126,8 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
           child: ListView.builder(
             padding: const EdgeInsets.all(16),
             itemCount: _cartItems.length,
-            itemBuilder: (context, index) => _buildCartItem(_cartItems[index], index),
+            itemBuilder: (context, index) =>
+                _buildCartItem(_cartItems[index], index),
           ),
         ),
 
@@ -151,17 +151,20 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
             children: [
               Text(
                 'Order Summary',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
               _buildSummaryRow('Subtotal', '₹${_subtotal.toInt()}'),
-              _buildSummaryRow('Delivery Fee', _deliveryFee == 0 ? 'FREE' : '₹${_deliveryFee.toInt()}'),
+              _buildSummaryRow(
+                'Delivery Fee',
+                _deliveryFee == 0 ? 'FREE' : '₹${_deliveryFee.toInt()}',
+              ),
               _buildSummaryRow('Tax (5%)', '₹${_tax.toInt()}'),
               const Divider(height: 24),
               _buildSummaryRow('Total', '₹${_total.toInt()}', isTotal: true),
-              
+
               if (_deliveryFee > 0)
                 Container(
                   margin: const EdgeInsets.only(top: 12),
@@ -177,10 +180,7 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                       Expanded(
                         child: Text(
                           'Add ₹${(500 - _subtotal).toInt()} more for free delivery',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: AppColors.info,
-                          ),
+                          style: TextStyle(fontSize: 12, color: AppColors.info),
                         ),
                       ),
                     ],
@@ -257,9 +257,9 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 4),
-                  
+
                   Text(
                     '₹${item['price'].toInt()} each',
                     style: TextStyle(
@@ -267,9 +267,9 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                       color: AppColors.textSecondary,
                     ),
                   ),
-                  
+
                   const SizedBox(height: 8),
-                  
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -284,31 +284,45 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                           children: [
                             IconButton(
                               onPressed: item['quantity'] > 1
-                                  ? () => _updateQuantity(index, item['quantity'] - 1)
+                                  ? () => _updateQuantity(
+                                      index,
+                                      item['quantity'] - 1,
+                                    )
                                   : null,
                               icon: const Icon(Icons.remove),
                               iconSize: 16,
                               padding: const EdgeInsets.all(8),
-                              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                              constraints: const BoxConstraints(
+                                minWidth: 32,
+                                minHeight: 32,
+                              ),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
                               child: Text(
                                 '${item['quantity']}',
-                                style: const TextStyle(fontWeight: FontWeight.w600),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                             IconButton(
-                              onPressed: () => _updateQuantity(index, item['quantity'] + 1),
+                              onPressed: () =>
+                                  _updateQuantity(index, item['quantity'] + 1),
                               icon: const Icon(Icons.add),
                               iconSize: 16,
                               padding: const EdgeInsets.all(8),
-                              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                              constraints: const BoxConstraints(
+                                minWidth: 32,
+                                minHeight: 32,
+                              ),
                             ),
                           ],
                         ),
                       ),
-                      
+
                       // Total Price
                       Text(
                         '₹${(item['price'] * item['quantity']).toInt()}',
@@ -320,11 +334,14 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                       ),
                     ],
                   ),
-                  
+
                   if (!item['inStock'])
                     Container(
                       margin: const EdgeInsets.only(top: 8),
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.error.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(4),
@@ -366,7 +383,9 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
             style: TextStyle(
               fontSize: isTotal ? 16 : 14,
               fontWeight: isTotal ? FontWeight.bold : FontWeight.w600,
-              color: isTotal ? AppColors.consumerPrimary : AppColors.textPrimary,
+              color: isTotal
+                  ? AppColors.consumerPrimary
+                  : AppColors.textPrimary,
             ),
           ),
         ],
@@ -376,7 +395,7 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
 
   Widget _buildCheckoutButton() {
     final hasOutOfStockItems = _cartItems.any((item) => !item['inStock']);
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -403,7 +422,11 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.warning_amber_rounded, color: AppColors.warning, size: 20),
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    color: AppColors.warning,
+                    size: 20,
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -418,7 +441,7 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                 ],
               ),
             ),
-          
+
           SizedBox(
             width: double.infinity,
             height: 48,
@@ -456,9 +479,9 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
     setState(() {
       _cartItems.removeAt(index);
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Item removed from cart')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Item removed from cart')));
   }
 
   void _showClearCartDialog() {
@@ -466,7 +489,9 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Clear Cart'),
-        content: const Text('Are you sure you want to remove all items from your cart?'),
+        content: const Text(
+          'Are you sure you want to remove all items from your cart?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -476,14 +501,11 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
             onPressed: () {
               setState(() => _cartItems.clear());
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Cart cleared')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('Cart cleared')));
             },
-            child: Text(
-              'Clear',
-              style: TextStyle(color: AppColors.error),
-            ),
+            child: Text('Clear', style: TextStyle(color: AppColors.error)),
           ),
         ],
       ),

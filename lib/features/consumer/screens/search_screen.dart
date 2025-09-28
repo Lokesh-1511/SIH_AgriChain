@@ -51,14 +51,20 @@ class _SearchScreenState extends State<SearchScreen> {
                     decoration: InputDecoration(
                       hintText: 'Search for fruits, vegetables, grains...',
                       hintStyle: TextStyle(color: AppColors.textSecondary),
-                      prefixIcon: Icon(Icons.search, color: AppColors.textSecondary),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: AppColors.textSecondary,
+                      ),
                       suffixIcon: _searchQuery.isNotEmpty
                           ? IconButton(
                               onPressed: () {
                                 _searchController.clear();
                                 setState(() => _searchQuery = '');
                               },
-                              icon: Icon(Icons.clear, color: AppColors.textSecondary),
+                              icon: Icon(
+                                Icons.clear,
+                                color: AppColors.textSecondary,
+                              ),
                             )
                           : null,
                       border: OutlineInputBorder(
@@ -90,16 +96,35 @@ class _SearchScreenState extends State<SearchScreen> {
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
                             value: _selectedFilter,
-                            onChanged: (value) => setState(() => _selectedFilter = value!),
+                            onChanged: (value) =>
+                                setState(() => _selectedFilter = value!),
                             dropdownColor: Colors.white,
-                            style: const TextStyle(color: Colors.white),
-                            icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white),
-                            items: ['All', 'Fruits', 'Vegetables', 'Grains', 'Dairy', 'Spices']
-                                .map((filter) => DropdownMenuItem(
-                                      value: filter,
-                                      child: Text(filter, style: const TextStyle(color: Colors.black)),
-                                    ))
-                                .toList(),
+                            style: const TextStyle(color: Colors.black),
+                            icon: const Icon(
+                              Icons.keyboard_arrow_down,
+                              color: Colors.white,
+                            ),
+                            items:
+                                [
+                                      'All',
+                                      'Fruits',
+                                      'Vegetables',
+                                      'Grains',
+                                      'Dairy',
+                                      'Spices',
+                                    ]
+                                    .map(
+                                      (filter) => DropdownMenuItem(
+                                        value: filter,
+                                        child: Text(
+                                          filter,
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
                           ),
                         ),
                       ),
@@ -115,16 +140,33 @@ class _SearchScreenState extends State<SearchScreen> {
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
                             value: _sortBy,
-                            onChanged: (value) => setState(() => _sortBy = value!),
+                            onChanged: (value) =>
+                                setState(() => _sortBy = value!),
                             dropdownColor: Colors.white,
-                            style: const TextStyle(color: Colors.white),
-                            icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white),
-                            items: ['Popular', 'Price: Low to High', 'Price: High to Low', 'Rating']
-                                .map((sort) => DropdownMenuItem(
-                                      value: sort,
-                                      child: Text(sort, style: const TextStyle(color: Colors.black)),
-                                    ))
-                                .toList(),
+                            style: const TextStyle(color: Colors.black),
+                            icon: const Icon(
+                              Icons.keyboard_arrow_down,
+                              color: Colors.white,
+                            ),
+                            items:
+                                [
+                                      'Popular',
+                                      'Price: Low to High',
+                                      'Price: High to Low',
+                                      'Rating',
+                                    ]
+                                    .map(
+                                      (sort) => DropdownMenuItem(
+                                        value: sort,
+                                        child: Text(
+                                          sort,
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
                           ),
                         ),
                       ),
@@ -163,44 +205,46 @@ class _SearchScreenState extends State<SearchScreen> {
           // Recent Searches
           Text(
             'Recent Searches',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: recentSearches
-                .map((search) => GestureDetector(
-                      onTap: () {
-                        _searchController.text = search;
-                        setState(() => _searchQuery = search);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: AppColors.border),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.history,
-                              size: 16,
-                              color: AppColors.textSecondary,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(search),
-                          ],
-                        ),
+                .map(
+                  (search) => GestureDetector(
+                    onTap: () {
+                      _searchController.text = search;
+                      setState(() => _searchQuery = search);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
                       ),
-                    ))
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: AppColors.border),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.history,
+                            size: 16,
+                            color: AppColors.textSecondary,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(search),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
                 .toList(),
           ),
 
@@ -209,9 +253,9 @@ class _SearchScreenState extends State<SearchScreen> {
           // Popular Categories
           Text(
             'Popular Categories',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
           GridView.builder(
@@ -320,10 +364,7 @@ class _SearchScreenState extends State<SearchScreen> {
           width: double.infinity,
           child: Text(
             'Found ${results.length} results for "$_searchQuery"',
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 14,
-            ),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
           ),
         ),
 
@@ -373,11 +414,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       const SizedBox(height: 4),
                       Row(
                         children: [
-                          Icon(
-                            Icons.star,
-                            color: AppColors.warning,
-                            size: 14,
-                          ),
+                          Icon(Icons.star, color: AppColors.warning, size: 14),
                           const SizedBox(width: 2),
                           Text(
                             '${product['rating']} (${product['reviews']})',
@@ -449,14 +486,13 @@ class _SearchScreenState extends State<SearchScreen> {
                       minimumSize: const Size(60, 32),
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                     ),
-                    child: const Text(
-                      'Add',
-                      style: TextStyle(fontSize: 12),
-                    ),
+                    child: const Text('Add', style: TextStyle(fontSize: 12)),
                   ),
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Product details coming soon!')),
+                      const SnackBar(
+                        content: Text('Product details coming soon!'),
+                      ),
                     );
                   },
                 ),

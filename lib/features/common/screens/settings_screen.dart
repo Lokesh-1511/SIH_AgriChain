@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../auth/providers/auth_provider.dart';
+import 'about_screen.dart';
+import 'contact_screen.dart';
+import 'privacy_policy_screen.dart';
+import 'terms_of_service_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -22,7 +26,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
     final user = authProvider.currentUser;
-    
+
     Color primaryColor = _getPrimaryColorForRole(user?.role ?? 'consumer');
 
     return Scaffold(
@@ -126,7 +130,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               'Download Quality',
               'High quality images and videos',
               Icons.hd,
-              trailing: const Text('High', style: TextStyle(color: AppColors.textSecondary)),
+              trailing: const Text(
+                'High',
+                style: TextStyle(color: AppColors.textSecondary),
+              ),
               onTap: () => _showQualitySettings(context),
             ),
             _buildSettingsTile(
@@ -293,17 +300,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
       leading: Icon(icon, color: AppColors.textSecondary),
       title: Text(
         title,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
       ),
       subtitle: Text(
         subtitle,
-        style: TextStyle(
-          fontSize: 14,
-          color: AppColors.textSecondary,
-        ),
+        style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
       ),
       trailing: trailing ?? const Icon(Icons.arrow_forward_ios, size: 16),
       onTap: onTap,
@@ -321,17 +322,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
       leading: Icon(icon, color: AppColors.textSecondary),
       title: Text(
         title,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
       ),
       subtitle: Text(
         subtitle,
-        style: TextStyle(
-          fontSize: 14,
-          color: AppColors.textSecondary,
-        ),
+        style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
       ),
       trailing: Switch(
         value: value,
@@ -353,26 +348,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
       leading: Icon(icon, color: AppColors.textSecondary),
       title: Text(
         title,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
       ),
       subtitle: Text(
         subtitle,
-        style: TextStyle(
-          fontSize: 14,
-          color: AppColors.textSecondary,
-        ),
+        style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
       ),
       trailing: DropdownButton<String>(
         value: currentValue,
         underline: const SizedBox.shrink(),
         items: options.map((option) {
-          return DropdownMenuItem(
-            value: option,
-            child: Text(option),
-          );
+          return DropdownMenuItem(value: option, child: Text(option));
         }).toList(),
         onChanged: (value) => onChanged(value!),
       ),
@@ -424,7 +410,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Clear Cache'),
-        content: const Text('This will free up storage space by clearing temporary files. Continue?'),
+        content: const Text(
+          'This will free up storage space by clearing temporary files. Continue?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -445,14 +433,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _showHelpCenter(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Help center coming soon!')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Help center coming soon!')));
   }
 
   void _showContactUs(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Contact support coming soon!')),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ContactScreen(),
+      ),
     );
   }
 
@@ -469,40 +460,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _showAppInfo(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('AgriChain'),
-        content: const Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Version: 1.0.0'),
-            SizedBox(height: 8),
-            Text('Build: 1001'),
-            SizedBox(height: 8),
-            Text('Developed for Smart India Hackathon 2024'),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const AboutScreen(),
       ),
     );
   }
 
   void _showTermsOfService(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Terms of service coming soon!')),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const TermsOfServiceScreen(),
+      ),
     );
   }
 
   void _showPrivacyPolicy(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Privacy policy coming soon!')),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const PrivacyPolicyScreen(),
+      ),
     );
   }
 
@@ -519,12 +499,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           ElevatedButton(
             onPressed: () {
-              final authProvider = Provider.of<AuthProvider>(context, listen: false);
-              authProvider.logout();
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                '/landing',
-                (route) => false,
+              final authProvider = Provider.of<AuthProvider>(
+                context,
+                listen: false,
               );
+              authProvider.logout();
+              Navigator.of(
+                context,
+              ).pushNamedAndRemoveUntil('/landing', (route) => false);
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             child: const Text('Logout', style: TextStyle(color: Colors.white)),

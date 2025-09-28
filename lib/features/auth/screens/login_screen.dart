@@ -4,6 +4,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
 import '../providers/auth_provider.dart';
 import 'register_screen.dart';
+import 'forgot_password_screen.dart';
 import '../../farmer/screens/farmer_dashboard.dart';
 import '../../distributor/screens/distributor_dashboard.dart';
 import '../../retailer/screens/retailer_dashboard.dart';
@@ -92,9 +93,9 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = false);
 
     if (success) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => _nextScreen),
-      );
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (_) => _nextScreen));
     } else {
       _showErrorSnackBar(authProvider.error ?? 'Login failed');
     }
@@ -102,18 +103,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: AppColors.error,
-      ),
+      SnackBar(content: Text(message), backgroundColor: AppColors.error),
     );
   }
 
   void _navigateToRegister() {
     Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => RegisterScreen(role: widget.role),
-      ),
+      MaterialPageRoute(builder: (_) => RegisterScreen(role: widget.role)),
     );
   }
 
@@ -134,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 32),
-              
+
               // Role Icon
               Container(
                 width: 80,
@@ -144,13 +140,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   color: _roleColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Icon(
-                  _getRoleIcon(),
-                  size: 40,
-                  color: _roleColor,
-                ),
+                child: Icon(_getRoleIcon(), size: 40, color: _roleColor),
               ),
-              
+
               Text(
                 'Welcome Back, $_roleTitle!',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -159,19 +151,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 8),
-              
+
               Text(
                 'Sign in to continue to your dashboard',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 48),
-              
+
               // Email Field
               TextFormField(
                 controller: _emailController,
@@ -179,19 +171,25 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(
                   labelText: 'Email',
-                  labelStyle: TextStyle(color: Colors.black),
+                  labelStyle: TextStyle(color: AppColors.textSecondary),
                   prefixIcon: Icon(Icons.email_outlined, color: _roleColor),
-                  
+
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: _roleColor, width: 1), // light grey border
+                    borderSide: BorderSide(
+                      color: _roleColor,
+                      width: 1,
+                    ), // light grey border
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: _roleColor, width: 2), // colored border when focused
+                    borderSide: BorderSide(
+                      color: _roleColor,
+                      width: 2,
+                    ), // colored border when focused
                   ),
                 ),
-                
+
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your email';
@@ -202,9 +200,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   return null;
                 },
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Password Field
               TextFormField(
                 controller: _passwordController,
@@ -212,11 +210,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(
                   labelText: 'Password',
-                  labelStyle: TextStyle(color: Colors.black),
+                  labelStyle: TextStyle(color: AppColors.textSecondary),
                   prefixIcon: Icon(Icons.lock_outline, color: _roleColor),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                      _isPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
                       color: AppColors.textSecondary,
                     ),
                     onPressed: () {
@@ -226,12 +226,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                   ),
                   enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                   borderSide: BorderSide(color: _roleColor, width: 1), // light grey border
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: _roleColor,
+                      width: 1,
+                    ), // light grey border
                   ),
                   focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: _roleColor, width: 2), // colored border when focused
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: _roleColor,
+                      width: 2,
+                    ), // colored border when focused
                   ),
                 ),
                 validator: (value) {
@@ -244,9 +250,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   return null;
                 },
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Login Button
               SizedBox(
                 height: 50,
@@ -260,47 +266,72 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   child: _isLoading
                       ? const CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
                         )
                       : Text(
                           'Login',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                         ),
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Forgot Password
               TextButton(
                 onPressed: () {
-                  // Handle forgot password
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          ForgotPasswordScreen(role: widget.role),
+                    ),
+                  );
                 },
                 child: Text(
                   'Forgot Password?',
                   style: TextStyle(color: _roleColor),
                 ),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Divider
-              const Row(
+              Row(
                 children: [
-                  Expanded(child: Divider()),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: Text('OR'),
+                  Expanded(
+                    child: Divider(
+                      color: AppColors.textSecondary,
+                      thickness: 1,
+                    ),
                   ),
-                  Expanded(child: Divider()),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      'OR',
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Divider(
+                      color: AppColors.textSecondary,
+                      thickness: 1,
+                    ),
+                  ),
                 ],
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Register Button
               OutlinedButton(
                 onPressed: _navigateToRegister,
@@ -316,9 +347,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: TextStyle(color: _roleColor),
                 ),
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Demo Login Info
               Container(
                 padding: const EdgeInsets.all(16),

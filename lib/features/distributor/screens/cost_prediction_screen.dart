@@ -89,7 +89,9 @@ class CostPredictionScreen extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            ..._costCategories.map((category) => _buildCostCategoryCard(category)).toList(),
+            ..._costCategories.map(
+              (category) => _buildCostCategoryCard(category),
+            ),
 
             const SizedBox(height: 24),
 
@@ -104,7 +106,7 @@ class CostPredictionScreen extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            ..._costFactors.map((factor) => _buildFactorCard(factor)).toList(),
+            ..._costFactors.map((factor) => _buildFactorCard(factor)),
 
             const SizedBox(height: 24),
 
@@ -140,7 +142,9 @@ class CostPredictionScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  ..._recommendations.map((rec) => _buildRecommendationItem(rec)).toList(),
+                  ..._recommendations.map(
+                    (rec) => _buildRecommendationItem(rec),
+                  ),
                 ],
               ),
             ),
@@ -230,10 +234,7 @@ class CostPredictionScreen extends StatelessWidget {
               ),
               Text(
                 '${category['percentage']}%',
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
               ),
             ],
           ),
@@ -244,7 +245,7 @@ class CostPredictionScreen extends StatelessWidget {
 
   Widget _buildFactorCard(Map<String, dynamic> factor) {
     Color impactColor = _getImpactColor(factor['impact']);
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -315,10 +316,7 @@ class CostPredictionScreen extends StatelessWidget {
           Expanded(
             child: Text(
               recommendation,
-              style: TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: 14,
-              ),
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
             ),
           ),
         ],
@@ -344,7 +342,9 @@ class CostPredictionScreen extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Route Optimization'),
-        content: const Text('AI has analyzed your delivery routes and found potential savings of ₹2,340 per week through optimized routing.'),
+        content: const Text(
+          'AI has analyzed your delivery routes and found potential savings of ₹2,340 per week through optimized routing.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -354,11 +354,18 @@ class CostPredictionScreen extends StatelessWidget {
             onPressed: () {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Route optimization applied successfully!')),
+                const SnackBar(
+                  content: Text('Route optimization applied successfully!'),
+                ),
               );
             },
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.distributorPrimary),
-            child: const Text('Apply Optimization', style: TextStyle(color: Colors.white)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.distributorPrimary,
+            ),
+            child: const Text(
+              'Apply Optimization',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),

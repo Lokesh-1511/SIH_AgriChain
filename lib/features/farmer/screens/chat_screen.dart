@@ -13,7 +13,8 @@ class _ChatScreenState extends State<ChatScreen> {
   final ScrollController _scrollController = ScrollController();
   final List<Map<String, dynamic>> _messages = [
     {
-      'text': 'Hello! I\'m AgriBot, your AI farming assistant. How can I help you today?',
+      'text':
+          'Hello! I\'m AgriBot, your AI farming assistant. How can I help you today?',
       'isUser': false,
       'time': '10:30 AM',
     },
@@ -132,7 +133,9 @@ class _ChatScreenState extends State<ChatScreen> {
               child: Text(
                 message['time'],
                 style: TextStyle(
-                  color: isUser ? Colors.white.withOpacity(0.7) : AppColors.textSecondary,
+                  color: isUser
+                      ? Colors.white.withOpacity(0.7)
+                      : AppColors.textSecondary,
                   fontSize: 10,
                 ),
               ),
@@ -220,9 +223,7 @@ class _ChatScreenState extends State<ChatScreen> {
         decoration: BoxDecoration(
           color: AppColors.farmerPrimary.withOpacity(0.1),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: AppColors.farmerPrimary.withOpacity(0.3),
-          ),
+          border: Border.all(color: AppColors.farmerPrimary.withOpacity(0.3)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -266,13 +267,18 @@ class _ChatScreenState extends State<ChatScreen> {
                 hintStyle: TextStyle(color: AppColors.textSecondary),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
-                  borderSide: BorderSide(color: AppColors.textSecondary.withOpacity(0.3)),
+                  borderSide: BorderSide(
+                    color: AppColors.textSecondary.withOpacity(0.3),
+                  ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
                   borderSide: BorderSide(color: AppColors.farmerPrimary),
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
               ),
               onSubmitted: (_) => _sendMessage(),
               maxLines: null,
@@ -331,7 +337,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   String _getAIResponse(String userMessage) {
     String message = userMessage.toLowerCase();
-    
+
     if (message.contains('weather')) {
       return 'Today\'s weather: Partly cloudy, 28°C. Perfect conditions for watering crops! Rain expected tomorrow, so avoid fertilizer application today.';
     } else if (message.contains('disease') || message.contains('pest')) {
@@ -351,7 +357,8 @@ class _ChatScreenState extends State<ChatScreen> {
     setState(() {
       _messages.clear();
       _messages.add({
-        'text': 'Hello! I\'m AgriBot, your AI farming assistant. How can I help you today?',
+        'text':
+            'Hello! I\'m AgriBot, your AI farming assistant. How can I help you today?',
         'isUser': false,
         'time': _getCurrentTime(),
       });
