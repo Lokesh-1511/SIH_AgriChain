@@ -72,13 +72,14 @@ class RetailerStatsCard extends StatelessWidget {
               fontSize: 14,
               fontWeight: FontWeight.w600,
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
           Text(
             subtitle,
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 11,
-            ),
+            style: TextStyle(color: Colors.grey[600], fontSize: 11),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),

@@ -68,10 +68,7 @@ class _FarmerDashboardState extends State<FarmerDashboard> {
         selectedItemColor: AppColors.farmerPrimary,
         unselectedItemColor: AppColors.textSecondary,
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(
             icon: Icon(Icons.inventory),
             label: 'My Batches',
@@ -128,7 +125,12 @@ class _FarmerDashboardState extends State<FarmerDashboard> {
     );
   }
 
-  Widget _buildNotificationItem(String title, String message, IconData icon, Color color) {
+  Widget _buildNotificationItem(
+    String title,
+    String message,
+    IconData icon,
+    Color color,
+  ) {
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: color.withOpacity(0.1),
@@ -196,7 +198,10 @@ class FarmerHomeTab extends StatelessWidget {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [AppColors.farmerPrimary, AppColors.farmerPrimary.withOpacity(0.8)],
+                colors: [
+                  AppColors.farmerPrimary,
+                  AppColors.farmerPrimary.withOpacity(0.8),
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -317,42 +322,60 @@ class FarmerHomeTab extends StatelessWidget {
                 'Post Product',
                 Icons.add_circle,
                 AppColors.farmerPrimary,
-                () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PostProductScreen())),
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const PostProductScreen()),
+                ),
               ),
               _buildQuickActionCard(
                 context,
                 'Crop Advisory',
                 Icons.lightbulb,
                 AppColors.info,
-                () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CropAdvisoryScreen())),
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const CropAdvisoryScreen()),
+                ),
               ),
               _buildQuickActionCard(
                 context,
                 'Insurance',
                 Icons.security,
                 AppColors.warning,
-                () => Navigator.push(context, MaterialPageRoute(builder: (_) => const InsuranceScreen())),
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const InsuranceScreen()),
+                ),
               ),
               _buildQuickActionCard(
                 context,
                 'Loan Apply',
                 Icons.account_balance,
                 AppColors.success,
-                () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LoanScreen())),
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LoanScreen()),
+                ),
               ),
               _buildQuickActionCard(
                 context,
                 'Agri Score',
                 Icons.assessment,
                 AppColors.farmerPrimary,
-                () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AgriScoreScreen())),
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AgriScoreScreen()),
+                ),
               ),
               _buildQuickActionCard(
                 context,
                 'Govt Schemes',
                 Icons.account_balance,
                 AppColors.info,
-                () => Navigator.push(context, MaterialPageRoute(builder: (_) => const GovtSchemesScreen())),
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const GovtSchemesScreen()),
+                ),
               ),
             ],
           ),
@@ -399,7 +422,13 @@ class FarmerHomeTab extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickActionCard(BuildContext context, String title, IconData icon, Color color, VoidCallback onTap) {
+  Widget _buildQuickActionCard(
+    BuildContext context,
+    String title,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+  ) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -432,8 +461,11 @@ class FarmerHomeTab extends StatelessWidget {
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
+                fontSize: 14, // Explicit font size
               ),
               textAlign: TextAlign.center,
+              maxLines: 2, // Allow 2 lines for longer titles
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

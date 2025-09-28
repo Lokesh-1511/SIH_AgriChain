@@ -15,10 +15,7 @@ class FloatingChatButton extends StatelessWidget {
         );
       },
       backgroundColor: AppColors.farmerPrimary,
-      child: const Icon(
-        Icons.chat_bubble_outline,
-        color: Colors.white,
-      ),
+      child: const Icon(Icons.chat_bubble_outline, color: Colors.white),
     );
   }
 }

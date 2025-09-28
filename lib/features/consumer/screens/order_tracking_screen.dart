@@ -94,10 +94,7 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
       ),
       body: TabBarView(
         controller: _tabController,
-        children: [
-          _buildActiveOrders(),
-          _buildOrderHistory(),
-        ],
+        children: [_buildActiveOrders(), _buildOrderHistory()],
       ),
     );
   }
@@ -114,7 +111,8 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: _activeOrders.length,
-      itemBuilder: (context, index) => _buildOrderCard(_activeOrders[index], true),
+      itemBuilder: (context, index) =>
+          _buildOrderCard(_activeOrders[index], true),
     );
   }
 
@@ -130,7 +128,8 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: _orderHistory.length,
-      itemBuilder: (context, index) => _buildOrderCard(_orderHistory[index], false),
+      itemBuilder: (context, index) =>
+          _buildOrderCard(_orderHistory[index], false),
     );
   }
 
@@ -150,11 +149,7 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
               color: AppColors.consumerPrimary.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              icon,
-              size: 60,
-              color: AppColors.consumerPrimary,
-            ),
+            child: Icon(icon, size: 60, color: AppColors.consumerPrimary),
           ),
           const SizedBox(height: 24),
           Text(
@@ -167,10 +162,7 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
           const SizedBox(height: 8),
           Text(
             subtitle,
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 16,
-            ),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
             textAlign: TextAlign.center,
           ),
         ],
@@ -209,7 +201,10 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: _getStatusColor(order['status']).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
@@ -337,7 +332,10 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
                       onPressed: () => _showOrderDetails(order),
                       style: OutlinedButton.styleFrom(
                         side: BorderSide(color: AppColors.consumerPrimary),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
                       ),
                       child: Text(
                         'View Details',
@@ -364,15 +362,21 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
   }
 
   Widget _buildProgressIndicator(int currentStep) {
-    final steps = ['Order Placed', 'Processing', 'Packed', 'Out for Delivery', 'Delivered'];
-    
+    final steps = [
+      'Order Placed',
+      'Processing',
+      'Packed',
+      'Out for Delivery',
+      'Delivered',
+    ];
+
     return Row(
       children: steps.asMap().entries.map((entry) {
         final index = entry.key;
         final step = entry.value;
         final isCompleted = index < currentStep;
         final isCurrent = index == currentStep;
-        
+
         return Expanded(
           child: Row(
             children: [
@@ -390,15 +394,15 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
                     child: isCompleted
                         ? const Icon(Icons.check, color: Colors.white, size: 12)
                         : isCurrent
-                            ? Container(
-                                width: 8,
-                                height: 8,
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                ),
-                              )
-                            : null,
+                        ? Container(
+                            width: 8,
+                            height: 8,
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                          )
+                        : null,
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -408,7 +412,9 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
                       color: isCompleted || isCurrent
                           ? AppColors.consumerPrimary
                           : AppColors.textSecondary,
-                      fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: isCurrent
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -476,9 +482,9 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
               const SizedBox(height: 20),
               Text(
                 'Track Order ${order['id']}',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
               Expanded(
@@ -525,9 +531,9 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
                           ],
                         ),
                       ),
-                      
+
                       const SizedBox(height: 20),
-                      
+
                       // Detailed Progress
                       _buildDetailedProgress(),
                     ],
@@ -580,7 +586,7 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
       children: trackingSteps.map((step) {
         final isCompleted = step['completed'] as bool;
         final isCurrent = step['current'] as bool? ?? false;
-        
+
         return Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -624,7 +630,9 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: isCurrent ? AppColors.consumerPrimary : AppColors.textPrimary,
+                            color: isCurrent
+                                ? AppColors.consumerPrimary
+                                : AppColors.textPrimary,
                           ),
                         ),
                         Text(
@@ -655,10 +663,8 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
   }
 
   void _showOrderDetails(Map<String, dynamic> order) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Order details for ${order['id']}'),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('Order details for ${order['id']}')));
   }
 }

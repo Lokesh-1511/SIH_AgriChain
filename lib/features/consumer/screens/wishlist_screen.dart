@@ -10,7 +10,7 @@ class WishlistScreen extends StatefulWidget {
 }
 
 class _WishlistScreenState extends State<WishlistScreen> {
-  List<Map<String, dynamic>> _wishlistItems = [
+  final List<Map<String, dynamic>> _wishlistItems = [
     {
       'id': '1',
       'name': 'Alphonso Mango',
@@ -92,10 +92,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                   value: 'Price: High to Low',
                   child: Text('Price: High to Low'),
                 ),
-                const PopupMenuItem(
-                  value: 'Name A-Z',
-                  child: Text('Name A-Z'),
-                ),
+                const PopupMenuItem(value: 'Name A-Z', child: Text('Name A-Z')),
               ],
             ),
             TextButton(
@@ -108,8 +105,12 @@ class _WishlistScreenState extends State<WishlistScreen> {
           ],
         ],
       ),
-      body: _wishlistItems.isEmpty ? _buildEmptyWishlist() : _buildWishlistContent(),
-      bottomNavigationBar: _wishlistItems.isNotEmpty ? _buildAddAllToCartButton() : null,
+      body: _wishlistItems.isEmpty
+          ? _buildEmptyWishlist()
+          : _buildWishlistContent(),
+      bottomNavigationBar: _wishlistItems.isNotEmpty
+          ? _buildAddAllToCartButton()
+          : null,
     );
   }
 
@@ -142,10 +143,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
           const SizedBox(height: 8),
           Text(
             'Save items you love for later!',
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 16,
-            ),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),
@@ -179,17 +177,11 @@ class _WishlistScreenState extends State<WishlistScreen> {
             children: [
               Text(
                 '${_wishlistItems.length} items in wishlist',
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
               ),
               Text(
                 'Sorted by: $_sortBy',
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
               ),
             ],
           ),
@@ -200,7 +192,8 @@ class _WishlistScreenState extends State<WishlistScreen> {
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             itemCount: sortedItems.length,
-            itemBuilder: (context, index) => _buildWishlistItem(sortedItems[index], index),
+            itemBuilder: (context, index) =>
+                _buildWishlistItem(sortedItems[index], index),
           ),
         ),
       ],
@@ -359,11 +352,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
 
                     Row(
                       children: [
-                        Icon(
-                          Icons.star,
-                          color: AppColors.warning,
-                          size: 14,
-                        ),
+                        Icon(Icons.star, color: AppColors.warning, size: 14),
                         const SizedBox(width: 2),
                         Text(
                           '${item['rating']} (${item['reviews']})',
@@ -423,7 +412,9 @@ class _WishlistScreenState extends State<WishlistScreen> {
                               width: 100,
                               height: 32,
                               child: ElevatedButton(
-                                onPressed: item['inStock'] ? () => _addToCart(item) : null,
+                                onPressed: item['inStock']
+                                    ? () => _addToCart(item)
+                                    : null,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: item['inStock']
                                       ? AppColors.consumerPrimary
@@ -436,7 +427,9 @@ class _WishlistScreenState extends State<WishlistScreen> {
                                   padding: EdgeInsets.zero,
                                 ),
                                 child: Text(
-                                  item['inStock'] ? 'Add to Cart' : 'Out of Stock',
+                                  item['inStock']
+                                      ? 'Add to Cart'
+                                      : 'Out of Stock',
                                   style: const TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w600,
@@ -475,7 +468,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
 
   Widget _buildAddAllToCartButton() {
     final inStockItems = _wishlistItems.where((item) => item['inStock']).length;
-    
+
     if (inStockItems == 0) return const SizedBox.shrink();
 
     return Container(
@@ -504,10 +497,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
           ),
           child: Text(
             'Add All to Cart ($inStockItems items)',
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
           ),
         ),
       ),
@@ -516,7 +506,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
 
   List<Map<String, dynamic>> _getSortedItems() {
     final items = List<Map<String, dynamic>>.from(_wishlistItems);
-    
+
     switch (_sortBy) {
       case 'Price: Low to High':
         items.sort((a, b) => a['price'].compareTo(b['price']));
@@ -532,7 +522,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
         items.sort((a, b) => b['addedDate'].compareTo(a['addedDate']));
         break;
     }
-    
+
     return items;
   }
 
@@ -541,7 +531,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
     setState(() {
       _wishlistItems.removeAt(index);
     });
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('${item['name']} removed from wishlist'),
@@ -572,8 +562,10 @@ class _WishlistScreenState extends State<WishlistScreen> {
   }
 
   void _addAllToCart() {
-    final inStockItems = _wishlistItems.where((item) => item['inStock']).toList();
-    
+    final inStockItems = _wishlistItems
+        .where((item) => item['inStock'])
+        .toList();
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('${inStockItems.length} items added to cart!'),
@@ -590,7 +582,9 @@ class _WishlistScreenState extends State<WishlistScreen> {
   void _notifyWhenAvailable(Map<String, dynamic> item) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('We\'ll notify you when ${item['name']} is back in stock!'),
+        content: Text(
+          'We\'ll notify you when ${item['name']} is back in stock!',
+        ),
       ),
     );
   }
@@ -600,7 +594,9 @@ class _WishlistScreenState extends State<WishlistScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Clear Wishlist'),
-        content: const Text('Are you sure you want to remove all items from your wishlist?'),
+        content: const Text(
+          'Are you sure you want to remove all items from your wishlist?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -610,14 +606,11 @@ class _WishlistScreenState extends State<WishlistScreen> {
             onPressed: () {
               setState(() => _wishlistItems.clear());
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Wishlist cleared')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('Wishlist cleared')));
             },
-            child: Text(
-              'Clear',
-              style: TextStyle(color: AppColors.error),
-            ),
+            child: Text('Clear', style: TextStyle(color: AppColors.error)),
           ),
         ],
       ),

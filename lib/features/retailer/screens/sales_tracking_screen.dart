@@ -43,9 +43,15 @@ class _SalesTrackingScreenState extends State<SalesTrackingScreen> {
                       border: OutlineInputBorder(),
                     ),
                     items: ['Today', 'This Week', 'This Month', 'This Year']
-                        .map((period) => DropdownMenuItem(value: period, child: Text(period)))
+                        .map(
+                          (period) => DropdownMenuItem(
+                            value: period,
+                            child: Text(period),
+                          ),
+                        )
                         .toList(),
-                    onChanged: (value) => setState(() => _selectedPeriod = value!),
+                    onChanged: (value) =>
+                        setState(() => _selectedPeriod = value!),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -56,10 +62,24 @@ class _SalesTrackingScreenState extends State<SalesTrackingScreen> {
                       labelText: 'Category',
                       border: OutlineInputBorder(),
                     ),
-                    items: ['All', 'Fruits', 'Vegetables', 'Grains', 'Dairy', 'Spices']
-                        .map((category) => DropdownMenuItem(value: category, child: Text(category)))
-                        .toList(),
-                    onChanged: (value) => setState(() => _selectedCategory = value!),
+                    items:
+                        [
+                              'All',
+                              'Fruits',
+                              'Vegetables',
+                              'Grains',
+                              'Dairy',
+                              'Spices',
+                            ]
+                            .map(
+                              (category) => DropdownMenuItem(
+                                value: category,
+                                child: Text(category),
+                              ),
+                            )
+                            .toList(),
+                    onChanged: (value) =>
+                        setState(() => _selectedCategory = value!),
                   ),
                 ),
               ],
@@ -88,11 +108,37 @@ class _SalesTrackingScreenState extends State<SalesTrackingScreen> {
               ),
               child: Row(
                 children: [
-                  Expanded(child: _buildSummaryItem('Sales', '₹12,450', Icons.currency_rupee)),
-                  Container(width: 1, height: 40, color: Colors.white.withOpacity(0.3)),
-                  Expanded(child: _buildSummaryItem('Transactions', '89', Icons.receipt)),
-                  Container(width: 1, height: 40, color: Colors.white.withOpacity(0.3)),
-                  Expanded(child: _buildSummaryItem('Avg. Sale', '₹140', Icons.trending_up)),
+                  Expanded(
+                    child: _buildSummaryItem(
+                      'Sales',
+                      '₹12,450',
+                      Icons.currency_rupee,
+                    ),
+                  ),
+                  Container(
+                    width: 1,
+                    height: 40,
+                    color: Colors.white.withOpacity(0.3),
+                  ),
+                  Expanded(
+                    child: _buildSummaryItem(
+                      'Transactions',
+                      '89',
+                      Icons.receipt,
+                    ),
+                  ),
+                  Container(
+                    width: 1,
+                    height: 40,
+                    color: Colors.white.withOpacity(0.3),
+                  ),
+                  Expanded(
+                    child: _buildSummaryItem(
+                      'Avg. Sale',
+                      '₹140',
+                      Icons.trending_up,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -176,7 +222,9 @@ class _SalesTrackingScreenState extends State<SalesTrackingScreen> {
                 ],
               ),
               child: Column(
-                children: _topProducts.map((product) => _buildProductSalesItem(product)).toList(),
+                children: _topProducts
+                    .map((product) => _buildProductSalesItem(product))
+                    .toList(),
               ),
             ),
 
@@ -193,7 +241,7 @@ class _SalesTrackingScreenState extends State<SalesTrackingScreen> {
 
             const SizedBox(height: 16),
 
-            ..._recentSales.map((sale) => _buildSaleCard(sale)).toList(),
+            ..._recentSales.map((sale) => _buildSaleCard(sale)),
           ],
         ),
       ),
@@ -215,10 +263,7 @@ class _SalesTrackingScreenState extends State<SalesTrackingScreen> {
         ),
         Text(
           title,
-          style: TextStyle(
-            color: Colors.white.withOpacity(0.9),
-            fontSize: 12,
-          ),
+          style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 12),
         ),
       ],
     );
@@ -228,7 +273,9 @@ class _SalesTrackingScreenState extends State<SalesTrackingScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: AppColors.textSecondary.withOpacity(0.1))),
+        border: Border(
+          bottom: BorderSide(color: AppColors.textSecondary.withOpacity(0.1)),
+        ),
       ),
       child: Row(
         children: [
@@ -240,7 +287,10 @@ class _SalesTrackingScreenState extends State<SalesTrackingScreen> {
               borderRadius: BorderRadius.circular(8),
             ),
             child: Center(
-              child: Text(product['emoji'], style: const TextStyle(fontSize: 20)),
+              child: Text(
+                product['emoji'],
+                style: const TextStyle(fontSize: 20),
+              ),
             ),
           ),
           const SizedBox(width: 12),
@@ -274,10 +324,7 @@ class _SalesTrackingScreenState extends State<SalesTrackingScreen> {
               ),
               Text(
                 '${product['growth']}% ↑',
-                style: TextStyle(
-                  color: AppColors.success,
-                  fontSize: 11,
-                ),
+                style: TextStyle(color: AppColors.success, fontSize: 11),
               ),
             ],
           ),
@@ -347,10 +394,7 @@ class _SalesTrackingScreenState extends State<SalesTrackingScreen> {
               ),
               Text(
                 sale['method'],
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 10,
-                ),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 10),
               ),
             ],
           ),
@@ -364,7 +408,9 @@ class _SalesTrackingScreenState extends State<SalesTrackingScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Add Manual Sale'),
-        content: const Text('Manual sale entry feature will be available soon!'),
+        content: const Text(
+          'Manual sale entry feature will be available soon!',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

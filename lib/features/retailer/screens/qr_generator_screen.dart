@@ -122,11 +122,19 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> {
                 decoration: const InputDecoration(
                   labelText: 'Select Template',
                   border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                 ),
-                items: _qrTemplates.map((template) => 
-                  DropdownMenuItem(value: template, child: Text(template))
-                ).toList(),
+                items: _qrTemplates
+                    .map(
+                      (template) => DropdownMenuItem(
+                        value: template,
+                        child: Text(template),
+                      ),
+                    )
+                    .toList(),
                 onChanged: (value) {
                   setState(() {
                     _selectedTemplate = value!;
@@ -155,11 +163,19 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> {
                 decoration: const InputDecoration(
                   labelText: 'Select Product',
                   border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                 ),
-                items: _products.keys.map((product) => 
-                  DropdownMenuItem(value: product, child: Text(product))
-                ).toList(),
+                items: _products.keys
+                    .map(
+                      (product) => DropdownMenuItem(
+                        value: product,
+                        child: Text(product),
+                      ),
+                    )
+                    .toList(),
                 onChanged: (value) {
                   setState(() {
                     _selectedProduct = value!;
@@ -304,9 +320,10 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> {
                   if (_includeOrigin && _products[_selectedProduct] != null)
                     Text('Origin: ${_products[_selectedProduct]!['origin']}'),
                   if (_includeBatch)
-                    Text('Batch: ${DateTime.now().millisecondsSinceEpoch.toString().substring(8)}'),
-                  if (_customText.isNotEmpty)
-                    Text('Note: $_customText'),
+                    Text(
+                      'Batch: ${DateTime.now().millisecondsSinceEpoch.toString().substring(8)}',
+                    ),
+                  if (_customText.isNotEmpty) Text('Note: $_customText'),
                   const SizedBox(height: 8),
                   Text(
                     'Scan Date: ${DateTime.now().toString().split('.').first}',
@@ -437,7 +454,7 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> {
       builder: (context) => AlertDialog(
         title: const Text('Bulk Generate QR Codes'),
         content: const Text(
-          'This will generate QR codes for all products in your inventory. Do you want to continue?'
+          'This will generate QR codes for all products in your inventory. Do you want to continue?',
         ),
         actions: [
           TextButton(

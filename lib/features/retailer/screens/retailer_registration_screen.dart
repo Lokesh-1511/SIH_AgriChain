@@ -7,13 +7,15 @@ import '../../auth/providers/auth_provider.dart';
 import '../screens/retailer_dashboard.dart';
 
 class RetailerRegistrationScreen extends StatefulWidget {
-  const RetailerRegistrationScreen({Key? key}) : super(key: key);
+  const RetailerRegistrationScreen({super.key});
 
   @override
-  State<RetailerRegistrationScreen> createState() => _RetailerRegistrationScreenState();
+  State<RetailerRegistrationScreen> createState() =>
+      _RetailerRegistrationScreenState();
 }
 
-class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen> {
+class _RetailerRegistrationScreenState
+    extends State<RetailerRegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
   final _pageController = PageController();
   int _currentStep = 0;
@@ -77,16 +79,18 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error picking image: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error picking image: $e')));
     }
   }
 
   Future<void> _sendAadhaarOTP() async {
     if (_aadhaarController.text.length != 12) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid 12-digit Aadhaar number')),
+        const SnackBar(
+          content: Text('Please enter a valid 12-digit Aadhaar number'),
+        ),
       );
       return;
     }
@@ -96,20 +100,20 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       await authProvider.sendAadhaarOTP(_aadhaarController.text);
-      
+
       setState(() {
         _otpSent = true;
         _isLoading = false;
       });
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('OTP sent to registered mobile number')),
       );
     } catch (e) {
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error sending OTP: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error sending OTP: $e')));
     }
   }
 
@@ -125,26 +129,29 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
 
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      await authProvider.verifyAadhaarOTP(_aadhaarController.text, _otpController.text);
-      
+      await authProvider.verifyAadhaarOTP(
+        _aadhaarController.text,
+        _otpController.text,
+      );
+
       setState(() {
         _isAadhaarVerified = true;
         _isLoading = false;
       });
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Aadhaar verified successfully')),
       );
     } catch (e) {
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error verifying OTP: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error verifying OTP: $e')));
     }
   }
 
   Future<void> _completeRegistration() async {
-    if (!_formKey.currentState!.validate()) return;
+    // Skip form validation for final step (no form fields on step 2)
     if (!_isAadhaarVerified) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please verify your Aadhaar first')),
@@ -162,10 +169,11 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
 
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      
+
       // Generate Unique Retailer ID
-      _generatedRetailerId = 'RET${DateTime.now().millisecondsSinceEpoch.toString().substring(8)}';
-      
+      _generatedRetailerId =
+          'RET${DateTime.now().millisecondsSinceEpoch.toString().substring(8)}';
+
       final userData = {
         'name': _nameController.text,
         'phone': _phoneController.text,
@@ -185,17 +193,16 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
       };
 
       await authProvider.register(userData);
-      
+
       setState(() => _isLoading = false);
-      
+
       // Show success dialog with generated ID
       _showSuccessDialog();
-      
     } catch (e) {
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Registration failed: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Registration failed: $e')));
     }
   }
 
@@ -252,7 +259,9 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
             onPressed: () {
               Navigator.of(context).pop();
               Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const RetailerDashboard()),
+                MaterialPageRoute(
+                  builder: (context) => const RetailerDashboard(),
+                ),
               );
             },
             child: const Text('Continue to Dashboard'),
@@ -290,19 +299,20 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
     switch (_currentStep) {
       case 0:
         return _nameController.text.isNotEmpty &&
-               _phoneController.text.isNotEmpty &&
-               _emailController.text.isNotEmpty &&
-               _passwordController.text.isNotEmpty &&
-               _confirmPasswordController.text.isNotEmpty &&
-               _passwordController.text == _confirmPasswordController.text;
+            _phoneController.text.isNotEmpty &&
+            _emailController.text.isNotEmpty &&
+            _passwordController.text.isNotEmpty &&
+            _confirmPasswordController.text.isNotEmpty &&
+            _passwordController.text == _confirmPasswordController.text;
       case 1:
         return _businessNameController.text.isNotEmpty &&
-               _storeAddressController.text.isNotEmpty &&
-               _businessHoursController.text.isNotEmpty;
+            _storeAddressController.text.isNotEmpty &&
+            _businessHoursController.text.isNotEmpty;
       case 2:
         return _isAadhaarVerified;
       case 3:
-        return _licenseNumberController.text.isNotEmpty && _licenseImage != null;
+        return _licenseNumberController.text.isNotEmpty &&
+            _licenseImage != null;
       default:
         return false;
     }
@@ -343,7 +353,7 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
               }),
             ),
           ),
-          
+
           // Step Content
           Expanded(
             child: PageView(
@@ -357,7 +367,7 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
               ],
             ),
           ),
-          
+
           // Navigation Buttons
           Container(
             padding: const EdgeInsets.all(16),
@@ -384,10 +394,16 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
                             height: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
                             ),
                           )
-                        : Text(_currentStep == 3 ? 'Complete Registration' : 'Next'),
+                        : Text(
+                            _currentStep == 3
+                                ? 'Complete Registration'
+                                : 'Next',
+                          ),
                   ),
                 ),
               ],
@@ -414,60 +430,134 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
               ),
             ),
             const SizedBox(height: 24),
-            
+
             TextFormField(
               controller: _nameController,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
                 labelText: 'Full Name *',
-                prefixIcon: Icon(Icons.person),
+                labelStyle: TextStyle(color: AppColors.textSecondary),
+                prefixIcon: Icon(Icons.person, color: AppColors.retailerPrimary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.retailerPrimary, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.retailerPrimary, width: 2),
+                ),
               ),
-              validator: (value) => value?.isEmpty ?? true ? 'Please enter your name' : null,
+              validator: (value) =>
+                  value?.isEmpty ?? true ? 'Please enter your name' : null,
             ),
             const SizedBox(height: 16),
-            
+
             TextFormField(
               controller: _phoneController,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
                 labelText: 'Phone Number *',
-                prefixIcon: Icon(Icons.phone),
+                labelStyle: TextStyle(color: AppColors.textSecondary),
+                prefixIcon: Icon(Icons.phone, color: AppColors.retailerPrimary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.retailerPrimary, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.retailerPrimary, width: 2),
+                ),
               ),
               keyboardType: TextInputType.phone,
-              validator: (value) => value?.isEmpty ?? true ? 'Please enter your phone number' : null,
+              validator: (value) => value?.isEmpty ?? true
+                  ? 'Please enter your phone number'
+                  : null,
             ),
             const SizedBox(height: 16),
-            
+
             TextFormField(
               controller: _emailController,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
                 labelText: 'Email Address *',
-                prefixIcon: Icon(Icons.email),
+                labelStyle: TextStyle(color: AppColors.textSecondary),
+                prefixIcon: Icon(Icons.email, color: AppColors.retailerPrimary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.retailerPrimary, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.retailerPrimary, width: 2),
+                ),
               ),
               keyboardType: TextInputType.emailAddress,
-              validator: (value) => value?.isEmpty ?? true ? 'Please enter your email' : null,
+              validator: (value) =>
+                  value?.isEmpty ?? true ? 'Please enter your email' : null,
             ),
             const SizedBox(height: 16),
-            
+
             TextFormField(
               controller: _passwordController,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
                 labelText: 'Password *',
-                prefixIcon: Icon(Icons.lock),
+                labelStyle: TextStyle(color: AppColors.textSecondary),
+                prefixIcon: Icon(Icons.lock, color: AppColors.retailerPrimary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.retailerPrimary, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.retailerPrimary, width: 2),
+                ),
               ),
               obscureText: true,
-              validator: (value) => value?.isEmpty ?? true ? 'Please enter a password' : null,
+              validator: (value) =>
+                  value?.isEmpty ?? true ? 'Please enter a password' : null,
             ),
             const SizedBox(height: 16),
-            
+
             TextFormField(
               controller: _confirmPasswordController,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
                 labelText: 'Confirm Password *',
-                prefixIcon: Icon(Icons.lock_outline),
+                labelStyle: TextStyle(color: AppColors.textSecondary),
+                prefixIcon: Icon(Icons.lock_outline, color: AppColors.retailerPrimary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.retailerPrimary, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.retailerPrimary, width: 2),
+                ),
               ),
               obscureText: true,
               validator: (value) {
-                if (value?.isEmpty ?? true) return 'Please confirm your password';
-                if (value != _passwordController.text) return 'Passwords do not match';
+                if (value?.isEmpty ?? true) {
+                  return 'Please confirm your password';
+                }
+                if (value != _passwordController.text) {
+                  return 'Passwords do not match';
+                }
                 return null;
               },
             ),
@@ -491,35 +581,77 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
             ),
           ),
           const SizedBox(height: 24),
-          
+
           TextFormField(
             controller: _businessNameController,
-            decoration: const InputDecoration(
+            style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
               labelText: 'Store Name *',
-              prefixIcon: Icon(Icons.store),
+              labelStyle: TextStyle(color: AppColors.textSecondary),
+                prefixIcon: Icon(Icons.store, color: AppColors.retailerPrimary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.retailerPrimary, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.retailerPrimary, width: 2),
+                ),
             ),
           ),
           const SizedBox(height: 16),
-          
+
           TextFormField(
             controller: _storeAddressController,
-            decoration: const InputDecoration(
+            style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
               labelText: 'Store Address *',
-              prefixIcon: Icon(Icons.location_on),
+              labelStyle: TextStyle(color: AppColors.textSecondary),
+                prefixIcon: Icon(Icons.location_on, color: AppColors.retailerPrimary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.retailerPrimary, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.retailerPrimary, width: 2),
+                ),
             ),
             maxLines: 3,
           ),
           const SizedBox(height: 16),
-          
+
           DropdownButtonFormField<String>(
             value: _storeType,
-            decoration: const InputDecoration(
+            style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
               labelText: 'Store Type *',
-              prefixIcon: Icon(Icons.category),
+              labelStyle: TextStyle(color: AppColors.textSecondary),
+                prefixIcon: Icon(Icons.category, color: AppColors.retailerPrimary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.retailerPrimary, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.retailerPrimary, width: 2),
+                ),
             ),
             items: const [
               DropdownMenuItem(value: 'grocery', child: Text('Grocery Store')),
-              DropdownMenuItem(value: 'supermarket', child: Text('Supermarket')),
+              DropdownMenuItem(
+                value: 'supermarket',
+                child: Text('Supermarket'),
+              ),
               DropdownMenuItem(value: 'organic', child: Text('Organic Store')),
               DropdownMenuItem(value: 'wholesale', child: Text('Wholesale')),
               DropdownMenuItem(value: 'other', child: Text('Other')),
@@ -527,22 +659,48 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
             onChanged: (value) => setState(() => _storeType = value!),
           ),
           const SizedBox(height: 16),
-          
+
           TextFormField(
             controller: _businessHoursController,
-            decoration: const InputDecoration(
+            style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
               labelText: 'Business Hours *',
-              prefixIcon: Icon(Icons.access_time),
+              labelStyle: TextStyle(color: AppColors.textSecondary),
+                prefixIcon: Icon(Icons.access_time, color: AppColors.retailerPrimary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.retailerPrimary, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.retailerPrimary, width: 2),
+                ),
               hintText: 'e.g., 9:00 AM - 9:00 PM',
             ),
           ),
           const SizedBox(height: 16),
-          
+
           TextFormField(
             controller: _gstNumberController,
-            decoration: const InputDecoration(
+            style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
               labelText: 'GST Number (Optional)',
-              prefixIcon: Icon(Icons.receipt),
+              labelStyle: TextStyle(color: AppColors.textSecondary),
+                prefixIcon: Icon(Icons.receipt, color: AppColors.retailerPrimary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.retailerPrimary, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.retailerPrimary, width: 2),
+                ),
               hintText: 'Enter GST number if applicable',
             ),
           ),
@@ -565,12 +723,25 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
             ),
           ),
           const SizedBox(height: 24),
-          
+
           TextFormField(
             controller: _aadhaarController,
-            decoration: const InputDecoration(
+            style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
               labelText: 'Aadhaar Number *',
-              prefixIcon: Icon(Icons.credit_card),
+              labelStyle: TextStyle(color: AppColors.textSecondary),
+                prefixIcon: Icon(Icons.credit_card, color: AppColors.retailerPrimary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.retailerPrimary, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.retailerPrimary, width: 2),
+                ),
               hintText: 'Enter 12-digit Aadhaar number',
             ),
             keyboardType: TextInputType.number,
@@ -578,7 +749,7 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
             enabled: !_isAadhaarVerified,
           ),
           const SizedBox(height: 16),
-          
+
           if (!_otpSent && !_isAadhaarVerified)
             SizedBox(
               width: double.infinity,
@@ -590,20 +761,33 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
                 child: const Text('Send OTP'),
               ),
             ),
-          
+
           if (_otpSent && !_isAadhaarVerified) ...[
             TextFormField(
               controller: _otpController,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
                 labelText: 'Enter OTP *',
-                prefixIcon: Icon(Icons.sms),
+                labelStyle: TextStyle(color: AppColors.textSecondary),
+                prefixIcon: Icon(Icons.sms, color: AppColors.retailerPrimary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.retailerPrimary, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.retailerPrimary, width: 2),
+                ),
                 hintText: 'Enter 6-digit OTP',
               ),
               keyboardType: TextInputType.number,
               maxLength: 6,
             ),
             const SizedBox(height: 16),
-            
+
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -615,7 +799,7 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
               ),
             ),
           ],
-          
+
           if (_isAadhaarVerified)
             Container(
               padding: const EdgeInsets.all(16),
@@ -657,26 +841,36 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
             ),
           ),
           const SizedBox(height: 24),
-          
+
           TextFormField(
             controller: _licenseNumberController,
-            decoration: const InputDecoration(
+            style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
               labelText: 'Trade License Number *',
-              prefixIcon: Icon(Icons.assignment),
+              labelStyle: TextStyle(color: AppColors.textSecondary),
+                prefixIcon: Icon(Icons.assignment, color: AppColors.retailerPrimary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.retailerPrimary, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.retailerPrimary, width: 2),
+                ),
               hintText: 'Enter your trade license number',
             ),
           ),
           const SizedBox(height: 24),
-          
+
           const Text(
             'Upload License Document *',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 12),
-          
+
           GestureDetector(
             onTap: _pickLicenseImage,
             child: Container(
@@ -722,26 +916,16 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
                   : const Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.cloud_upload,
-                          size: 48,
-                          color: Colors.grey,
-                        ),
+                        Icon(Icons.cloud_upload, size: 48, color: Colors.grey),
                         SizedBox(height: 16),
                         Text(
                           'Tap to upload license document',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 16,
-                          ),
+                          style: TextStyle(color: Colors.grey, fontSize: 16),
                         ),
                         SizedBox(height: 8),
                         Text(
                           'Supported formats: JPG, PNG, PDF',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 12,
-                          ),
+                          style: TextStyle(color: Colors.grey, fontSize: 12),
                         ),
                       ],
                     ),

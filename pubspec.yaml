@@ -48,6 +48,9 @@ dependencies:
   # Charts & Analytics
   fl_chart: ^0.68.0
   
+  # URL Launcher
+  url_launcher: ^6.3.0
+  
   # File Handling
   file_picker: ^8.0.3
   path_provider: ^2.1.2

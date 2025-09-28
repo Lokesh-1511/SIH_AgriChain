@@ -4,10 +4,7 @@ import '../../../core/theme/app_colors.dart';
 class ProductDetailsScreen extends StatefulWidget {
   final Map<String, dynamic> product;
 
-  const ProductDetailsScreen({
-    super.key,
-    required this.product,
-  });
+  const ProductDetailsScreen({super.key, required this.product});
 
   @override
   State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
@@ -39,10 +36,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 const SnackBar(content: Text('Share feature coming soon!')),
               );
             },
-            icon: Icon(
-              Icons.share,
-              color: AppColors.textSecondary,
-            ),
+            icon: Icon(Icons.share, color: AppColors.textSecondary),
           ),
         ],
       ),
@@ -141,11 +135,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   // Rating and Reviews
                   Row(
                     children: [
-                      Icon(
-                        Icons.star,
-                        color: AppColors.warning,
-                        size: 20,
-                      ),
+                      Icon(Icons.star, color: AppColors.warning, size: 20),
                       const SizedBox(width: 4),
                       Text(
                         '${widget.product['rating']}',
@@ -179,7 +169,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         ),
                       ),
                       if (widget.product['originalPrice'] != null &&
-                          widget.product['originalPrice'] > widget.product['price']) ...[
+                          widget.product['originalPrice'] >
+                              widget.product['price']) ...[
                         const SizedBox(width: 12),
                         Text(
                           '₹${widget.product['originalPrice'].toInt()}',
@@ -313,7 +304,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               icon: const Icon(Icons.remove),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
                               child: Text(
                                 '$_quantity',
                                 style: const TextStyle(

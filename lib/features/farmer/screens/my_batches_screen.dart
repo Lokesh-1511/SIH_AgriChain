@@ -18,9 +18,13 @@ class MyBatchesScreen extends StatelessWidget {
               children: [
                 Expanded(child: _buildStatCard('Active', '5', AppColors.info)),
                 const SizedBox(width: 12),
-                Expanded(child: _buildStatCard('In Transit', '3', AppColors.warning)),
+                Expanded(
+                  child: _buildStatCard('In Transit', '3', AppColors.warning),
+                ),
                 const SizedBox(width: 12),
-                Expanded(child: _buildStatCard('Delivered', '12', AppColors.success)),
+                Expanded(
+                  child: _buildStatCard('Delivered', '12', AppColors.success),
+                ),
               ],
             ),
 
@@ -80,10 +84,7 @@ class MyBatchesScreen extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             title,
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 12,
-            ),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
           ),
         ],
       ),
@@ -92,7 +93,7 @@ class MyBatchesScreen extends StatelessWidget {
 
   Widget _buildBatchCard(BuildContext context, Map<String, dynamic> batch) {
     Color statusColor = _getStatusColor(batch['status']);
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -120,7 +121,10 @@ class MyBatchesScreen extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: statusColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(20),
@@ -152,10 +156,7 @@ class MyBatchesScreen extends StatelessWidget {
             children: [
               Text(
                 'Posted: ${batch['date']}',
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
               ),
               TextButton(
                 onPressed: () => _showBatchDetails(context, batch),
@@ -173,7 +174,10 @@ class MyBatchesScreen extends StatelessWidget {
                   backgroundColor: AppColors.farmerPrimary,
                   padding: const EdgeInsets.symmetric(vertical: 8),
                 ),
-                child: const Text('Edit Batch', style: TextStyle(color: Colors.white)),
+                child: const Text(
+                  'Edit Batch',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
           ],

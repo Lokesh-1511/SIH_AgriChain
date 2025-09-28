@@ -5,7 +5,8 @@ class SupplierManagementScreen extends StatefulWidget {
   const SupplierManagementScreen({super.key});
 
   @override
-  State<SupplierManagementScreen> createState() => _SupplierManagementScreenState();
+  State<SupplierManagementScreen> createState() =>
+      _SupplierManagementScreenState();
 }
 
 class _SupplierManagementScreenState extends State<SupplierManagementScreen> {
@@ -33,11 +34,25 @@ class _SupplierManagementScreenState extends State<SupplierManagementScreen> {
             margin: const EdgeInsets.all(16),
             child: Row(
               children: [
-                Expanded(child: _buildSummaryCard('Total Suppliers', '24', AppColors.info)),
+                Expanded(
+                  child: _buildSummaryCard(
+                    'Total Suppliers',
+                    '24',
+                    AppColors.info,
+                  ),
+                ),
                 const SizedBox(width: 12),
-                Expanded(child: _buildSummaryCard('Active', '22', AppColors.success)),
+                Expanded(
+                  child: _buildSummaryCard('Active', '22', AppColors.success),
+                ),
                 const SizedBox(width: 12),
-                Expanded(child: _buildSummaryCard('Pending Orders', '7', AppColors.warning)),
+                Expanded(
+                  child: _buildSummaryCard(
+                    'Pending Orders',
+                    '7',
+                    AppColors.warning,
+                  ),
+                ),
               ],
             ),
           ),
@@ -104,10 +119,7 @@ class _SupplierManagementScreenState extends State<SupplierManagementScreen> {
           const SizedBox(height: 4),
           Text(
             title,
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 11,
-            ),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
             textAlign: TextAlign.center,
           ),
         ],
@@ -130,16 +142,21 @@ class _SupplierManagementScreenState extends State<SupplierManagementScreen> {
         selectedColor: AppColors.retailerPrimary.withOpacity(0.2),
         checkmarkColor: AppColors.retailerPrimary,
         labelStyle: TextStyle(
-          color: isSelected ? AppColors.retailerPrimary : AppColors.textSecondary,
+          color: isSelected
+              ? AppColors.retailerPrimary
+              : AppColors.textSecondary,
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
         ),
       ),
     );
   }
 
-  Widget _buildSupplierCard(BuildContext context, Map<String, dynamic> supplier) {
+  Widget _buildSupplierCard(
+    BuildContext context,
+    Map<String, dynamic> supplier,
+  ) {
     Color statusColor = _getStatusColor(supplier['status']);
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -214,54 +231,71 @@ class _SupplierManagementScreenState extends State<SupplierManagementScreen> {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           Row(
             children: [
               Expanded(
-                child: _buildInfoChip('Rating', '${supplier['rating']}★', AppColors.warning),
+                child: _buildInfoChip(
+                  'Rating',
+                  '${supplier['rating']}★',
+                  AppColors.warning,
+                ),
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: _buildInfoChip('Orders', '${supplier['totalOrders']}', AppColors.info),
+                child: _buildInfoChip(
+                  'Orders',
+                  '${supplier['totalOrders']}',
+                  AppColors.info,
+                ),
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: _buildInfoChip('Avg Price', '₹${supplier['avgPrice']}', AppColors.success),
+                child: _buildInfoChip(
+                  'Avg Price',
+                  '₹${supplier['avgPrice']}',
+                  AppColors.success,
+                ),
               ),
             ],
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           // Products Supplied
           Align(
             alignment: Alignment.centerLeft,
             child: Wrap(
               spacing: 4,
               runSpacing: 4,
-              children: (supplier['products'] as List<String>).map((product) => 
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: AppColors.retailerPrimary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    product,
-                    style: TextStyle(
-                      color: AppColors.retailerPrimary,
-                      fontSize: 9,
+              children: (supplier['products'] as List<String>)
+                  .map(
+                    (product) => Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.retailerPrimary.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        product,
+                        style: TextStyle(
+                          color: AppColors.retailerPrimary,
+                          fontSize: 9,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ).toList(),
+                  )
+                  .toList(),
             ),
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           Row(
             children: [
               Expanded(
@@ -311,13 +345,7 @@ class _SupplierManagementScreenState extends State<SupplierManagementScreen> {
               fontSize: 14,
             ),
           ),
-          Text(
-            label,
-            style: TextStyle(
-              color: color,
-              fontSize: 10,
-            ),
-          ),
+          Text(label, style: TextStyle(color: color, fontSize: 10)),
         ],
       ),
     );
@@ -340,7 +368,9 @@ class _SupplierManagementScreenState extends State<SupplierManagementScreen> {
     if (_selectedCategory == 'All') {
       return _suppliers;
     }
-    return _suppliers.where((supplier) => supplier['category'] == _selectedCategory).toList();
+    return _suppliers
+        .where((supplier) => supplier['category'] == _selectedCategory)
+        .toList();
   }
 
   void _addNewSupplier(BuildContext context) {
@@ -348,7 +378,9 @@ class _SupplierManagementScreenState extends State<SupplierManagementScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Add New Supplier'),
-        content: const Text('Supplier registration feature will be available soon!'),
+        content: const Text(
+          'Supplier registration feature will be available soon!',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

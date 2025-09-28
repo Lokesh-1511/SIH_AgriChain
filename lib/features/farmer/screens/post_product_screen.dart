@@ -13,7 +13,7 @@ class _PostProductScreenState extends State<PostProductScreen> {
   final _nameController = TextEditingController();
   final _quantityController = TextEditingController();
   final _priceController = TextEditingController();
-  
+
   String _selectedUnit = 'kg';
   String _selectedCategory = 'Vegetables';
 
@@ -26,7 +26,10 @@ class _PostProductScreenState extends State<PostProductScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.farmerPrimary,
-        title: const Text('Post Product', style: TextStyle(color: Colors.white)),
+        title: const Text(
+          'Post Product',
+          style: TextStyle(color: Colors.white),
+        ),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
@@ -42,16 +45,25 @@ class _PostProductScreenState extends State<PostProductScreen> {
                 decoration: BoxDecoration(
                   color: AppColors.farmerPrimary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.farmerPrimary.withOpacity(0.3)),
+                  border: Border.all(
+                    color: AppColors.farmerPrimary.withOpacity(0.3),
+                  ),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.camera_alt, size: 48, color: AppColors.farmerPrimary),
+                    Icon(
+                      Icons.camera_alt,
+                      size: 48,
+                      color: AppColors.farmerPrimary,
+                    ),
                     const SizedBox(height: 12),
                     Text(
                       'Upload Product Image',
-                      style: TextStyle(color: AppColors.farmerPrimary, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        color: AppColors.farmerPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     ElevatedButton(
@@ -59,8 +71,13 @@ class _PostProductScreenState extends State<PostProductScreen> {
                         // Handle image upload
                         _showImageSourceDialog();
                       },
-                      style: ElevatedButton.styleFrom(backgroundColor: AppColors.farmerPrimary),
-                      child: const Text('Choose Image', style: TextStyle(color: Colors.white)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.farmerPrimary,
+                      ),
+                      child: const Text(
+                        'Choose Image',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ],
                 ),
@@ -74,10 +91,16 @@ class _PostProductScreenState extends State<PostProductScreen> {
                 decoration: InputDecoration(
                   labelText: 'Product Name',
                   hintText: 'e.g., Fresh Tomatoes',
-                  prefixIcon: Icon(Icons.agriculture, color: AppColors.farmerPrimary),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  prefixIcon: Icon(
+                    Icons.agriculture,
+                    color: AppColors.farmerPrimary,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-                validator: (value) => value?.isEmpty == true ? 'Please enter product name' : null,
+                validator: (value) =>
+                    value?.isEmpty == true ? 'Please enter product name' : null,
               ),
 
               const SizedBox(height: 16),
@@ -87,13 +110,24 @@ class _PostProductScreenState extends State<PostProductScreen> {
                 value: _selectedCategory,
                 decoration: InputDecoration(
                   labelText: 'Category',
-                  prefixIcon: Icon(Icons.category, color: AppColors.farmerPrimary),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  prefixIcon: Icon(
+                    Icons.category,
+                    color: AppColors.farmerPrimary,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-                items: _categories.map((category) => 
-                  DropdownMenuItem(value: category, child: Text(category))
-                ).toList(),
-                onChanged: (value) => setState(() => _selectedCategory = value!),
+                items: _categories
+                    .map(
+                      (category) => DropdownMenuItem(
+                        value: category,
+                        child: Text(category),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) =>
+                    setState(() => _selectedCategory = value!),
               ),
 
               const SizedBox(height: 16),
@@ -108,10 +142,16 @@ class _PostProductScreenState extends State<PostProductScreen> {
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         labelText: 'Quantity',
-                        prefixIcon: Icon(Icons.scale, color: AppColors.farmerPrimary),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        prefixIcon: Icon(
+                          Icons.scale,
+                          color: AppColors.farmerPrimary,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                      validator: (value) => value?.isEmpty == true ? 'Enter quantity' : null,
+                      validator: (value) =>
+                          value?.isEmpty == true ? 'Enter quantity' : null,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -120,12 +160,20 @@ class _PostProductScreenState extends State<PostProductScreen> {
                       value: _selectedUnit,
                       decoration: InputDecoration(
                         labelText: 'Unit',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                      items: _units.map((unit) => 
-                        DropdownMenuItem(value: unit, child: Text(unit))
-                      ).toList(),
-                      onChanged: (value) => setState(() => _selectedUnit = value!),
+                      items: _units
+                          .map(
+                            (unit) => DropdownMenuItem(
+                              value: unit,
+                              child: Text(unit),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) =>
+                          setState(() => _selectedUnit = value!),
                     ),
                   ),
                 ],
@@ -169,9 +217,15 @@ class _PostProductScreenState extends State<PostProductScreen> {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.info,
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
                       ),
-                      child: const Text('Use AI Price', style: TextStyle(color: Colors.white)),
+                      child: const Text(
+                        'Use AI Price',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ],
                 ),
@@ -185,10 +239,16 @@ class _PostProductScreenState extends State<PostProductScreen> {
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   labelText: 'Base Price (₹ per $_selectedUnit)',
-                  prefixIcon: Icon(Icons.currency_rupee, color: AppColors.farmerPrimary),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  prefixIcon: Icon(
+                    Icons.currency_rupee,
+                    color: AppColors.farmerPrimary,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-                validator: (value) => value?.isEmpty == true ? 'Enter base price' : null,
+                validator: (value) =>
+                    value?.isEmpty == true ? 'Enter base price' : null,
               ),
 
               const SizedBox(height: 24),
@@ -216,7 +276,9 @@ class _PostProductScreenState extends State<PostProductScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.farmerPrimary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 child: const Text(
                   'Post Product to Blockchain',
@@ -297,12 +359,14 @@ class _PostProductScreenState extends State<PostProductScreen> {
       // Simulate blockchain posting
       Future.delayed(const Duration(seconds: 3), () {
         Navigator.pop(context); // Close loading
-        
+
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
             title: const Text('Success!'),
-            content: const Text('Your product has been posted to the blockchain successfully.'),
+            content: const Text(
+              'Your product has been posted to the blockchain successfully.',
+            ),
             actions: [
               TextButton(
                 onPressed: () {

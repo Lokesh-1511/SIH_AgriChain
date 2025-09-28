@@ -5,11 +5,7 @@ class ProductCard extends StatelessWidget {
   final Map<String, dynamic> product;
   final VoidCallback onTap;
 
-  const ProductCard({
-    super.key,
-    required this.product,
-    required this.onTap,
-  });
+  const ProductCard({super.key, required this.product, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -91,13 +87,14 @@ class ProductCard extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             // Product Details
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+            Expanded( // Added Expanded to prevent overflow
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                   // Product name
                   Text(
                     product['name'],
@@ -109,9 +106,9 @@ class ProductCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  
+
                   const SizedBox(height: 4),
-                  
+
                   // Organic badge
                   if (product['organic'] == true)
                     Container(
@@ -132,17 +129,13 @@ class ProductCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                  
+
                   const SizedBox(height: 6),
-                  
+
                   // Rating and reviews
                   Row(
                     children: [
-                      Icon(
-                        Icons.star,
-                        color: AppColors.warning,
-                        size: 12,
-                      ),
+                      Icon(Icons.star, color: AppColors.warning, size: 12),
                       const SizedBox(width: 2),
                       Text(
                         '${product['rating']}',
@@ -162,9 +155,9 @@ class ProductCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 8),
-                  
+
                   // Price
                   Row(
                     children: [
@@ -191,9 +184,11 @@ class ProductCard extends StatelessWidget {
                         ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 8),
-                  
+
+                  const Spacer(), // Push button to bottom
+
                   // Add to cart button
                   SizedBox(
                     width: double.infinity,
@@ -227,6 +222,7 @@ class ProductCard extends StatelessWidget {
                     ),
                   ),
                 ],
+                ),
               ),
             ),
           ],

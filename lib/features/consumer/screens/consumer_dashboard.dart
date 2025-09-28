@@ -26,7 +26,7 @@ class ConsumerDashboard extends StatefulWidget {
 class _ConsumerDashboardState extends State<ConsumerDashboard> {
   int _currentIndex = 0;
   String _selectedCategory = 'All';
-  int _cartItemCount = 3;
+  final int _cartItemCount = 3;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +39,8 @@ class _ConsumerDashboardState extends State<ConsumerDashboard> {
             children: [
               ConsumerHomeTab(
                 selectedCategory: _selectedCategory,
-                onCategoryChanged: (category) => setState(() => _selectedCategory = category),
+                onCategoryChanged: (category) =>
+                    setState(() => _selectedCategory = category),
               ),
               SearchScreen(),
               ShoppingCartScreen(),
@@ -58,10 +59,7 @@ class _ConsumerDashboardState extends State<ConsumerDashboard> {
         backgroundColor: Colors.white,
         elevation: 8,
         items: [
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
+          const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           const BottomNavigationBarItem(
             icon: Icon(Icons.search),
             label: 'Search',
@@ -131,7 +129,7 @@ class _ConsumerDashboardState extends State<ConsumerDashboard> {
       actions: [
         IconButton(
           onPressed: () => Navigator.push(
-            context, 
+            context,
             MaterialPageRoute(builder: (_) => const WishlistScreen()),
           ),
           icon: Stack(
@@ -294,32 +292,30 @@ class ConsumerHomeTab extends StatelessWidget {
                       const SizedBox(height: 8),
                       const Text(
                         'Get up to 30% off on fresh fruits & vegetables',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                        ),
+                        style: TextStyle(color: Colors.white, fontSize: 14),
                       ),
                       const SizedBox(height: 12),
                       ElevatedButton(
                         onPressed: () => Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const PriceComparisonScreen()),
+                          MaterialPageRoute(
+                            builder: (_) => const PriceComparisonScreen(),
+                          ),
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
                           foregroundColor: AppColors.consumerPrimary,
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                         ),
                         child: const Text('Shop Now'),
                       ),
                     ],
                   ),
                 ),
-                const Icon(
-                  Icons.local_offer,
-                  color: Colors.white,
-                  size: 64,
-                ),
+                const Icon(Icons.local_offer, color: Colors.white, size: 64),
               ],
             ),
           ),
@@ -329,11 +325,29 @@ class ConsumerHomeTab extends StatelessWidget {
           // Quick Actions
           Row(
             children: [
-              Expanded(child: _buildQuickAction('Price Compare', Icons.compare_arrows, AppColors.info)),
+              Expanded(
+                child: _buildQuickAction(
+                  'Price Compare',
+                  Icons.compare_arrows,
+                  AppColors.info,
+                ),
+              ),
               const SizedBox(width: 12),
-              Expanded(child: _buildQuickAction('Best Deals', Icons.local_offer, AppColors.success)),
+              Expanded(
+                child: _buildQuickAction(
+                  'Best Deals',
+                  Icons.local_offer,
+                  AppColors.success,
+                ),
+              ),
               const SizedBox(width: 12),
-              Expanded(child: _buildQuickAction('Fresh Today', Icons.schedule, AppColors.warning)),
+              Expanded(
+                child: _buildQuickAction(
+                  'Fresh Today',
+                  Icons.schedule,
+                  AppColors.warning,
+                ),
+              ),
             ],
           ),
 
@@ -404,7 +418,7 @@ class ConsumerHomeTab extends StatelessWidget {
               ),
               TextButton(
                 onPressed: () => Navigator.push(
-                  context, 
+                  context,
                   MaterialPageRoute(builder: (_) => const SearchScreen()),
                 ),
                 child: const Text('View All'),
@@ -422,7 +436,7 @@ class ConsumerHomeTab extends StatelessWidget {
               crossAxisCount: 2,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
-              childAspectRatio: 0.75,
+              childAspectRatio: 0.95, // Increased further from 0.85 to prevent overflow
             ),
             itemCount: _getFilteredProducts().length,
             itemBuilder: (context, index) {
@@ -486,7 +500,9 @@ class ConsumerHomeTab extends StatelessWidget {
     if (selectedCategory == 'All') {
       return _products;
     }
-    return _products.where((product) => product['category'] == selectedCategory).toList();
+    return _products
+        .where((product) => product['category'] == selectedCategory)
+        .toList();
   }
 
   static final List<Map<String, dynamic>> _products = [

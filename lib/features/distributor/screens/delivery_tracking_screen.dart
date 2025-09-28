@@ -12,7 +12,7 @@ class DeliveryTrackingScreen extends StatefulWidget {
 class _DeliveryTrackingScreenState extends State<DeliveryTrackingScreen> {
   String _selectedFilter = 'All';
   Timer? _locationTimer;
-  
+
   @override
   void initState() {
     super.initState();
@@ -75,11 +75,29 @@ class _DeliveryTrackingScreenState extends State<DeliveryTrackingScreen> {
             ),
             child: Row(
               children: [
-                Expanded(child: _buildStatusItem('Active', '8', Icons.local_shipping)),
-                Container(width: 1, height: 40, color: Colors.white.withOpacity(0.3)),
-                Expanded(child: _buildStatusItem('Delivered', '24', Icons.check_circle)),
-                Container(width: 1, height: 40, color: Colors.white.withOpacity(0.3)),
-                Expanded(child: _buildStatusItem('Pending', '3', Icons.schedule)),
+                Expanded(
+                  child: _buildStatusItem('Active', '8', Icons.local_shipping),
+                ),
+                Container(
+                  width: 1,
+                  height: 40,
+                  color: Colors.white.withOpacity(0.3),
+                ),
+                Expanded(
+                  child: _buildStatusItem(
+                    'Delivered',
+                    '24',
+                    Icons.check_circle,
+                  ),
+                ),
+                Container(
+                  width: 1,
+                  height: 40,
+                  color: Colors.white.withOpacity(0.3),
+                ),
+                Expanded(
+                  child: _buildStatusItem('Pending', '3', Icons.schedule),
+                ),
               ],
             ),
           ),
@@ -138,10 +156,7 @@ class _DeliveryTrackingScreenState extends State<DeliveryTrackingScreen> {
         ),
         Text(
           label,
-          style: TextStyle(
-            color: Colors.white.withOpacity(0.9),
-            fontSize: 12,
-          ),
+          style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 12),
         ),
       ],
     );
@@ -162,17 +177,22 @@ class _DeliveryTrackingScreenState extends State<DeliveryTrackingScreen> {
         selectedColor: AppColors.distributorPrimary.withOpacity(0.2),
         checkmarkColor: AppColors.distributorPrimary,
         labelStyle: TextStyle(
-          color: isSelected ? AppColors.distributorPrimary : AppColors.textSecondary,
+          color: isSelected
+              ? AppColors.distributorPrimary
+              : AppColors.textSecondary,
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
         ),
       ),
     );
   }
 
-  Widget _buildDeliveryCard(BuildContext context, Map<String, dynamic> delivery) {
+  Widget _buildDeliveryCard(
+    BuildContext context,
+    Map<String, dynamic> delivery,
+  ) {
     Color statusColor = _getStatusColor(delivery['status']);
     double progress = _getDeliveryProgress(delivery['status']);
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -219,7 +239,10 @@ class _DeliveryTrackingScreenState extends State<DeliveryTrackingScreen> {
                         ),
                         const SizedBox(width: 8),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
                             color: statusColor.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(10),
@@ -466,7 +489,9 @@ class _DeliveryTrackingScreenState extends State<DeliveryTrackingScreen> {
     if (_selectedFilter == 'All') {
       return _deliveries;
     }
-    return _deliveries.where((delivery) => delivery['status'] == _selectedFilter).toList();
+    return _deliveries
+        .where((delivery) => delivery['status'] == _selectedFilter)
+        .toList();
   }
 
   void _showMapView(BuildContext context) {
@@ -504,7 +529,10 @@ class _DeliveryTrackingScreenState extends State<DeliveryTrackingScreen> {
     );
   }
 
-  void _viewDeliveryDetails(BuildContext context, Map<String, dynamic> delivery) {
+  void _viewDeliveryDetails(
+    BuildContext context,
+    Map<String, dynamic> delivery,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -521,14 +549,22 @@ class _DeliveryTrackingScreenState extends State<DeliveryTrackingScreen> {
               Text('Distance: ${delivery['distance']} km'),
               Text('ETA: ${delivery['eta']}'),
               const SizedBox(height: 8),
-              const Text('Route:', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text(
+                'Route:',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               Text('From: ${delivery['origin']}'),
               Text('To: ${delivery['destination']}'),
               if (delivery['currentLocation'] != null)
                 Text('Current: ${delivery['currentLocation']}'),
               const SizedBox(height: 8),
-              const Text('Items:', style: TextStyle(fontWeight: FontWeight.bold)),
-              ...delivery['items'].map<Widget>((item) => Text('• $item')).toList(),
+              const Text(
+                'Items:',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              ...delivery['items']
+                  .map<Widget>((item) => Text('• $item'))
+                  .toList(),
             ],
           ),
         ),
@@ -571,7 +607,9 @@ class _DeliveryTrackingScreenState extends State<DeliveryTrackingScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            Text('Current Location: ${delivery['currentLocation'] ?? 'Unknown'}'),
+            Text(
+              'Current Location: ${delivery['currentLocation'] ?? 'Unknown'}',
+            ),
             Text('Last Update: ${delivery['lastUpdate']}'),
             Text('Speed: 45 km/h'),
             Text('Next Checkpoint: 2.5 km'),
@@ -592,7 +630,9 @@ class _DeliveryTrackingScreenState extends State<DeliveryTrackingScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Create New Delivery'),
-        content: const Text('New delivery creation feature will be available soon!'),
+        content: const Text(
+          'New delivery creation feature will be available soon!',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

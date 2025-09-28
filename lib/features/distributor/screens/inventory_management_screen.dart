@@ -5,7 +5,8 @@ class InventoryManagementScreen extends StatefulWidget {
   const InventoryManagementScreen({super.key});
 
   @override
-  State<InventoryManagementScreen> createState() => _InventoryManagementScreenState();
+  State<InventoryManagementScreen> createState() =>
+      _InventoryManagementScreenState();
 }
 
 class _InventoryManagementScreenState extends State<InventoryManagementScreen> {
@@ -58,15 +59,31 @@ class _InventoryManagementScreenState extends State<InventoryManagementScreen> {
             child: Row(
               children: [
                 Expanded(
-                  child: _buildSummaryItem('Total Items', '143', Icons.inventory),
+                  child: _buildSummaryItem(
+                    'Total Items',
+                    '143',
+                    Icons.inventory,
+                  ),
                 ),
-                Container(width: 1, height: 40, color: Colors.white.withOpacity(0.3)),
+                Container(
+                  width: 1,
+                  height: 40,
+                  color: Colors.white.withOpacity(0.3),
+                ),
                 Expanded(
                   child: _buildSummaryItem('Low Stock', '7', Icons.warning),
                 ),
-                Container(width: 1, height: 40, color: Colors.white.withOpacity(0.3)),
+                Container(
+                  width: 1,
+                  height: 40,
+                  color: Colors.white.withOpacity(0.3),
+                ),
                 Expanded(
-                  child: _buildSummaryItem('Value', '₹2.4L', Icons.currency_rupee),
+                  child: _buildSummaryItem(
+                    'Value',
+                    '₹2.4L',
+                    Icons.currency_rupee,
+                  ),
                 ),
               ],
             ),
@@ -78,15 +95,27 @@ class _InventoryManagementScreenState extends State<InventoryManagementScreen> {
             child: Row(
               children: [
                 Expanded(
-                  child: _buildQuickAction('Stock Alert', Icons.notifications, AppColors.warning),
+                  child: _buildQuickAction(
+                    'Stock Alert',
+                    Icons.notifications,
+                    AppColors.warning,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: _buildQuickAction('Generate Report', Icons.description, AppColors.info),
+                  child: _buildQuickAction(
+                    'Generate Report',
+                    Icons.description,
+                    AppColors.info,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: _buildQuickAction('Forecast', Icons.trending_up, AppColors.success),
+                  child: _buildQuickAction(
+                    'Forecast',
+                    Icons.trending_up,
+                    AppColors.success,
+                  ),
                 ),
               ],
             ),
@@ -144,10 +173,7 @@ class _InventoryManagementScreenState extends State<InventoryManagementScreen> {
         ),
         Text(
           title,
-          style: TextStyle(
-            color: Colors.white.withOpacity(0.9),
-            fontSize: 12,
-          ),
+          style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 12),
         ),
       ],
     );
@@ -175,10 +201,7 @@ class _InventoryManagementScreenState extends State<InventoryManagementScreen> {
             const SizedBox(height: 4),
             Text(
               title,
-              style: TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: 10,
-              ),
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 10),
               textAlign: TextAlign.center,
             ),
           ],
@@ -202,7 +225,9 @@ class _InventoryManagementScreenState extends State<InventoryManagementScreen> {
         selectedColor: AppColors.distributorPrimary.withOpacity(0.2),
         checkmarkColor: AppColors.distributorPrimary,
         labelStyle: TextStyle(
-          color: isSelected ? AppColors.distributorPrimary : AppColors.textSecondary,
+          color: isSelected
+              ? AppColors.distributorPrimary
+              : AppColors.textSecondary,
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
         ),
       ),
@@ -211,7 +236,7 @@ class _InventoryManagementScreenState extends State<InventoryManagementScreen> {
 
   Widget _buildInventoryItem(BuildContext context, Map<String, dynamic> item) {
     Color stockColor = _getStockColor(item['stock'], item['minStock']);
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -293,7 +318,10 @@ class _InventoryManagementScreenState extends State<InventoryManagementScreen> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: stockColor.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
@@ -331,7 +359,10 @@ class _InventoryManagementScreenState extends State<InventoryManagementScreen> {
                   ),
                   child: FractionallySizedBox(
                     alignment: Alignment.centerLeft,
-                    widthFactor: (item['stock'] / (item['maxStock'] ?? item['stock'] * 2)).clamp(0.0, 1.0),
+                    widthFactor:
+                        (item['stock'] /
+                                (item['maxStock'] ?? item['stock'] * 2))
+                            .clamp(0.0, 1.0),
                     child: Container(
                       decoration: BoxDecoration(
                         color: stockColor,
@@ -344,10 +375,7 @@ class _InventoryManagementScreenState extends State<InventoryManagementScreen> {
               const SizedBox(width: 12),
               Text(
                 'Last Updated: ${item['lastUpdated']}',
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 10,
-                ),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 10),
               ),
             ],
           ),
@@ -408,9 +436,11 @@ class _InventoryManagementScreenState extends State<InventoryManagementScreen> {
   }
 
   List<Map<String, dynamic>> _getFilteredInventory() {
-    List<Map<String, dynamic>> filtered = _selectedCategory == 'All' 
+    List<Map<String, dynamic>> filtered = _selectedCategory == 'All'
         ? List.from(_inventoryItems)
-        : _inventoryItems.where((item) => item['category'] == _selectedCategory).toList();
+        : _inventoryItems
+              .where((item) => item['category'] == _selectedCategory)
+              .toList();
 
     // Apply sorting
     filtered.sort((a, b) {
@@ -445,30 +475,43 @@ class _InventoryManagementScreenState extends State<InventoryManagementScreen> {
           children: [
             Text(
               'Sort & Filter',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             const Align(
               alignment: Alignment.centerLeft,
-              child: Text('Sort By:', style: TextStyle(fontWeight: FontWeight.w600)),
+              child: Text(
+                'Sort By:',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
             ),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
-              children: [
-                'Name A-Z', 'Name Z-A', 'Stock Low-High', 'Stock High-Low', 'Price Low-High', 'Price High-Low'
-              ].map((sort) => FilterChip(
-                label: Text(sort),
-                selected: _selectedSort == sort,
-                onSelected: (selected) {
-                  setState(() {
-                    _selectedSort = sort;
-                  });
-                  Navigator.pop(context);
-                },
-              )).toList(),
+              children:
+                  [
+                        'Name A-Z',
+                        'Name Z-A',
+                        'Stock Low-High',
+                        'Stock High-Low',
+                        'Price Low-High',
+                        'Price High-Low',
+                      ]
+                      .map(
+                        (sort) => FilterChip(
+                          label: Text(sort),
+                          selected: _selectedSort == sort,
+                          onSelected: (selected) {
+                            setState(() {
+                              _selectedSort = sort;
+                            });
+                            Navigator.pop(context);
+                          },
+                        ),
+                      )
+                      .toList(),
             ),
           ],
         ),
@@ -493,9 +536,9 @@ class _InventoryManagementScreenState extends State<InventoryManagementScreen> {
   }
 
   void _handleQuickAction(String action) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('$action feature coming soon!')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('$action feature coming soon!')));
   }
 
   void _editStock(BuildContext context, Map<String, dynamic> item) {
@@ -553,7 +596,9 @@ class _InventoryManagementScreenState extends State<InventoryManagementScreen> {
             Text('Minimum Required: ${item['minStock']} kg'),
             const SizedBox(height: 16),
             Text('Suggested Quantity: $suggestedQuantity kg'),
-            Text('Estimated Cost: ₹${(suggestedQuantity * item['price']).toStringAsFixed(0)}'),
+            Text(
+              'Estimated Cost: ₹${(suggestedQuantity * item['price']).toStringAsFixed(0)}',
+            ),
           ],
         ),
         actions: [
@@ -565,7 +610,9 @@ class _InventoryManagementScreenState extends State<InventoryManagementScreen> {
             onPressed: () {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Reorder request sent to supplier!')),
+                const SnackBar(
+                  content: Text('Reorder request sent to supplier!'),
+                ),
               );
             },
             child: const Text('Send Reorder'),

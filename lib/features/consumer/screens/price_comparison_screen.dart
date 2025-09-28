@@ -40,22 +40,44 @@ class _PriceComparisonScreenState extends State<PriceComparisonScreen> {
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<String>(
                         value: _selectedLocation,
-                        onChanged: (value) => setState(() => _selectedLocation = value!),
+                        onChanged: (value) =>
+                            setState(() => _selectedLocation = value!),
                         dropdownColor: Colors.white,
-                        style: const TextStyle(color: Colors.white),
-                        icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white),
-                        items: ['Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Kolkata']
-                            .map((location) => DropdownMenuItem(
-                                  value: location,
-                                  child: Row(
-                                    children: [
-                                      const Icon(Icons.location_on, color: Colors.black, size: 16),
-                                      const SizedBox(width: 8),
-                                      Text(location, style: const TextStyle(color: Colors.black)),
-                                    ],
+                        style: const TextStyle(color: Colors.black),
+                        icon: const Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Colors.white,
+                        ),
+                        items:
+                            [
+                                  'Mumbai',
+                                  'Delhi',
+                                  'Bangalore',
+                                  'Chennai',
+                                  'Kolkata',
+                                ]
+                                .map(
+                                  (location) => DropdownMenuItem(
+                                    value: location,
+                                    child: Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.location_on,
+                                          color: Colors.black,
+                                          size: 16,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          location,
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ))
-                            .toList(),
+                                )
+                                .toList(),
                       ),
                     ),
                   ),
@@ -73,14 +95,30 @@ class _PriceComparisonScreenState extends State<PriceComparisonScreen> {
                         value: _sortBy,
                         onChanged: (value) => setState(() => _sortBy = value!),
                         dropdownColor: Colors.white,
-                        style: const TextStyle(color: Colors.white),
-                        icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white),
-                        items: ['Price: Low to High', 'Price: High to Low', 'Distance', 'Rating']
-                            .map((sort) => DropdownMenuItem(
-                                  value: sort,
-                                  child: Text(sort, style: const TextStyle(color: Colors.black)),
-                                ))
-                            .toList(),
+                        style: const TextStyle(color: Colors.black),
+                        icon: const Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Colors.white,
+                        ),
+                        items:
+                            [
+                                  'Price: Low to High',
+                                  'Price: High to Low',
+                                  'Distance',
+                                  'Rating',
+                                ]
+                                .map(
+                                  (sort) => DropdownMenuItem(
+                                    value: sort,
+                                    child: Text(
+                                      sort,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
                       ),
                     ),
                   ),
@@ -119,10 +157,7 @@ class _PriceComparisonScreenState extends State<PriceComparisonScreen> {
                       ),
                       const Text(
                         'Compare prices from multiple sellers',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                        ),
+                        style: TextStyle(color: Colors.white, fontSize: 14),
                       ),
                     ],
                   ),
@@ -200,7 +235,10 @@ class _PriceComparisonScreenState extends State<PriceComparisonScreen> {
                       ),
                       const SizedBox(height: 4),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.consumerPrimary.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(4),
@@ -219,7 +257,10 @@ class _PriceComparisonScreenState extends State<PriceComparisonScreen> {
                 ),
                 // Best Price Badge
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.success,
                     borderRadius: BorderRadius.circular(20),
@@ -244,13 +285,17 @@ class _PriceComparisonScreenState extends State<PriceComparisonScreen> {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: sellers.length,
-            separatorBuilder: (context, index) => const Divider(height: 1, indent: 16, endIndent: 16),
+            separatorBuilder: (context, index) =>
+                const Divider(height: 1, indent: 16, endIndent: 16),
             itemBuilder: (context, index) {
               final seller = sellers[index];
               final isLowestPrice = index == 0;
 
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 child: Row(
                   children: [
                     // Seller Info
@@ -324,7 +369,9 @@ class _PriceComparisonScreenState extends State<PriceComparisonScreen> {
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: isLowestPrice ? AppColors.success : AppColors.consumerPrimary,
+                                color: isLowestPrice
+                                    ? AppColors.success
+                                    : AppColors.consumerPrimary,
                               ),
                             ),
                             if (seller['originalPrice'] != null) ...[
@@ -341,7 +388,10 @@ class _PriceComparisonScreenState extends State<PriceComparisonScreen> {
                             if (isLowestPrice)
                               Container(
                                 margin: const EdgeInsets.only(left: 8),
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
                                 decoration: BoxDecoration(
                                   color: AppColors.success,
                                   borderRadius: BorderRadius.circular(4),
@@ -364,8 +414,13 @@ class _PriceComparisonScreenState extends State<PriceComparisonScreen> {
                             OutlinedButton(
                               onPressed: () => _viewSellerProfile(seller),
                               style: OutlinedButton.styleFrom(
-                                side: BorderSide(color: AppColors.consumerPrimary),
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                side: BorderSide(
+                                  color: AppColors.consumerPrimary,
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 4,
+                                ),
                                 minimumSize: const Size(60, 28),
                               ),
                               child: Text(
@@ -382,7 +437,10 @@ class _PriceComparisonScreenState extends State<PriceComparisonScreen> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.consumerPrimary,
                                 foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 4,
+                                ),
                                 minimumSize: const Size(60, 28),
                               ),
                               child: const Text(
@@ -542,17 +600,11 @@ class _PriceComparisonScreenState extends State<PriceComparisonScreen> {
                       const SizedBox(height: 4),
                       Row(
                         children: [
-                          Icon(
-                            Icons.star,
-                            color: AppColors.warning,
-                            size: 16,
-                          ),
+                          Icon(Icons.star, color: AppColors.warning, size: 16),
                           const SizedBox(width: 4),
                           Text(
                             '${seller['rating']} rating',
-                            style: TextStyle(
-                              color: AppColors.textSecondary,
-                            ),
+                            style: TextStyle(color: AppColors.textSecondary),
                           ),
                         ],
                       ),
@@ -576,7 +628,9 @@ class _PriceComparisonScreenState extends State<PriceComparisonScreen> {
                     onPressed: () {
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Visiting ${seller['name']} store...')),
+                        SnackBar(
+                          content: Text('Visiting ${seller['name']} store...'),
+                        ),
                       );
                     },
                     style: ElevatedButton.styleFrom(

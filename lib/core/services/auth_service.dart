@@ -9,7 +9,7 @@ class AuthService {
     _instance ??= AuthService._internal();
     return _instance!;
   }
-  
+
   AuthService._internal();
 
   SharedPreferences? _prefs;
@@ -21,20 +21,20 @@ class AuthService {
   // Mock authentication
   Future<User?> login(String email, String password, String role) async {
     await _initPrefs();
-    
+
     // Mock login logic - in real app, this would call an API
     if (email.isNotEmpty && password.isNotEmpty) {
       final mockUser = _createMockUser(email, role);
       await _saveUserSession(mockUser);
       return mockUser;
     }
-    
+
     throw Exception('Invalid credentials');
   }
 
   Future<User?> register(Map<String, dynamic> userData) async {
     await _initPrefs();
-    
+
     // Mock registration logic
     final user = _createUserFromData(userData);
     await _saveUserSession(user);
@@ -75,7 +75,7 @@ class AuthService {
   User _createMockUser(String email, String role) {
     final now = DateTime.now();
     final id = 'user_${DateTime.now().millisecondsSinceEpoch}';
-    
+
     switch (role) {
       case AppConstants.roleFarmer:
         return Farmer(
@@ -90,7 +90,7 @@ class AuthService {
           landSize: 5.0,
           agriScore: 85.0,
         );
-      
+
       case AppConstants.roleDistributor:
         return Distributor(
           id: id,
@@ -104,7 +104,7 @@ class AuthService {
           licenseNumber: 'DL_123456789',
           rating: 4.2,
         );
-      
+
       case AppConstants.roleRetailer:
         return Retailer(
           id: id,
@@ -118,7 +118,7 @@ class AuthService {
           location: 'Market Street, City',
           rating: 4.5,
         );
-      
+
       case AppConstants.roleConsumer:
         return Consumer(
           id: id,
@@ -130,7 +130,7 @@ class AuthService {
           consumerId: 'CSM_$id',
           preferences: ['organic', 'local'],
         );
-      
+
       default:
         throw Exception('Invalid role');
     }
@@ -140,7 +140,7 @@ class AuthService {
     final now = DateTime.now();
     final id = 'user_${DateTime.now().millisecondsSinceEpoch}';
     final role = data['role'] as String;
-    
+
     switch (role) {
       case AppConstants.roleFarmer:
         return Farmer(
@@ -155,7 +155,7 @@ class AuthService {
           landSize: data['landSize'] ?? 0.0,
           agriScore: 75.0, // Starting score
         );
-      
+
       case AppConstants.roleDistributor:
         return Distributor(
           id: id,
@@ -169,7 +169,7 @@ class AuthService {
           licenseNumber: 'LIC_$id',
           rating: 4.0,
         );
-      
+
       case AppConstants.roleRetailer:
         return Retailer(
           id: id,
@@ -183,7 +183,7 @@ class AuthService {
           location: data['address'],
           rating: 4.0,
         );
-      
+
       case AppConstants.roleConsumer:
         return Consumer(
           id: id,
@@ -194,7 +194,7 @@ class AuthService {
           createdAt: now,
           consumerId: 'CSM_$id',
         );
-      
+
       default:
         throw Exception('Invalid role');
     }
@@ -204,9 +204,10 @@ class AuthService {
   Future<bool> verifyAadhaar(String aadhaarNumber) async {
     // Simulate API delay
     await Future.delayed(const Duration(seconds: 2));
-    
+
     // Mock verification - in real app, this would call Aadhaar API
-    return aadhaarNumber.length == 12 && aadhaarNumber.contains(RegExp(r'^[0-9]+$'));
+    return aadhaarNumber.length == 12 &&
+        aadhaarNumber.contains(RegExp(r'^[0-9]+$'));
   }
 
   Future<String> sendOTP(String phone) async {
@@ -222,9 +223,10 @@ class AuthService {
   Future<bool> sendAadhaarOTP(String aadhaarNumber) async {
     // Simulate API delay
     await Future.delayed(const Duration(seconds: 2));
-    
+
     // Mock verification - in real app, this would call Aadhaar API
-    if (aadhaarNumber.length == 12 && aadhaarNumber.contains(RegExp(r'^[0-9]+$'))) {
+    if (aadhaarNumber.length == 12 &&
+        aadhaarNumber.contains(RegExp(r'^[0-9]+$'))) {
       return true; // OTP sent successfully
     }
     throw Exception('Invalid Aadhaar number');
@@ -233,8 +235,51 @@ class AuthService {
   Future<bool> verifyAadhaarOTP(String aadhaarNumber, String otp) async {
     // Simulate API delay
     await Future.delayed(const Duration(seconds: 1));
-    
+
     // Mock verification - in real app, this would verify with Aadhaar API
     return otp == '123456'; // Mock OTP verification
+  }
+
+  // Password Reset Methods
+  Future<bool> sendPasswordResetOTP(String email) async {
+    // Simulate API delay
+    await Future.delayed(const Duration(seconds: 2));
+
+    // Mock password reset OTP sending
+    // In real app, this would:
+    // 1. Check if email exists in database
+    // 2. Generate and send OTP via email
+    // 3. Store OTP temporarily for verification
+
+    if (email.isNotEmpty && email.contains('@')) {
+      return true; // OTP sent successfully
+    }
+    throw Exception('Invalid email address');
+  }
+
+  Future<bool> verifyPasswordResetOTP(String email, String otp) async {
+    // Simulate API delay
+    await Future.delayed(const Duration(seconds: 1));
+
+    // Mock password reset OTP verification
+    // In real app, this would verify the OTP against stored value
+    return otp == '123456'; // Mock OTP verification
+  }
+
+  Future<bool> resetPassword(String email, String newPassword) async {
+    // Simulate API delay
+    await Future.delayed(const Duration(seconds: 2));
+
+    // Mock password reset
+    // In real app, this would:
+    // 1. Validate that OTP was verified for this email
+    // 2. Hash the new password
+    // 3. Update password in database
+    // 4. Invalidate all existing sessions
+
+    if (email.isNotEmpty && newPassword.isNotEmpty && newPassword.length >= 6) {
+      return true; // Password reset successfully
+    }
+    throw Exception('Failed to reset password');
   }
 }

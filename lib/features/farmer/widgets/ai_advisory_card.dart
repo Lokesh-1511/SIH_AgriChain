@@ -48,9 +48,9 @@ class AIAdvisoryCard extends StatelessWidget {
               const Spacer(),
               Text(
                 'Today',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: AppColors.textSecondary),
               ),
             ],
           ),
@@ -112,10 +112,7 @@ class AIAdvisoryCard extends StatelessWidget {
         children: [
           Text(
             label,
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 12,
-            ),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
           ),
           const SizedBox(width: 4),
           Text(

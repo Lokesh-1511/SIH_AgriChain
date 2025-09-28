@@ -8,15 +8,19 @@ class AIService {
     _instance ??= AIService._internal();
     return _instance!;
   }
-  
+
   AIService._internal();
 
   final Random _random = Random();
 
   // Mock AI Price Suggestion
-  Future<double> suggestBasePrice(String productName, double quantity, String location) async {
+  Future<double> suggestBasePrice(
+    String productName,
+    double quantity,
+    String location,
+  ) async {
     await Future.delayed(const Duration(seconds: 1));
-    
+
     // Mock price calculation based on product type and market conditions
     final basePrices = {
       'Rice': 45.0,
@@ -30,45 +34,53 @@ class AIService {
       'Cabbage': 15.0,
       'Spinach': 35.0,
     };
-    
+
     final basePrice = basePrices[productName] ?? 50.0;
-    final marketVariation = (_random.nextDouble() - 0.5) * 10; // ±5 price variation
+    final marketVariation =
+        (_random.nextDouble() - 0.5) * 10; // ±5 price variation
     return basePrice + marketVariation;
   }
 
   // Mock AI Crop Advisory
-  Future<CropAdvisory> getCropAdvisory(String farmerId, String cropType, String location) async {
+  Future<CropAdvisory> getCropAdvisory(
+    String farmerId,
+    String cropType,
+    String location,
+  ) async {
     await Future.delayed(const Duration(seconds: 2));
-    
+
     final weather = WeatherData(
       temperature: 25.0 + (_random.nextDouble() * 10),
       humidity: 60.0 + (_random.nextDouble() * 30),
       rainfall: _random.nextDouble() * 20,
       condition: ['Sunny', 'Cloudy', 'Rainy'][_random.nextInt(3)],
-      forecast: List.generate(7, (index) => 
-        WeatherForecast(
+      forecast: List.generate(
+        7,
+        (index) => WeatherForecast(
           date: DateTime.now().add(Duration(days: index + 1)),
           temperature: 20.0 + (_random.nextDouble() * 15),
           condition: ['Sunny', 'Cloudy', 'Rainy'][_random.nextInt(3)],
           rainfall: _random.nextDouble() * 15,
-        )
+        ),
       ),
     );
 
     final priceTrends = PriceTrends(
       product: cropType,
       currentPrice: 45.0 + (_random.nextDouble() * 20),
-      historical: List.generate(30, (index) =>
-        PricePoint(
+      historical: List.generate(
+        30,
+        (index) => PricePoint(
           date: DateTime.now().subtract(Duration(days: 30 - index)),
           price: 40.0 + (_random.nextDouble() * 25),
-        )
+        ),
       ),
-      forecast: List.generate(30, (index) =>
-        PricePoint(
+      forecast: List.generate(
+        30,
+        (index) => PricePoint(
           date: DateTime.now().add(Duration(days: index + 1)),
           price: 42.0 + (_random.nextDouble() * 28),
-        )
+        ),
       ),
       trend: ['Increasing', 'Stable', 'Decreasing'][_random.nextInt(3)],
     );
@@ -89,11 +101,14 @@ class AIService {
   }
 
   // Mock AI Recommendations
-  Future<List<AIRecommendation>> getRecommendations(String userId, String userRole) async {
+  Future<List<AIRecommendation>> getRecommendations(
+    String userId,
+    String userRole,
+  ) async {
     await Future.delayed(const Duration(seconds: 1));
-    
+
     final recommendations = <AIRecommendation>[];
-    
+
     switch (userRole) {
       case AppConstants.roleFarmer:
         recommendations.addAll(_getFarmerRecommendations(userId));
@@ -108,22 +123,26 @@ class AIService {
         recommendations.addAll(_getConsumerRecommendations(userId));
         break;
     }
-    
+
     return recommendations;
   }
 
   // Mock Chatbot Response
-  Future<ChatMessage> getChatbotResponse(String userId, String message, String? imageUrl) async {
+  Future<ChatMessage> getChatbotResponse(
+    String userId,
+    String message,
+    String? imageUrl,
+  ) async {
     await Future.delayed(const Duration(seconds: 1));
-    
+
     String response;
-    
+
     if (imageUrl != null) {
       response = _generateImageResponse(message);
     } else {
       response = _generateTextResponse(message);
     }
-    
+
     return ChatMessage(
       id: 'msg_${DateTime.now().millisecondsSinceEpoch}',
       userId: userId,
@@ -135,55 +154,63 @@ class AIService {
   }
 
   // Mock AI Cost Prediction for Distributors
-  Future<double> predictDeliveryCost(String origin, String destination, double distance, String vehicleType) async {
+  Future<double> predictDeliveryCost(
+    String origin,
+    String destination,
+    double distance,
+    String vehicleType,
+  ) async {
     await Future.delayed(const Duration(seconds: 1));
-    
-    final baseCostPerKm = {
-      'truck': 8.0,
-      'van': 6.0,
-      'motorcycle': 3.0,
-    };
-    
+
+    final baseCostPerKm = {'truck': 8.0, 'van': 6.0, 'motorcycle': 3.0};
+
     final costPerKm = baseCostPerKm[vehicleType.toLowerCase()] ?? 5.0;
-    final fuelMultiplier = 1.0 + (_random.nextDouble() * 0.2); // Fuel price variation
-    final trafficMultiplier = 1.0 + (_random.nextDouble() * 0.3); // Traffic conditions
-    
+    final fuelMultiplier =
+        1.0 + (_random.nextDouble() * 0.2); // Fuel price variation
+    final trafficMultiplier =
+        1.0 + (_random.nextDouble() * 0.3); // Traffic conditions
+
     return distance * costPerKm * fuelMultiplier * trafficMultiplier;
   }
 
   // Mock AI Margin Suggestion for Retailers
-  Future<double> suggestMargin(String productName, String location, double basePrice) async {
+  Future<double> suggestMargin(
+    String productName,
+    String location,
+    double basePrice,
+  ) async {
     await Future.delayed(const Duration(seconds: 1));
-    
+
     final demandFactor = 0.8 + (_random.nextDouble() * 0.4); // 0.8 to 1.2
     final competitionFactor = 0.9 + (_random.nextDouble() * 0.2); // 0.9 to 1.1
     final seasonalFactor = 0.95 + (_random.nextDouble() * 0.1); // 0.95 to 1.05
-    
-    final suggestedMargin = 0.15 + (demandFactor * competitionFactor * seasonalFactor * 0.1);
+
+    final suggestedMargin =
+        0.15 + (demandFactor * competitionFactor * seasonalFactor * 0.1);
     return suggestedMargin.clamp(0.05, 0.35); // 5% to 35% margin
   }
 
   List<String> _getCropRecommendations(String cropType, WeatherData weather) {
     final recommendations = <String>[];
-    
+
     if (weather.rainfall < 5) {
       recommendations.add('Consider irrigation due to low rainfall forecast');
     }
-    
+
     if (weather.temperature > 35) {
       recommendations.add('Provide shade during peak hours');
     }
-    
+
     if (weather.humidity > 80) {
       recommendations.add('Monitor for fungal diseases');
     }
-    
+
     recommendations.addAll([
       'Apply organic fertilizer for better yield',
       'Regular soil testing recommended',
       'Consider companion planting for natural pest control',
     ]);
-    
+
     return recommendations;
   }
 
@@ -202,7 +229,8 @@ class AIService {
         userId: userId,
         type: 'crop_suggestion',
         title: 'Best Crop for This Season',
-        description: 'Based on weather patterns, consider planting tomatoes this season',
+        description:
+            'Based on weather patterns, consider planting tomatoes this season',
         confidence: 0.85,
         data: {'crop': 'tomato', 'expected_yield': 3.2},
         timestamp: DateTime.now(),
@@ -273,7 +301,7 @@ class AIService {
       'Quality seeds and proper fertilization are key to successful farming.',
       'Monitor weather patterns regularly for optimal planting schedules.',
     ];
-    
+
     return responses[_random.nextInt(responses.length)];
   }
 

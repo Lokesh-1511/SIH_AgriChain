@@ -24,7 +24,10 @@ class InsuranceScreen extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [AppColors.success, AppColors.success.withOpacity(0.8)],
+                  colors: [
+                    AppColors.success,
+                    AppColors.success.withOpacity(0.8),
+                  ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -82,7 +85,11 @@ class InsuranceScreen extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: _buildStatCard('Premium Paid', '₹12,500', AppColors.info),
+                  child: _buildStatCard(
+                    'Premium Paid',
+                    '₹12,500',
+                    AppColors.info,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -108,7 +115,9 @@ class InsuranceScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Insurance Schemes
-            ..._insuranceSchemes.map((scheme) => _buildSchemeCard(context, scheme)).toList(),
+            ..._insuranceSchemes.map(
+              (scheme) => _buildSchemeCard(context, scheme),
+            ),
 
             const SizedBox(height: 24),
 
@@ -217,10 +226,7 @@ class InsuranceScreen extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             title,
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 12,
-            ),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
             textAlign: TextAlign.center,
           ),
         ],
@@ -254,10 +260,7 @@ class InsuranceScreen extends StatelessWidget {
                   color: AppColors.farmerPrimary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
-                  scheme['icon'],
-                  color: AppColors.farmerPrimary,
-                ),
+                child: Icon(scheme['icon'], color: AppColors.farmerPrimary),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -283,7 +286,10 @@ class InsuranceScreen extends StatelessWidget {
               ),
               if (scheme['isActive']) ...[
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.success.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
@@ -311,10 +317,7 @@ class InsuranceScreen extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             scheme['description'],
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 13,
-            ),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
           ),
           if (!scheme['isActive']) ...[
             const SizedBox(height: 12),
@@ -343,10 +346,7 @@ class InsuranceScreen extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(
-            color: AppColors.textSecondary,
-            fontSize: 11,
-          ),
+          style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
         ),
         Text(
           value,
@@ -365,7 +365,9 @@ class InsuranceScreen extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('File Insurance Claim'),
-        content: const Text('To file a new claim, please contact our customer service at 1800-XXX-XXXX or visit the nearest branch with required documents.'),
+        content: const Text(
+          'To file a new claim, please contact our customer service at 1800-XXX-XXXX or visit the nearest branch with required documents.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -381,7 +383,9 @@ class InsuranceScreen extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Apply for ${scheme['name']}'),
-        content: const Text('Would you like to apply for this insurance scheme? You will be redirected to the application form.'),
+        content: const Text(
+          'Would you like to apply for this insurance scheme? You will be redirected to the application form.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -391,7 +395,9 @@ class InsuranceScreen extends StatelessWidget {
             onPressed: () {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Application process will be available soon!')),
+                const SnackBar(
+                  content: Text('Application process will be available soon!'),
+                ),
               );
             },
             child: const Text('Apply'),
@@ -407,7 +413,8 @@ class InsuranceScreen extends StatelessWidget {
       'type': 'Government Scheme',
       'coverage': '₹2,50,000',
       'premium': '₹12,500/year',
-      'description': 'Comprehensive crop insurance covering yield losses due to natural calamities, pests, and diseases.',
+      'description':
+          'Comprehensive crop insurance covering yield losses due to natural calamities, pests, and diseases.',
       'icon': Icons.agriculture,
       'isActive': true,
     },
@@ -416,7 +423,8 @@ class InsuranceScreen extends StatelessWidget {
       'type': 'Private Scheme',
       'coverage': '₹1,50,000',
       'premium': '₹8,000/year',
-      'description': 'Protection against weather-related crop losses based on rainfall, temperature, and humidity data.',
+      'description':
+          'Protection against weather-related crop losses based on rainfall, temperature, and humidity data.',
       'icon': Icons.cloud,
       'isActive': false,
     },
@@ -425,7 +433,8 @@ class InsuranceScreen extends StatelessWidget {
       'type': 'Additional Coverage',
       'coverage': '₹50,000',
       'premium': '₹3,000/year',
-      'description': 'Insurance coverage for cattle, buffaloes, and other livestock against death and permanent disability.',
+      'description':
+          'Insurance coverage for cattle, buffaloes, and other livestock against death and permanent disability.',
       'icon': Icons.pets,
       'isActive': false,
     },

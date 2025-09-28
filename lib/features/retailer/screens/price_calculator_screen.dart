@@ -14,7 +14,7 @@ class _PriceCalculatorScreenState extends State<PriceCalculatorScreen> {
   double _profitMargin = 25.0;
   double _gst = 5.0;
   String _selectedProduct = 'Custom Product';
-  
+
   double _calculatedPrice = 0.0;
   double _totalProfit = 0.0;
   double _gstAmount = 0.0;
@@ -70,10 +70,7 @@ class _PriceCalculatorScreenState extends State<PriceCalculatorScreen> {
                 children: [
                   const Text(
                     'Selling Price',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -127,17 +124,26 @@ class _PriceCalculatorScreenState extends State<PriceCalculatorScreen> {
                 decoration: const InputDecoration(
                   labelText: 'Select Product',
                   border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                 ),
-                items: _productTemplates.keys.map((product) => 
-                  DropdownMenuItem(value: product, child: Text(product))
-                ).toList(),
+                items: _productTemplates.keys
+                    .map(
+                      (product) => DropdownMenuItem(
+                        value: product,
+                        child: Text(product),
+                      ),
+                    )
+                    .toList(),
                 onChanged: (value) {
                   setState(() {
                     _selectedProduct = value!;
                     if (_productTemplates.containsKey(value)) {
                       final template = _productTemplates[value]!;
-                      _costPriceController.text = template['costPrice'].toString();
+                      _costPriceController.text = template['costPrice']
+                          .toString();
                       _profitMargin = template['profitMargin'];
                       _gst = template['gst'];
                     }
@@ -333,17 +339,29 @@ class _PriceCalculatorScreenState extends State<PriceCalculatorScreen> {
               ),
               child: Column(
                 children: [
-                  _buildBreakdownRow('Cost Price', '₹${_costPriceController.text}'),
+                  _buildBreakdownRow(
+                    'Cost Price',
+                    '₹${_costPriceController.text}',
+                  ),
                   const Divider(),
-                  _buildBreakdownRow('Profit (${_profitMargin.toStringAsFixed(1)}%)', 
-                    '₹${_totalProfit.toStringAsFixed(2)}', AppColors.success),
+                  _buildBreakdownRow(
+                    'Profit (${_profitMargin.toStringAsFixed(1)}%)',
+                    '₹${_totalProfit.toStringAsFixed(2)}',
+                    AppColors.success,
+                  ),
                   const Divider(),
-                  _buildBreakdownRow('GST (${_gst.toStringAsFixed(1)}%)', 
-                    '₹${_gstAmount.toStringAsFixed(2)}', AppColors.warning),
+                  _buildBreakdownRow(
+                    'GST (${_gst.toStringAsFixed(1)}%)',
+                    '₹${_gstAmount.toStringAsFixed(2)}',
+                    AppColors.warning,
+                  ),
                   const Divider(thickness: 2),
-                  _buildBreakdownRow('Selling Price', 
-                    '₹${_calculatedPrice.toStringAsFixed(2)}', 
-                    AppColors.retailerPrimary, true),
+                  _buildBreakdownRow(
+                    'Selling Price',
+                    '₹${_calculatedPrice.toStringAsFixed(2)}',
+                    AppColors.retailerPrimary,
+                    true,
+                  ),
                 ],
               ),
             ),
@@ -363,11 +381,21 @@ class _PriceCalculatorScreenState extends State<PriceCalculatorScreen> {
 
             Row(
               children: [
-                Expanded(child: _buildPresetButton('Low Margin', 15.0, AppColors.info)),
+                Expanded(
+                  child: _buildPresetButton('Low Margin', 15.0, AppColors.info),
+                ),
                 const SizedBox(width: 8),
-                Expanded(child: _buildPresetButton('Standard', 25.0, AppColors.success)),
+                Expanded(
+                  child: _buildPresetButton(
+                    'Standard',
+                    25.0,
+                    AppColors.success,
+                  ),
+                ),
                 const SizedBox(width: 8),
-                Expanded(child: _buildPresetButton('Premium', 40.0, AppColors.warning)),
+                Expanded(
+                  child: _buildPresetButton('Premium', 40.0, AppColors.warning),
+                ),
               ],
             ),
 
@@ -407,7 +435,12 @@ class _PriceCalculatorScreenState extends State<PriceCalculatorScreen> {
     );
   }
 
-  Widget _buildBreakdownRow(String label, String value, [Color? color, bool isBold = false]) {
+  Widget _buildBreakdownRow(
+    String label,
+    String value, [
+    Color? color,
+    bool isBold = false,
+  ]) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -453,12 +486,12 @@ class _PriceCalculatorScreenState extends State<PriceCalculatorScreen> {
   void _calculatePrice() {
     if (_costPriceController.text.isNotEmpty) {
       double costPrice = double.tryParse(_costPriceController.text) ?? 0;
-      
+
       _totalProfit = costPrice * (_profitMargin / 100);
       double priceWithProfit = costPrice + _totalProfit;
       _gstAmount = priceWithProfit * (_gst / 100);
       _calculatedPrice = priceWithProfit + _gstAmount;
-      
+
       setState(() {});
     }
   }
@@ -477,9 +510,9 @@ class _PriceCalculatorScreenState extends State<PriceCalculatorScreen> {
   }
 
   void _saveCalculation(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Price calculation saved!')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Price calculation saved!')));
   }
 
   void _updateProductPrice(BuildContext context) {
@@ -489,7 +522,7 @@ class _PriceCalculatorScreenState extends State<PriceCalculatorScreen> {
         builder: (context) => AlertDialog(
           title: const Text('Update Product Price'),
           content: Text(
-            'Update ${_selectedProduct} price to ₹${_calculatedPrice.toStringAsFixed(2)}/kg?'
+            'Update $_selectedProduct price to ₹${_calculatedPrice.toStringAsFixed(2)}/kg?',
           ),
           actions: [
             TextButton(
@@ -500,7 +533,9 @@ class _PriceCalculatorScreenState extends State<PriceCalculatorScreen> {
               onPressed: () {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Product price updated successfully!')),
+                  const SnackBar(
+                    content: Text('Product price updated successfully!'),
+                  ),
                 );
               },
               child: const Text('Update'),

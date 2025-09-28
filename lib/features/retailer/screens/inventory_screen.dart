@@ -12,7 +12,7 @@ class InventoryScreen extends StatefulWidget {
 class _InventoryScreenState extends State<InventoryScreen> {
   String _selectedCategory = 'All';
   String _searchQuery = '';
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void dispose() {
@@ -97,11 +97,25 @@ class _InventoryScreenState extends State<InventoryScreen> {
             ),
             child: Row(
               children: [
-                Expanded(child: _buildStatItem('Total', '247', Icons.inventory)),
-                Container(width: 1, height: 30, color: Colors.white.withOpacity(0.3)),
-                Expanded(child: _buildStatItem('Low Stock', '12', Icons.warning)),
-                Container(width: 1, height: 30, color: Colors.white.withOpacity(0.3)),
-                Expanded(child: _buildStatItem('Value', '₹4.2L', Icons.currency_rupee)),
+                Expanded(
+                  child: _buildStatItem('Total', '247', Icons.inventory),
+                ),
+                Container(
+                  width: 1,
+                  height: 30,
+                  color: Colors.white.withOpacity(0.3),
+                ),
+                Expanded(
+                  child: _buildStatItem('Low Stock', '12', Icons.warning),
+                ),
+                Container(
+                  width: 1,
+                  height: 30,
+                  color: Colors.white.withOpacity(0.3),
+                ),
+                Expanded(
+                  child: _buildStatItem('Value', '₹4.2L', Icons.currency_rupee),
+                ),
               ],
             ),
           ),
@@ -116,7 +130,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                 crossAxisCount: 2,
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
-                childAspectRatio: 0.8,
+                childAspectRatio: 1.0, // Increased further from 0.9 to prevent overflow
               ),
               itemCount: _getFilteredProducts().length,
               itemBuilder: (context, index) {
@@ -155,7 +169,9 @@ class _InventoryScreenState extends State<InventoryScreen> {
         selectedColor: AppColors.retailerPrimary.withOpacity(0.2),
         checkmarkColor: AppColors.retailerPrimary,
         labelStyle: TextStyle(
-          color: isSelected ? AppColors.retailerPrimary : AppColors.textSecondary,
+          color: isSelected
+              ? AppColors.retailerPrimary
+              : AppColors.textSecondary,
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
         ),
       ),
@@ -177,25 +193,27 @@ class _InventoryScreenState extends State<InventoryScreen> {
         ),
         Text(
           label,
-          style: TextStyle(
-            color: Colors.white.withOpacity(0.9),
-            fontSize: 11,
-          ),
+          style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 11),
         ),
       ],
     );
   }
 
   List<Map<String, dynamic>> _getFilteredProducts() {
-    List<Map<String, dynamic>> filtered = _selectedCategory == 'All' 
+    List<Map<String, dynamic>> filtered = _selectedCategory == 'All'
         ? List.from(_products)
-        : _products.where((product) => product['category'] == _selectedCategory).toList();
+        : _products
+              .where((product) => product['category'] == _selectedCategory)
+              .toList();
 
     if (_searchQuery.isNotEmpty) {
-      filtered = filtered.where((product) => 
-        product['name'].toLowerCase().contains(_searchQuery) ||
-        product['category'].toLowerCase().contains(_searchQuery)
-      ).toList();
+      filtered = filtered
+          .where(
+            (product) =>
+                product['name'].toLowerCase().contains(_searchQuery) ||
+                product['category'].toLowerCase().contains(_searchQuery),
+          )
+          .toList();
     }
 
     return filtered;
@@ -282,7 +300,10 @@ class _InventoryScreenState extends State<InventoryScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.retailerPrimary,
                     ),
-                    child: const Text('Edit Stock', style: TextStyle(color: Colors.white)),
+                    child: const Text(
+                      'Edit Stock',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -357,7 +378,9 @@ class _InventoryScreenState extends State<InventoryScreen> {
           children: [
             Text('Supplier: ${product['supplier']}'),
             Text('Suggested Quantity: ${product['minStock'] * 2} kg'),
-            Text('Estimated Cost: ₹${(product['minStock'] * 2 * product['price']).toStringAsFixed(0)}'),
+            Text(
+              'Estimated Cost: ₹${(product['minStock'] * 2 * product['price']).toStringAsFixed(0)}',
+            ),
           ],
         ),
         actions: [

@@ -4,7 +4,7 @@ import '../../../core/models/user_model.dart';
 
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService = AuthService.instance;
-  
+
   User? _currentUser;
   bool _isLoading = false;
   String? _error;
@@ -35,7 +35,7 @@ class AuthProvider extends ChangeNotifier {
   Future<bool> login(String email, String password, String role) async {
     _setLoading(true);
     _setError(null);
-    
+
     try {
       final user = await _authService.login(email, password, role);
       if (user != null) {
@@ -56,7 +56,7 @@ class AuthProvider extends ChangeNotifier {
   Future<bool> register(Map<String, dynamic> userData) async {
     _setLoading(true);
     _setError(null);
-    
+
     try {
       final user = await _authService.register(userData);
       if (user != null) {
@@ -90,7 +90,7 @@ class AuthProvider extends ChangeNotifier {
   Future<bool> verifyAadhaar(String aadhaarNumber) async {
     _setLoading(true);
     _setError(null);
-    
+
     try {
       final isValid = await _authService.verifyAadhaar(aadhaarNumber);
       return isValid;
@@ -105,7 +105,7 @@ class AuthProvider extends ChangeNotifier {
   Future<String?> sendOTP(String phone) async {
     _setLoading(true);
     _setError(null);
-    
+
     try {
       final otp = await _authService.sendOTP(phone);
       return otp;
@@ -120,7 +120,7 @@ class AuthProvider extends ChangeNotifier {
   Future<bool> verifyOTP(String phone, String otp) async {
     _setLoading(true);
     _setError(null);
-    
+
     try {
       final isValid = await _authService.verifyOTP(phone, otp);
       return isValid;
@@ -135,7 +135,7 @@ class AuthProvider extends ChangeNotifier {
   Future<bool> sendAadhaarOTP(String aadhaarNumber) async {
     _setLoading(true);
     _setError(null);
-    
+
     try {
       final success = await _authService.sendAadhaarOTP(aadhaarNumber);
       return success;
@@ -150,12 +150,58 @@ class AuthProvider extends ChangeNotifier {
   Future<bool> verifyAadhaarOTP(String aadhaarNumber, String otp) async {
     _setLoading(true);
     _setError(null);
-    
+
     try {
       final isValid = await _authService.verifyAadhaarOTP(aadhaarNumber, otp);
       return isValid;
     } catch (e) {
       _setError('Aadhaar OTP verification failed: $e');
+      return false;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // Password Reset Methods
+  Future<bool> sendPasswordResetOTP(String email) async {
+    _setLoading(true);
+    _setError(null);
+
+    try {
+      await _authService.sendPasswordResetOTP(email);
+      return true;
+    } catch (e) {
+      _setError('Failed to send password reset OTP: $e');
+      return false;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  Future<bool> verifyPasswordResetOTP(String email, String otp) async {
+    _setLoading(true);
+    _setError(null);
+
+    try {
+      final isValid = await _authService.verifyPasswordResetOTP(email, otp);
+      return isValid;
+    } catch (e) {
+      _setError('Password reset OTP verification failed: $e');
+      return false;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  Future<bool> resetPassword(String email, String newPassword) async {
+    _setLoading(true);
+    _setError(null);
+
+    try {
+      await _authService.resetPassword(email, newPassword);
+      return true;
+    } catch (e) {
+      _setError('Failed to reset password: $e');
       return false;
     } finally {
       _setLoading(false);

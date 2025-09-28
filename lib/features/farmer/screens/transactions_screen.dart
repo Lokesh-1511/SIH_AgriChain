@@ -83,7 +83,12 @@ class TransactionsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSummaryCard(String title, String amount, Color color, IconData icon) {
+  Widget _buildSummaryCard(
+    String title,
+    String amount,
+    Color color,
+    IconData icon,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -107,10 +112,7 @@ class TransactionsScreen extends StatelessWidget {
               Container(
                 width: 8,
                 height: 8,
-                decoration: BoxDecoration(
-                  color: color,
-                  shape: BoxShape.circle,
-                ),
+                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
               ),
             ],
           ),
@@ -126,10 +128,7 @@ class TransactionsScreen extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             title,
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 12,
-            ),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
           ),
         ],
       ),
@@ -148,12 +147,17 @@ class TransactionsScreen extends StatelessWidget {
         fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
       ),
       side: BorderSide(
-        color: isSelected ? AppColors.farmerPrimary : AppColors.textSecondary.withOpacity(0.3),
+        color: isSelected
+            ? AppColors.farmerPrimary
+            : AppColors.textSecondary.withOpacity(0.3),
       ),
     );
   }
 
-  Widget _buildTransactionCard(BuildContext context, Map<String, dynamic> transaction) {
+  Widget _buildTransactionCard(
+    BuildContext context,
+    Map<String, dynamic> transaction,
+  ) {
     bool isCredit = transaction['type'] == 'credit';
     Color amountColor = isCredit ? AppColors.success : AppColors.error;
     IconData icon = isCredit ? Icons.add_circle : Icons.remove_circle;
@@ -240,11 +244,7 @@ class TransactionsScreen extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.qr_code,
-                    size: 16,
-                    color: AppColors.farmerPrimary,
-                  ),
+                  Icon(Icons.qr_code, size: 16, color: AppColors.farmerPrimary),
                   const SizedBox(width: 8),
                   Text(
                     'Batch ID: ${transaction['batchId']}',
@@ -256,9 +256,14 @@ class TransactionsScreen extends StatelessWidget {
                   ),
                   const Spacer(),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
-                      color: _getStatusColor(transaction['status']).withOpacity(0.1),
+                      color: _getStatusColor(
+                        transaction['status'],
+                      ).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(

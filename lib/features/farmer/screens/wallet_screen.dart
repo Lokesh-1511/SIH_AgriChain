@@ -30,7 +30,10 @@ class WalletScreen extends StatelessWidget {
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [AppColors.farmerPrimary, AppColors.farmerPrimary.withOpacity(0.8)],
+                  colors: [
+                    AppColors.farmerPrimary,
+                    AppColors.farmerPrimary.withOpacity(0.8),
+                  ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -216,7 +219,7 @@ class WalletScreen extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            ..._paymentMethods.map((method) => _buildPaymentMethodCard(method)).toList(),
+            ..._paymentMethods.map((method) => _buildPaymentMethodCard(method)),
 
             const SizedBox(height: 24),
 
@@ -264,7 +267,12 @@ class WalletScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickActionCard(String title, IconData icon, Color color, VoidCallback onTap) {
+  Widget _buildQuickActionCard(
+    String title,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+  ) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -371,10 +379,7 @@ class WalletScreen extends StatelessWidget {
               const SizedBox(height: 2),
               Text(
                 transaction['time'],
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 10,
-                ),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 10),
               ),
             ],
           ),
@@ -448,7 +453,11 @@ class WalletScreen extends StatelessWidget {
             ),
           ],
           const SizedBox(width: 8),
-          Icon(Icons.arrow_forward_ios, color: AppColors.textSecondary, size: 16),
+          Icon(
+            Icons.arrow_forward_ios,
+            color: AppColors.textSecondary,
+            size: 16,
+          ),
         ],
       ),
     );
@@ -471,10 +480,7 @@ class WalletScreen extends StatelessWidget {
             children: [
               Text(
                 value,
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
               ),
               if (hasToggle) ...[
                 const SizedBox(width: 8),
@@ -531,7 +537,9 @@ class WalletScreen extends StatelessWidget {
             onPressed: () {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Payment gateway integration coming soon!')),
+                const SnackBar(
+                  content: Text('Payment gateway integration coming soon!'),
+                ),
               );
             },
             child: const Text('Add'),
@@ -562,7 +570,9 @@ class WalletScreen extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Withdraw Money'),
-        content: const Text('Money withdrawal to bank account will be available soon!'),
+        content: const Text(
+          'Money withdrawal to bank account will be available soon!',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -578,7 +588,9 @@ class WalletScreen extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Transaction History'),
-        content: const Text('Detailed transaction history will be available soon!'),
+        content: const Text(
+          'Detailed transaction history will be available soon!',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

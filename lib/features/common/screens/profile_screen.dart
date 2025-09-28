@@ -16,7 +16,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
-  
+
   bool _isEditing = false;
 
   @override
@@ -24,7 +24,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final user = authProvider.currentUser;
-    
+
     if (user != null) {
       _nameController.text = user.name;
       _emailController.text = user.email;
@@ -37,7 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
     final user = authProvider.currentUser;
-    
+
     if (user == null) {
       return const Scaffold(
         body: Center(child: Text('No user data available')),
@@ -112,9 +112,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Role Badge
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -134,9 +134,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 8),
-                  
+
                   // User ID
                   Text(
                     'ID: ${user.id}',
@@ -174,9 +174,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  
+
                   const SizedBox(height: 20),
-                  
+
                   // Name Field
                   _buildProfileField(
                     'Full Name',
@@ -184,9 +184,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Icons.person,
                     _isEditing,
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Email Field
                   _buildProfileField(
                     'Email',
@@ -194,9 +194,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Icons.email,
                     false, // Email should not be editable
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Phone Field
                   _buildProfileField(
                     'Phone',
@@ -204,9 +204,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Icons.phone,
                     _isEditing,
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Address Field
                   _buildProfileField(
                     'Address',
@@ -223,7 +223,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             // Role-specific Information
             if (user.role == 'farmer') _buildFarmerInfo(user, primaryColor),
-            if (user.role == 'distributor') _buildDistributorInfo(user, primaryColor),
+            if (user.role == 'distributor')
+              _buildDistributorInfo(user, primaryColor),
             if (user.role == 'retailer') _buildRetailerInfo(user, primaryColor),
             if (user.role == 'consumer') _buildConsumerInfo(user, primaryColor),
 
@@ -251,9 +252,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                   ),
-                
+
                 const SizedBox(height: 12),
-                
+
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton(
@@ -350,15 +351,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           Text(
             'Farming Details',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
-                child: _buildInfoTile('Land Size', '5.2 acres', Icons.landscape),
+                child: _buildInfoTile(
+                  'Land Size',
+                  '5.2 acres',
+                  Icons.landscape,
+                ),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -390,9 +395,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           Text(
             'Distribution Details',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           Row(
@@ -401,9 +406,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: _buildInfoTile('Vehicles', '12', Icons.local_shipping),
               ),
               const SizedBox(width: 16),
-              Expanded(
-                child: _buildInfoTile('Rating', '4.8/5', Icons.star),
-              ),
+              Expanded(child: _buildInfoTile('Rating', '4.8/5', Icons.star)),
             ],
           ),
         ],
@@ -430,9 +433,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           Text(
             'Retail Details',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           Row(
@@ -441,9 +444,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: _buildInfoTile('Store Type', 'Grocery', Icons.store),
               ),
               const SizedBox(width: 16),
-              Expanded(
-                child: _buildInfoTile('Rating', '4.6/5', Icons.star),
-              ),
+              Expanded(child: _buildInfoTile('Rating', '4.6/5', Icons.star)),
             ],
           ),
         ],
@@ -470,9 +471,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           Text(
             'Purchase History',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           Row(
@@ -504,18 +505,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 8),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 4),
           Text(
             label,
-            style: TextStyle(
-              fontSize: 12,
-              color: AppColors.textSecondary,
-            ),
+            style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
           ),
         ],
       ),
