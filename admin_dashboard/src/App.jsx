@@ -15,6 +15,8 @@ import RoleManagement from './pages/RoleManagement';
 import SupplyChainMonitoring from './pages/SupplyChainMonitoring';
 import BlockchainExplorer from './pages/BlockchainExplorer';
 import Reports from './pages/Reports';
+import Profile from './pages/Profile';
+import Settings from './pages/Settings';
 import ProtectedRoute from './components/common/ProtectedRoute';
 
 function App() {
@@ -35,6 +37,8 @@ function App() {
               <Route path="supply-chain" element={<SupplyChainMonitoring />} />
               <Route path="blockchain" element={<BlockchainExplorer />} />
               <Route path="reports" element={<Reports />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="settings" element={<Settings />} />
             </Route>
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>

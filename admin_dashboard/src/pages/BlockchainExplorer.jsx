@@ -24,6 +24,13 @@ import {
   Alert,
   Pagination,
   InputAdornment,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  IconButton,
+  Tooltip,
+  Link
 } from '@mui/material';
 import {
   Search,
@@ -34,6 +41,9 @@ import {
   TrendingUp,
   Visibility,
   Link as LinkIcon,
+  Close as CloseIcon,
+  ContentCopy,
+  OpenInNew
 } from '@mui/icons-material';
 import { BlockchainService } from '../services/mockData';
 
@@ -142,79 +152,117 @@ const mockBlockchainTransactions = [
 ];
 
 const TransactionDetailsDialog = ({ transaction, open, onClose }) => {
-  if (!transaction || !open) return null;
+  if (!transaction) return null;
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    // You could add a toast notification here
+  };
+
+  const formatHash = (hash) => {
+    return `${hash.slice(0, 6)}...${hash.slice(-4)}`;
+  };
+
+  const formatAddress = (address) => {
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  };
 
   return (
-    <Card sx={{ maxWidth: 800, mx: 'auto', mt: 2 }}>
-      <CardContent>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h6">Transaction Details</Typography>
-          <Button onClick={onClose} variant="outlined" size="small">
-            Close
-          </Button>
+    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+      <DialogTitle>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Block color="primary" />
+            <Typography variant="h6">Transaction Details</Typography>
+          </Box>
+          <IconButton onClick={onClose} size="small">
+            <CloseIcon />
+          </IconButton>
         </Box>
-        
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
-            <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-              Transaction Hash
-            </Typography>
-            <Typography variant="body2" fontFamily="monospace" gutterBottom sx={{ wordBreak: 'break-all' }}>
-              {transaction.hash}
-            </Typography>
+      </DialogTitle>
+      
+      <DialogContent>
+        <Grid container spacing={3}>
+          {/* Transaction Hash */}
+          <Grid item xs={12}>
+            <Box sx={{ p: 2, bgcolor: 'grey.50', borderRadius: 2 }}>
+              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                Transaction Hash
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant="body2" fontFamily="monospace" sx={{ flex: 1, wordBreak: 'break-all' }}>
+                  {transaction.hash}
+                </Typography>
+                <Tooltip title="Copy Hash">
+                  <IconButton size="small" onClick={() => copyToClipboard(transaction.hash)}>
+                    <ContentCopy fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            </Box>
           </Grid>
-          
+
+          {/* Basic Info */}
           <Grid item xs={12} md={6}>
             <Typography variant="subtitle2" color="text.secondary" gutterBottom>
               Block Number
             </Typography>
-            <Typography variant="body2" gutterBottom>
-              {transaction.blockNumber.toLocaleString()}
+            <Typography variant="h6" color="primary">
+              #{transaction.blockNumber.toLocaleString()}
             </Typography>
           </Grid>
           
           <Grid item xs={12} md={6}>
             <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-              From
+              Timestamp
             </Typography>
-            <Typography variant="body2" fontFamily="monospace" gutterBottom sx={{ wordBreak: 'break-all' }}>
-              {transaction.from}
+            <Typography variant="body1">
+              {new Date(transaction.timestamp).toLocaleString()}
             </Typography>
+          </Grid>
+
+          {/* Addresses */}
+          <Grid item xs={12} md={6}>
+            <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+              From Address
+            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 1, bgcolor: 'grey.50', borderRadius: 1 }}>
+              <AccountBalanceWallet color="action" fontSize="small" />
+              <Typography variant="body2" fontFamily="monospace" sx={{ flex: 1 }}>
+                {formatAddress(transaction.from)}
+              </Typography>
+              <Tooltip title="Copy Address">
+                <IconButton size="small" onClick={() => copyToClipboard(transaction.from)}>
+                  <ContentCopy fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            </Box>
           </Grid>
           
           <Grid item xs={12} md={6}>
             <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-              To
+              To Address
             </Typography>
-            <Typography variant="body2" fontFamily="monospace" gutterBottom sx={{ wordBreak: 'break-all' }}>
-              {transaction.to}
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 1, bgcolor: 'grey.50', borderRadius: 1 }}>
+              <AccountBalanceWallet color="action" fontSize="small" />
+              <Typography variant="body2" fontFamily="monospace" sx={{ flex: 1 }}>
+                {formatAddress(transaction.to)}
+              </Typography>
+              <Tooltip title="Copy Address">
+                <IconButton size="small" onClick={() => copyToClipboard(transaction.to)}>
+                  <ContentCopy fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            </Box>
           </Grid>
-          
+
+          {/* Transaction Details */}
           <Grid item xs={12} md={6}>
             <Typography variant="subtitle2" color="text.secondary" gutterBottom>
               Value
             </Typography>
-            <Typography variant="body2" gutterBottom>
+            <Typography variant="h6" color="success.main">
               ${transaction.value.toLocaleString()}
-            </Typography>
-          </Grid>
-          
-          <Grid item xs={12} md={6}>
-            <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-              Gas Used
-            </Typography>
-            <Typography variant="body2" gutterBottom>
-              {transaction.gasUsed.toLocaleString()} ({transaction.gasPrice} Gwei)
-            </Typography>
-          </Grid>
-          
-          <Grid item xs={12} md={6}>
-            <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-              Function Called
-            </Typography>
-            <Typography variant="body2" gutterBottom>
-              {transaction.function}
             </Typography>
           </Grid>
           
@@ -225,27 +273,64 @@ const TransactionDetailsDialog = ({ transaction, open, onClose }) => {
             <Chip 
               label={transaction.status}
               color={transaction.status === 'Success' ? 'success' : 'error'}
-              size="small"
+              sx={{ fontWeight: 'bold' }}
             />
           </Grid>
+
+          {/* Gas Information */}
+          <Grid item xs={12} md={6}>
+            <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+              Gas Used
+            </Typography>
+            <Typography variant="body1">
+              {transaction.gasUsed.toLocaleString()}
+            </Typography>
+          </Grid>
           
+          <Grid item xs={12} md={6}>
+            <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+              Gas Price
+            </Typography>
+            <Typography variant="body1">
+              {transaction.gasPrice} Gwei
+            </Typography>
+          </Grid>
+
+          {/* Function Called */}
           <Grid item xs={12}>
             <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-              Event Logs
+              Function Called
+            </Typography>
+            <Box sx={{ p: 1, bgcolor: 'primary.50', borderRadius: 1, border: '1px solid', borderColor: 'primary.200' }}>
+              <Typography variant="body2" fontFamily="monospace" color="primary.main">
+                {transaction.function}
+              </Typography>
+            </Box>
+          </Grid>
+
+          {/* Event Logs */}
+          <Grid item xs={12}>
+            <Typography variant="subtitle2" color="text.secondary" gutterBottom sx={{ mb: 2 }}>
+              Event Logs ({transaction.eventLogs.length})
             </Typography>
             {transaction.eventLogs.map((log, index) => (
-              <Accordion key={index} variant="outlined">
+              <Accordion key={index} variant="outlined" sx={{ mb: 1 }}>
                 <AccordionSummary expandIcon={<ExpandMore />}>
-                  <Typography variant="subtitle2">{log.event}</Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography variant="subtitle2" color="primary">
+                      {log.event}
+                    </Typography>
+                    <Chip label={`Log ${index + 1}`} size="small" variant="outlined" />
+                  </Box>
                 </AccordionSummary>
                 <AccordionDetails>
-                  <Grid container spacing={1}>
+                  <Grid container spacing={2}>
                     {Object.entries(log.args).map(([key, value]) => (
                       <Grid item xs={12} sm={6} key={key}>
-                        <Typography variant="caption" color="text.secondary">
+                        <Typography variant="caption" color="text.secondary" display="block">
                           {key}
                         </Typography>
-                        <Typography variant="body2" fontFamily="monospace">
+                        <Typography variant="body2" fontFamily="monospace" sx={{ wordBreak: 'break-all' }}>
                           {value}
                         </Typography>
                       </Grid>
@@ -256,8 +341,24 @@ const TransactionDetailsDialog = ({ transaction, open, onClose }) => {
             ))}
           </Grid>
         </Grid>
-      </CardContent>
-    </Card>
+      </DialogContent>
+      
+      <DialogActions>
+        <Button onClick={onClose}>
+          Close
+        </Button>
+        <Button 
+          variant="contained" 
+          startIcon={<OpenInNew />}
+          onClick={() => {
+            // Open in blockchain explorer
+            window.open(`https://etherscan.io/tx/${transaction.hash}`, '_blank');
+          }}
+        >
+          View on Etherscan
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 
