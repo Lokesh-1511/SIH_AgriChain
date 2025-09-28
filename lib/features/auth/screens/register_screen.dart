@@ -282,6 +282,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   label: 'Email Address',
                   icon: Icons.email,
                   keyboardType: TextInputType.emailAddress,
+                  
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your email';
@@ -524,21 +525,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
       obscureText: obscureText,
       maxLines: maxLines,
       validator: validator,
+      style: TextStyle(color: Colors.black),
       decoration: InputDecoration(
         labelText: label,
+        labelStyle: TextStyle(color: AppColors.textSecondary),
         prefixIcon: Icon(icon, color: _roleColor),
         suffixIcon: suffixIcon,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
         ),
+         enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                   borderSide: BorderSide(color: _roleColor, width: 1), // light grey border
+                  ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: _roleColor, width: 2),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.border),
-        ),
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: _roleColor, width: 2), // colored border when focused
+                  ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: AppColors.error),

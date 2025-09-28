@@ -183,12 +183,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   prefixIcon: Icon(Icons.email_outlined, color: _roleColor),
                   
                   enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                   borderSide: BorderSide(color: _roleColor, width: 1), // light grey border
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: _roleColor, width: 1), // light grey border
                   ),
                   focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: _roleColor, width: 2), // colored border when focused
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: _roleColor, width: 2), // colored border when focused
                   ),
                 ),
                 
