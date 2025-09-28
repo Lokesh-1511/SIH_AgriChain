@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
@@ -129,7 +131,7 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
             ),
             const SizedBox(width: 8),
             Text(
-              'Join as Farmer',
+              'Join as a Farmer',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
@@ -281,8 +283,10 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
+                // ignore: deprecated_member_use
                 color: AppColors.info.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
+                // ignore: deprecated_member_use
                 border: Border.all(color: AppColors.info.withOpacity(0.3)),
               ),
               child: Row(
@@ -457,20 +461,32 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
               child: Column(
                 children: [
                   RadioListTile<String>(
-                    title: const Text('Owned'),
-                    subtitle: const Text('I own this land'),
+                    title: const Text('Owned', style: TextStyle(color: AppColors.textPrimary,),),
+                    subtitle: const Text('I own this land', style: TextStyle(color: AppColors.textSecondary,),),
+                    
                     value: 'owned',
                     groupValue: _landOwnership,
-                    activeColor: AppColors.farmerPrimary,
+                    fillColor: WidgetStateProperty.resolveWith<Color>((states) {
+                        if (states.contains(WidgetState.selected)) {
+                          return AppColors.farmerPrimary; // selected color
+                        }
+                        return Colors.grey; // unselected color
+                 }),
+
                     onChanged: (value) => setState(() => _landOwnership = value!),
                   ),
                   Divider(height: 1, color: AppColors.border),
                   RadioListTile<String>(
-                    title: const Text('Lease/Rent'),
-                    subtitle: const Text('I lease or rent this land'),
+                    title: const Text('Lease/Rent', style: TextStyle(color: AppColors.textPrimary,),),
+                    subtitle: const Text('I lease or rent this land', style: TextStyle(color: AppColors.textSecondary,),),
                     value: 'lease',
                     groupValue: _landOwnership,
-                    activeColor: AppColors.farmerPrimary,
+                    fillColor: WidgetStateProperty.resolveWith<Color>((states) {
+                        if (states.contains(WidgetState.selected)) {
+                          return AppColors.farmerPrimary; // selected color
+                        }
+                        return Colors.grey; // unselected color
+                    }),
                     onChanged: (value) => setState(() => _landOwnership = value!),
                   ),
                 ],
@@ -597,13 +613,22 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
             const SizedBox(height: 24),
             
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Checkbox(
-                  value: _agreeToTerms,
-                  onChanged: (value) => setState(() => _agreeToTerms = value ?? false),
-                  activeColor: AppColors.farmerPrimary,
+                Transform.scale(
+                  scale: 1.5, // 1.0 = normal, increase for bigger size
+                  child: Checkbox(
+                    value: _agreeToTerms,
+                    shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                    onChanged: (value) => setState(() => _agreeToTerms = value ?? false),
+                    fillColor: MaterialStateProperty.resolveWith<Color>((states) {
+                      if (states.contains(MaterialState.selected)) {
+                        return AppColors.farmerPrimary;
+                      }
+                      return AppColors.textHint;
+                    }),
+                  ),
                 ),
+
                 Expanded(
                   child: GestureDetector(
                     onTap: () => setState(() => _agreeToTerms = !_agreeToTerms),
@@ -748,7 +773,7 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color:AppColors.background,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -780,6 +805,7 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
                 Text(
                   title,
                   style: const TextStyle(
+                    color: AppColors.textPrimary,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -818,21 +844,23 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
       maxLines: maxLines,
       enabled: enabled,
       validator: validator,
+      style: TextStyle(color: Colors.black),
       decoration: InputDecoration(
         labelText: label,
+        labelStyle: TextStyle(color: AppColors.textSecondary),
         prefixIcon: Icon(icon, color: AppColors.farmerPrimary),
         suffixIcon: suffixIcon,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.farmerPrimary, width: 2),
-        ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.border),
-        ),
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: AppColors.farmerPrimary, width: 1), // light grey border
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: AppColors.farmerPrimary, width: 2), // colored border when focused
+                  ),
         disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: AppColors.border.withOpacity(0.5)),
@@ -949,7 +977,11 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
           if (_currentStep > 0) const SizedBox(width: 16),
           Expanded(
             child: ElevatedButton(
-              onPressed: _isLoading ? null : _nextStep,
+              onPressed: () {
+                _isLoading ? null : _nextStep();
+                 FocusScope.of(context).unfocus();
+                
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.farmerPrimary,
                 foregroundColor: Colors.white,
@@ -964,7 +996,8 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
                         strokeWidth: 2,
                       ),
                     )
-                  : Text(_getNextButtonText()),
+                  : Text(_getNextButtonText(), ),
+              
             ),
           ),
         ],
@@ -1182,7 +1215,7 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
         .split(' ')
         .map((word) => word.isNotEmpty ? word[0].toUpperCase() : '')
         .join('');
-    return 'FRM${nameInitials}${timestamp.toString().substring(8)}';
+    return 'FRM$nameInitials${timestamp.toString().substring(8)}';
   }
 
   void _navigateToDashboard() {
@@ -1195,6 +1228,7 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
   void _showSuccessSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        behavior: SnackBarBehavior.floating,
         content: Text(message),
         backgroundColor: AppColors.success,
       ),
@@ -1204,6 +1238,7 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        behavior: SnackBarBehavior.floating,
         content: Text(message),
         backgroundColor: AppColors.error,
         action: SnackBarAction(
