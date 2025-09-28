@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
 import '../providers/auth_provider.dart';
+import 'register_screen.dart';
 import '../../farmer/screens/farmer_dashboard.dart';
 import '../../distributor/screens/distributor_dashboard.dart';
 import '../../retailer/screens/retailer_dashboard.dart';
@@ -109,8 +110,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _navigateToRegister() {
-    // Navigate to registration screen
-    // This would be implemented based on the role
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => RegisterScreen(role: widget.role),
+      ),
+    );
   }
 
   @override

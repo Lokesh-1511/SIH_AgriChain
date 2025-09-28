@@ -3,6 +3,9 @@ import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../common/screens/landing_screen.dart';
+import '../../common/screens/profile_screen.dart';
+import '../../common/screens/settings_screen.dart';
+import '../../common/screens/notifications_screen.dart';
 import '../widgets/distributor_stats_card.dart';
 import '../widgets/batch_request_card.dart';
 import '../../common/widgets/floating_chat_button.dart';
@@ -11,6 +14,7 @@ import 'cost_prediction_screen.dart';
 import 'inventory_management_screen.dart';
 import 'distributor_analytics_screen.dart';
 import 'vehicle_management_screen.dart';
+import 'delivery_tracking_screen.dart';
 
 class DistributorDashboard extends StatefulWidget {
   const DistributorDashboard({super.key});
@@ -146,21 +150,24 @@ class _DistributorDashboardState extends State<DistributorDashboard> {
   }
 
   void _showNotifications() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Notifications feature coming soon!')),
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const NotificationsScreen()),
     );
   }
 
   void _handleMenuAction(String action) {
     switch (action) {
       case 'profile':
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile screen coming soon!')),
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const ProfileScreen()),
         );
         break;
       case 'settings':
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Settings screen coming soon!')),
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const SettingsScreen()),
         );
         break;
       case 'logout':
@@ -401,59 +408,4 @@ class DistributorHomeTab extends StatelessWidget {
       'shelfLife': 7,
     },
   ];
-}
-
-// Placeholder screens
-class DeliveryTrackingScreen extends StatelessWidget {
-  const DeliveryTrackingScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Delivery Tracking'),
-        backgroundColor: AppColors.distributorPrimary,
-        foregroundColor: Colors.white,
-      ),
-      body: const Center(
-        child: Text('Delivery Tracking - Coming Soon'),
-      ),
-    );
-  }
-}
-
-class InventoryScreen extends StatelessWidget {
-  const InventoryScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Inventory'),
-        backgroundColor: AppColors.distributorPrimary,
-        foregroundColor: Colors.white,
-      ),
-      body: const Center(
-        child: Text('Inventory Management - Coming Soon'),
-      ),
-    );
-  }
-}
-
-class AnalyticsScreen extends StatelessWidget {
-  const AnalyticsScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Analytics'),
-        backgroundColor: AppColors.distributorPrimary,
-        foregroundColor: Colors.white,
-      ),
-      body: const Center(
-        child: Text('Analytics Dashboard - Coming Soon'),
-      ),
-    );
-  }
 }

@@ -152,7 +152,8 @@ class AuthService {
           createdAt: now,
           farmerId: 'FRM_$id',
           landOwnership: data['landOwnership'] ?? 'owned',
-          landSize: double.tryParse(data['landSize'] ?? '0') ?? 0.0,
+          landSize: data['landSize'] ?? 0.0,
+          agriScore: 75.0, // Starting score
         );
       
       case AppConstants.roleDistributor:
@@ -164,8 +165,9 @@ class AuthService {
           address: data['address'],
           createdAt: now,
           distributorId: 'DST_$id',
-          vehicleDetails: data['vehicleDetails'] ?? '',
-          licenseNumber: data['licenseNumber'] ?? '',
+          vehicleDetails: 'Vehicle Count: ${data['vehicleCount'] ?? 0}',
+          licenseNumber: 'LIC_$id',
+          rating: 4.0,
         );
       
       case AppConstants.roleRetailer:
@@ -177,8 +179,9 @@ class AuthService {
           address: data['address'],
           createdAt: now,
           retailerId: 'RTL_$id',
-          shopName: data['shopName'] ?? '',
-          location: data['location'] ?? '',
+          shopName: '${data['name']}\'s ${data['storeType'] ?? 'Store'}',
+          location: data['address'],
+          rating: 4.0,
         );
       
       case AppConstants.roleConsumer:
