@@ -2,7 +2,12 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext.jsx';
+
+// Import agriculture-blockchain theme styles
+import './styles/agri-theme.css';
 import './styles/mui-theme-overrides.css';
+import './styles/globals.css';
+
 import LoginPage from './pages/LoginPage';
 import DashboardLayout from './components/common/DashboardLayout';
 import Dashboard from './pages/Dashboard';
@@ -11,9 +16,6 @@ import SupplyChainMonitoring from './pages/SupplyChainMonitoring';
 import BlockchainExplorer from './pages/BlockchainExplorer';
 import Reports from './pages/Reports';
 import ProtectedRoute from './components/common/ProtectedRoute';
-
-// Import global styles
-import './styles/globals.css';
 
 function App() {
   return (

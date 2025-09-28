@@ -8,11 +8,11 @@ const Header = () => {
   const location = useLocation();
 
   const navItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: '📊' },
-    { path: '/roles', label: 'Role Management', icon: '👥' },
-    { path: '/supply-chain', label: 'Supply Chain', icon: '🔗' },
-    { path: '/blockchain', label: 'Blockchain', icon: '⛓️' },
-    { path: '/reports', label: 'Reports', icon: '📄' }
+    { path: '/dashboard', label: 'Dashboard' },
+    { path: '/roles', label: 'Role Management'},
+    { path: '/supply-chain', label: 'Supply Chain' },
+    { path: '/blockchain', label: 'Blockchain' },
+    { path: '/reports', label: 'Reports' }
   ];
 
   const isActivePath = (path) => {
@@ -21,62 +21,77 @@ const Header = () => {
   };
 
   return (
-    <header className="header">
-      <div className="header-container">
-        {/* Logo and Brand */}
-        <div className="header-brand">
-          <div className="logo">
-            <span className="logo-icon">🌾</span>
-            <span className="logo-text">AgriChain</span>
+    <header className="agri-header">
+      {/* Animated background particles */}
+      <div className="agri-particles">
+        {[...Array(8)].map((_, i) => (
+          <div 
+            key={i} 
+            className="agri-particle" 
+            style={{
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 20}s`,
+              animationDuration: `${15 + Math.random() * 10}s`
+            }}
+          />
+        ))}
+      </div>
+
+      <div className="agri-header-container">
+        {/* Enhanced Logo and Brand */}
+        <div className="agri-header-brand">
+          <div className="agri-logo agri-hover-glow">
+            <span className="agri-logo-icon">🌾</span>
+            <div className="agri-logo-text">
+              <span className="agri-brand-main">AgriChain</span>
+              <span className="agri-brand-sub">Admin Dashboard</span>
+            </div>
           </div>
-          <span className="brand-subtitle">Admin Dashboard</span>
         </div>
 
-        {/* Navigation */}
-        <nav className="header-nav">
+        {/* Enhanced Navigation with Glassmorphism */}
+        <nav className="agri-header-nav">
           {navItems.map((item) => (
             <Link
               key={item.path}
               to={item.path}
-              className={`nav-item ${isActivePath(item.path) ? 'active' : ''}`}
+              className={`agri-nav-link ${isActivePath(item.path) ? 'active' : ''}`}
             >
-              <span className="nav-icon">{item.icon}</span>
-              <span className="nav-label">{item.label}</span>
+              
+              <span className="agri-nav-label">{item.label}</span>
+              <div className="agri-nav-indicator"></div>
             </Link>
           ))}
         </nav>
 
-        {/* Theme Toggle and User Actions */}
-        <div className="header-actions">
-          {/* Theme Toggle Button */}
+        {/* Enhanced Theme Toggle and Actions */}
+        <div className="agri-header-actions">
+          {/* Modern Sun/Moon Theme Toggle Button */}
           <button 
-            className="theme-toggle"
+            className="agri-modern-theme-toggle"
             onClick={toggleTheme}
             aria-label={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
           >
-            <div className="toggle-track">
-              <div className="toggle-thumb">
-                <span className="toggle-icon">
+            <div className="agri-toggle-track">
+              <div className={`agri-toggle-slider ${isDarkMode ? 'dark' : 'light'}`}>
+                <span className="agri-toggle-icon">
                   {isDarkMode ? '🌙' : '☀️'}
                 </span>
               </div>
             </div>
           </button>
 
-          {/* Notifications */}
-          <button className="notification-btn">
-            <span className="notification-icon">🔔</span>
-            <span className="notification-badge">3</span>
+          {/* Enhanced Notifications */}
+          <button className="agri-notification-btn agri-hover-glow">
+            <span className="agri-notification-icon">🔔</span>
+            <span className="agri-notification-badge agri-badge">3</span>
           </button>
 
-          {/* User Menu */}
-          <div className="user-menu">
-            <div className="user-avatar">
-              <span>👤</span>
-            </div>
-            <div className="user-info">
-              <span className="user-name">Admin User</span>
-              <span className="user-role">Administrator</span>
+          {/* User Profile */}
+          <div className="agri-user-profile agri-hover-scale">
+            <div className="agri-user-info">
+              <span className="agri-username">Admin User</span>
+              <span className="agri-user-role">Administrator</span>
             </div>
           </div>
         </div>

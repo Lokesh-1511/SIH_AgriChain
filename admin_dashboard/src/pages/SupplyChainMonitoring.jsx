@@ -479,26 +479,26 @@ const SupplyChainMonitoring = () => {
                 </ListItemIcon>
                 <ListItemText
                   primary={
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Typography variant="subtitle2">
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontWeight: 600 }}>
                         {anomaly.type} - {anomaly.batchId}
-                      </Typography>
+                      </span>
                       <Chip
                         label={anomaly.severity}
                         color={getSeverityColor(anomaly.severity)}
                         size="small"
                       />
-                    </Box>
+                    </span>
                   }
                   secondary={
-                    <Box>
-                      <Typography variant="body2" color="text.secondary">
+                    <span>
+                      <span style={{ color: 'var(--color-textSecondary)', display: 'block' }}>
                         {anomaly.message}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
+                      </span>
+                      <span style={{ color: 'var(--color-textSecondary)', display: 'block', fontSize: '0.75rem' }}>
                         Detected: {new Date(anomaly.detected).toLocaleString()}
-                      </Typography>
-                    </Box>
+                      </span>
+                    </span>
                   }
                 />
                 <Button 

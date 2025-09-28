@@ -120,7 +120,7 @@ const Dashboard = () => {
               title="Total Batches"
               value={dashboardData.stats.totalBatches?.toLocaleString()}
               subtitle="Tracked this month"
-              icon="📦"
+              
               trend={{ direction: 'up', value: '+12%' }}
               color="primary"
               gradient={true}
@@ -133,7 +133,7 @@ const Dashboard = () => {
               title="Active Shipments"
               value={dashboardData.stats.activeBatches}
               subtitle="Currently in transit"
-              icon="🚛"
+             
               trend={{ direction: 'up', value: '+8%' }}
               color="secondary"
               animated={true}
@@ -145,7 +145,7 @@ const Dashboard = () => {
               title="Total Value"
               value={formatCurrency(dashboardData.stats.totalValue)}
               subtitle="Supply chain value"
-              icon="💰"
+              
               trend={{ direction: 'up', value: '+15%' }}
               color="success"
               gradient={true}
@@ -158,7 +158,7 @@ const Dashboard = () => {
               title="Success Rate"
               value={`${dashboardData.stats.successRate}%`}
               subtitle="Delivery success rate"
-              icon="✅"
+              
               trend={{ direction: 'up', value: '+2.1%' }}
               color="info"
               animated={true}
@@ -213,7 +213,7 @@ const Dashboard = () => {
         <AnimatedCard delay={1400} className="transaction-feed-card">
           <div className="card transaction-feed">
             <div className="card-header">
-              <h3 className="card-title">🔄 Real-time Transaction Feed</h3>
+              <h3 className="card-title">Real-time Transaction Feed</h3>
               <div className="live-indicator">
                 <div className="live-dot"></div>
                 <span>Live</span>
@@ -224,12 +224,7 @@ const Dashboard = () => {
               <div className="transaction-list">
                 {dashboardData.transactions.map((tx, index) => (
                   <div key={tx.id} className="transaction-item">
-                    <div className="transaction-icon">
-                      {tx.type === 'Harvest' && '🌾'}
-                      {tx.type === 'Transport' && '🚛'}
-                      {tx.type === 'Processing' && '⚙️'}
-                      {tx.type === 'Sale' && '💰'}
-                    </div>
+                    
                     
                     <div className="transaction-details">
                       <div className="transaction-header">
