@@ -218,4 +218,23 @@ class AuthService {
     await Future.delayed(const Duration(seconds: 1));
     return otp == '123456'; // Mock verification
   }
+
+  Future<bool> sendAadhaarOTP(String aadhaarNumber) async {
+    // Simulate API delay
+    await Future.delayed(const Duration(seconds: 2));
+    
+    // Mock verification - in real app, this would call Aadhaar API
+    if (aadhaarNumber.length == 12 && aadhaarNumber.contains(RegExp(r'^[0-9]+$'))) {
+      return true; // OTP sent successfully
+    }
+    throw Exception('Invalid Aadhaar number');
+  }
+
+  Future<bool> verifyAadhaarOTP(String aadhaarNumber, String otp) async {
+    // Simulate API delay
+    await Future.delayed(const Duration(seconds: 1));
+    
+    // Mock verification - in real app, this would verify with Aadhaar API
+    return otp == '123456'; // Mock OTP verification
+  }
 }

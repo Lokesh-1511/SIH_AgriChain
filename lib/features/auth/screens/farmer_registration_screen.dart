@@ -493,7 +493,7 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
               ),
             ),
             
-            if (_landOwnership == 'lease') ...[
+            if (_landOwnership.isNotEmpty) ...[
               const SizedBox(height: 20),
               
               Text(
@@ -507,21 +507,57 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
               
               const SizedBox(height: 16),
               
-              _buildDocumentUpload(
-                title: 'Land Owner\'s Record',
-                subtitle: 'Upload owner\'s land documents',
-                file: _ownerRecordFile,
-                onTap: () => _pickDocument('owner_record'),
-              ),
-              
-              const SizedBox(height: 12),
-              
-              _buildDocumentUpload(
-                title: 'Lease Agreement',
-                subtitle: 'Upload lease/rent agreement',
-                file: _leaseDocFile,
-                onTap: () => _pickDocument('lease_doc'),
-              ),
+              if (_landOwnership == 'owned') ...[
+                _buildDocumentUpload(
+                  title: 'Land Record',
+                  subtitle: 'Upload your land ownership document (Khatiyan/Patta/Registry)',
+                  file: _ownerRecordFile,
+                  onTap: () => _pickDocument('owner_record'),
+                ),
+                
+                const SizedBox(height: 8),
+                
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.success.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: AppColors.success.withOpacity(0.3)),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.verified, color: AppColors.success, size: 16),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Required: Land ownership proof to verify your property rights',
+                          style: TextStyle(
+                            color: AppColors.success,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ] else if (_landOwnership == 'lease') ...[
+                _buildDocumentUpload(
+                  title: 'Land Owner\'s Record',
+                  subtitle: 'Upload owner\'s land documents',
+                  file: _ownerRecordFile,
+                  onTap: () => _pickDocument('owner_record'),
+                ),
+                
+                const SizedBox(height: 12),
+                
+                _buildDocumentUpload(
+                  title: 'Lease Agreement',
+                  subtitle: 'Upload lease/rent agreement',
+                  file: _leaseDocFile,
+                  onTap: () => _pickDocument('lease_doc'),
+                ),
+              ],
             ],
             
             const SizedBox(height: 20),
@@ -1053,7 +1089,12 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
         return true;
       case 2:
         if (!(_landFormKey.currentState?.validate() ?? false)) return false;
-        if (_landOwnership == 'lease') {
+        if (_landOwnership == 'owned') {
+          if (_ownerRecordFile == null) {
+            _showErrorSnackBar('Please upload your land ownership document');
+            return false;
+          }
+        } else if (_landOwnership == 'lease') {
           if (_ownerRecordFile == null || _leaseDocFile == null) {
             _showErrorSnackBar('Please upload required documents for lease land');
             return false;
