@@ -132,6 +132,36 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool> sendAadhaarOTP(String aadhaarNumber) async {
+    _setLoading(true);
+    _setError(null);
+    
+    try {
+      final success = await _authService.sendAadhaarOTP(aadhaarNumber);
+      return success;
+    } catch (e) {
+      _setError('Failed to send Aadhaar OTP: $e');
+      return false;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  Future<bool> verifyAadhaarOTP(String aadhaarNumber, String otp) async {
+    _setLoading(true);
+    _setError(null);
+    
+    try {
+      final isValid = await _authService.verifyAadhaarOTP(aadhaarNumber, otp);
+      return isValid;
+    } catch (e) {
+      _setError('Aadhaar OTP verification failed: $e');
+      return false;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
   void _setLoading(bool loading) {
     _isLoading = loading;
     notifyListeners();
