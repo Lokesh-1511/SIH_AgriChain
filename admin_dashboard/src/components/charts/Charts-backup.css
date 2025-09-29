@@ -1,0 +1,524 @@
+/* 🌾 Agriculture-Blockchain Charts Styles */
+
+/* ========== ENHANCED CHART CONTAINERS ========== */
+.agri-chart-container {
+  background: var(--color-gradient-card);
+  border: 1px solid transparent;
+  border-radius: 16px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 
+    0 8px 32px var(--color-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  padding: 24px;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  animation: fadeInUp 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.agri-chart-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-gradient-cardBorder);
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+.agri-chart-container:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 
+    0 16px 64px var(--color-shadow),
+    var(--color-glow-green),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.agri-chart-container:hover::before {
+  opacity: 1;
+}
+
+/* ========== CHART HEADER STYLES ========== */
+.agri-chart-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid transparent;
+  background-image: var(--color-gradient-cardBorder);
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 100% 2px;
+}
+
+.agri-chart-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--color-gradient-primary);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 4px 16px rgba(59, 125, 58, 0.3);
+  transition: all 0.3s ease;
+}
+
+.agri-chart-icon:hover {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 
+    0 8px 32px rgba(59, 125, 58, 0.4),
+    var(--color-glow-green);
+}
+
+.agri-chart-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: var(--color-gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+/* ========== CHART WRAPPER STYLES ========== */
+.agri-chart-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* ========== ENHANCED TOOLTIP STYLES ========== */
+.agri-chart-tooltip {
+  background: var(--color-gradient-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  box-shadow: 
+    0 12px 48px var(--color-shadow),
+    var(--color-glow-green),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  padding: 16px;
+  animation: tooltipSlideIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  z-index: 1000;
+  min-width: 180px;
+}
+
+.tooltip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tooltip-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tooltip-color-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  animation: colorPulse 2s ease-in-out infinite;
+}
+
+.tooltip-label {
+  font-weight: 600;
+  color: var(--color-text);
+  font-size: 14px;
+}
+
+.tooltip-value-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.tooltip-value {
+  font-weight: 700;
+  font-size: 16px;
+  background: var(--color-gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.tooltip-percentage {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  background: var(--color-hover);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.tooltip-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  min-width: 120px;
+}
+
+.tooltip-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs);
+}
+
+.tooltip-entry {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.tooltip-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.tooltip-name {
+  font-size: 0.875rem;
+  color: var(--color-textSecondary);
+  flex: 1;
+}
+
+.tooltip-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* Legend Styles */
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--color-border);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 0.875rem;
+  color: var(--color-textSecondary);
+  cursor: pointer;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-md);
+  transition: var(--transition-fast);
+}
+
+.legend-item:hover {
+  background: var(--color-hover);
+  color: var(--color-text);
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-text {
+  font-weight: 500;
+}
+
+/* Chart-specific Styles */
+
+/* Bar Chart Enhancements */
+.chart-container .recharts-bar-rectangle {
+  transition: var(--transition-fast);
+}
+
+.chart-container .recharts-bar-rectangle:hover {
+  opacity: 0.8;
+  filter: brightness(1.1);
+}
+
+/* Line Chart Enhancements */
+.chart-container .recharts-line-curve {
+  filter: drop-shadow(0 2px 4px var(--color-shadow));
+}
+
+.chart-container .recharts-line-dot {
+  filter: drop-shadow(0 1px 2px var(--color-shadow));
+}
+
+.chart-container .recharts-active-dot {
+  animation: dotPulse 1.5s infinite;
+}
+
+/* Pie Chart Enhancements */
+.chart-container .recharts-pie-sector {
+  transition: var(--transition-fast);
+  cursor: pointer;
+}
+
+.chart-container .recharts-pie-sector:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
+/* Grid and Axis Styles */
+.chart-container .recharts-cartesian-grid line {
+  stroke: var(--color-border);
+  opacity: 0.3;
+}
+
+.chart-container .recharts-xAxis .recharts-cartesian-axis-line,
+.chart-container .recharts-yAxis .recharts-cartesian-axis-line {
+  stroke: var(--color-border);
+}
+
+.chart-container .recharts-xAxis .recharts-cartesian-axis-tick-line,
+.chart-container .recharts-yAxis .recharts-cartesian-axis-tick-line {
+  stroke: var(--color-border);
+}
+
+.chart-container .recharts-text {
+  fill: var(--color-textSecondary);
+  font-size: 12px;
+  font-family: inherit;
+}
+
+/* Loading State */
+.chart-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--color-textSecondary);
+}
+
+.chart-loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--color-border);
+  border-top: 3px solid var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: var(--spacing-md);
+}
+
+/* ========== ENHANCED LEGEND STYLES ========== */
+.agri-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 20px;
+  padding: 16px;
+  background: var(--color-gradient-card);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--color-border);
+}
+
+.agri-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--color-hover);
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.agri-legend-item:hover {
+  transform: translateY(-2px) scale(1.05);
+  background: var(--color-primary);
+  color: white;
+  box-shadow: var(--color-glow-green);
+}
+
+.agri-legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  animation: legendColorPulse 3s ease-in-out infinite;
+  border: 2px solid white;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+.agri-legend-text {
+  color: var(--color-text);
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  transition: color 0.3s ease;
+}
+
+/* ========== NO DATA STYLES ========== */
+.agri-chart-no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--color-text-secondary);
+  font-size: 16px;
+  background: var(--color-gradient-card);
+  border-radius: 12px;
+  border: 2px dashed var(--color-border);
+  position: relative;
+  overflow: hidden;
+}
+
+.agri-chart-no-data::before {
+  content: '📊';
+  font-size: 48px;
+  opacity: 0.3;
+  margin-bottom: 12px;
+  animation: noDataFloat 3s ease-in-out infinite;
+}
+
+.agri-chart-no-data p {
+  margin: 0;
+  font-weight: 500;
+}
+
+/* ========== KEYFRAME ANIMATIONS ========== */
+@keyframes legendColorPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes noDataFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--color-error);
+  text-align: center;
+  padding: var(--spacing-lg);
+}
+
+.chart-error-icon {
+  font-size: 3rem;
+  margin-bottom: var(--spacing-md);
+  opacity: 0.5;
+}
+
+.chart-error-message {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: var(--spacing-sm);
+}
+
+.chart-error-details {
+  font-size: 0.875rem;
+  color: var(--color-textSecondary);
+}
+
+/* Animations */
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dotPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .chart-container {
+    padding: var(--spacing-md);
+  }
+  
+  .chart-title {
+    font-size: 1.125rem;
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .chart-legend {
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
+    padding-top: var(--spacing-sm);
+  }
+  
+  .legend-item {
+    font-size: 0.75rem;
+    padding: 2px var(--spacing-xs);
+  }
+  
+  .tooltip-content {
+    min-width: 100px;
+  }
+  
+  .tooltip-label,
+  .tooltip-name,
+  .tooltip-value {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-container {
+    padding: var(--spacing-sm);
+  }
+  
+  .chart-title {
+    font-size: 1rem;
+  }
+  
+  .chart-legend {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .legend-item {
+    justify-content: center;
+  }
+}

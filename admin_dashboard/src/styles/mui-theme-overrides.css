@@ -1,0 +1,493 @@
+/* 🌱⛓️ Agriculture-Blockchain MUI Theme Overrides */
+
+/* ========== ENHANCED CARD COMPONENTS ========== */
+.MuiCard-root {
+  background: var(--color-gradient-card) !important;
+  color: var(--color-text) !important;
+  border: 1px solid transparent !important;
+  border-radius: 16px !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  box-shadow: 
+    0 8px 32px var(--color-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.MuiCard-root::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-gradient-cardBorder);
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+.MuiCard-root:hover {
+  transform: translateY(-4px) scale(1.02) !important;
+  box-shadow: 
+    0 16px 64px var(--color-shadow),
+    var(--color-glow-green),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+
+.MuiCard-root:hover::before {
+  opacity: 1 !important;
+}
+
+.MuiPaper-root {
+  background: var(--color-gradient-card) !important;
+  color: var(--color-text) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-radius: 12px !important;
+}
+
+/* ========== ENHANCED BUTTON SYSTEM ========== */
+.MuiButton-root {
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  max-width: 200px !important;
+  min-width: fit-content !important;
+}
+
+.MuiButton-root::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease !important;
+}
+
+.MuiButton-root:hover::before {
+  left: 100% !important;
+}
+
+.MuiButton-contained {
+  background: var(--color-gradient-button) !important;
+  color: white !important;
+  box-shadow: 
+    0 4px 16px rgba(59, 125, 58, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+
+.MuiButton-contained:hover {
+  background: var(--color-gradient-buttonHover) !important;
+  transform: translateY(-2px) scale(1.05) !important;
+  box-shadow: 
+    0 8px 32px rgba(59, 125, 58, 0.4),
+    var(--color-glow-green),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+  letter-spacing: 1px !important;
+}
+
+.MuiButton-outlined {
+  border: 2px solid var(--color-primary) !important;
+  color: var(--color-primary) !important;
+  background: transparent !important;
+}
+
+.MuiButton-outlined:hover {
+  background: var(--color-hover) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: var(--color-glow-green) !important;
+}
+
+/* ========== ENHANCED FORM COMPONENTS ========== */
+.MuiTextField-root .MuiOutlinedInput-root {
+  background: var(--color-card-background) !important;
+  color: var(--color-text) !important;
+  border-radius: 12px !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  transition: all 0.3s ease !important;
+}
+
+.MuiTextField-root .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
+  border: 2px solid var(--color-border) !important;
+  border-radius: 12px !important;
+  transition: all 0.3s ease !important;
+}
+
+.MuiTextField-root .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 2px rgba(59, 125, 58, 0.1) !important;
+}
+
+.MuiTextField-root .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: var(--color-primary) !important;
+  box-shadow: 
+    0 0 0 3px rgba(59, 125, 58, 0.2),
+    var(--color-glow-green) !important;
+}
+
+.MuiTextField-root .MuiInputLabel-root {
+  color: var(--color-text-secondary) !important;
+  font-weight: 500 !important;
+}
+
+.MuiTextField-root .MuiInputLabel-root.Mui-focused {
+  color: var(--color-primary) !important;
+  font-weight: 600 !important;
+}
+
+/* ========== ENHANCED TABLE COMPONENTS ========== */
+.MuiTableContainer-root {
+  background: var(--color-gradient-card) !important;
+  border-radius: 16px !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid var(--color-border) !important;
+  overflow: hidden !important;
+  box-shadow: 0 8px 32px var(--color-shadow) !important;
+}
+
+.MuiTable-root {
+  background: transparent !important;
+}
+
+.MuiTableHead-root {
+  background: var(--color-gradient-primary) !important;
+}
+
+.MuiTableHead-root .MuiTableCell-root {
+  color: white !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  border-bottom: 2px solid var(--color-secondary) !important;
+}
+
+.MuiTableBody-root .MuiTableRow-root {
+  transition: all 0.3s ease !important;
+}
+
+.MuiTableBody-root .MuiTableRow-root:hover {
+  background: var(--color-hover) !important;
+  transform: scale(1.01) !important;
+}
+
+.MuiTableBody-root .MuiTableCell-root {
+  color: var(--color-text) !important;
+  border-bottom: 1px solid var(--color-border) !important;
+}
+
+/* ========== ENHANCED TYPOGRAPHY ========== */
+.MuiTypography-root {
+  color: var(--color-text) !important;
+}
+
+.MuiTypography-h1,
+.MuiTypography-h2,
+.MuiTypography-h3,
+.MuiTypography-h4,
+.MuiTypography-h5,
+.MuiTypography-h6 {
+  background: var(--color-gradient-primary) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  font-weight: 700 !important;
+}
+
+/* ========== ENHANCED NAVIGATION COMPONENTS ========== */
+.MuiAppBar-root {
+  background: var(--color-gradient-hero) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  box-shadow: 
+    0 4px 32px var(--color-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  border-bottom: 1px solid var(--color-border) !important;
+}
+
+.MuiTabs-root {
+  background: transparent !important;
+}
+
+.MuiTab-root {
+  color: var(--color-text-secondary) !important;
+  font-weight: 500 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  transition: all 0.3s ease !important;
+}
+
+.MuiTab-root:hover {
+  color: var(--color-primary) !important;
+  background: var(--color-hover) !important;
+}
+
+.MuiTab-root.Mui-selected {
+  color: var(--color-primary) !important;
+  font-weight: 600 !important;
+}
+
+.MuiTabs-indicator {
+  background: var(--color-gradient-primary) !important;
+  height: 3px !important;
+  border-radius: 2px !important;
+}
+
+/* ========== ENHANCED DIALOG COMPONENTS ========== */
+.MuiDialog-paper {
+  background: var(--color-gradient-card) !important;
+  backdrop-filter: blur(30px) !important;
+  -webkit-backdrop-filter: blur(30px) !important;
+  border-radius: 20px !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: 
+    0 20px 80px var(--color-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+.MuiDialogTitle-root {
+  background: var(--color-gradient-primary) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+}
+
+.MuiDialogContent-root {
+  color: var(--color-text) !important;
+}
+
+/* ========== ENHANCED MENU COMPONENTS ========== */
+.MuiMenu-paper {
+  background: var(--color-gradient-card) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-radius: 12px !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: 
+    0 12px 48px var(--color-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  min-width: 200px !important;
+  max-width: 280px !important;
+}
+
+.MuiMenuItem-root {
+  color: var(--color-text) !important;
+  transition: all 0.3s ease !important;
+  border-radius: 8px !important;
+  margin: 4px 8px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 250px !important;
+  min-height: 40px !important;
+  padding: 8px 16px !important;
+  justify-content: flex-start !important;
+}
+
+.MuiMenuItem-root:hover {
+  background: var(--color-hover) !important;
+  color: var(--color-primary) !important;
+  transform: translateX(4px) !important;
+}
+
+/* ========== ENHANCED CHIP COMPONENTS ========== */
+.MuiChip-root {
+  background: var(--color-gradient-accent) !important;
+  color: var(--color-text) !important;
+  font-weight: 600 !important;
+  border-radius: 20px !important;
+  transition: all 0.3s ease !important;
+  border: 1px solid var(--color-border) !important;
+}
+
+.MuiChip-root:hover {
+  transform: scale(1.05) !important;
+  box-shadow: var(--color-glow-gold) !important;
+}
+
+.MuiChip-filled {
+  background: var(--color-gradient-primary) !important;
+  color: white !important;
+}
+
+/* ========== ENHANCED PROGRESS COMPONENTS ========== */
+.MuiLinearProgress-root {
+  height: 8px !important;
+  border-radius: 4px !important;
+  background: var(--color-border) !important;
+  overflow: hidden !important;
+}
+
+.MuiLinearProgress-bar {
+  background: var(--color-gradient-primary) !important;
+  border-radius: 4px !important;
+  animation: progressPulse 2s ease-in-out infinite alternate !important;
+}
+
+.MuiCircularProgress-root {
+  color: var(--color-primary) !important;
+}
+
+.MuiCircularProgress-circle {
+  stroke: var(--color-primary) !important;
+  filter: drop-shadow(0 0 8px var(--color-primary)) !important;
+}
+
+/* ========== ENHANCED FORM CONTROL COMPONENTS ========== */
+.MuiFormControl-root {
+  margin-bottom: 16px !important;
+}
+
+.MuiFormLabel-root {
+  color: var(--color-text-secondary) !important;
+  font-weight: 500 !important;
+}
+
+.MuiFormLabel-root.Mui-focused {
+  color: var(--color-primary) !important;
+}
+
+.MuiFormHelperText-root {
+  color: var(--color-text-secondary) !important;
+}
+
+.MuiFormHelperText-root.Mui-error {
+  color: var(--color-error) !important;
+}
+
+/* ========== ENHANCED SELECT COMPONENTS ========== */
+.MuiSelect-root {
+  color: var(--color-text) !important;
+}
+
+.MuiSelect-icon {
+  color: var(--color-primary) !important;
+}
+
+.MuiSelect-select:focus {
+  background: transparent !important;
+}
+
+/* ========== ENHANCED CHECKBOX & RADIO COMPONENTS ========== */
+.MuiCheckbox-root {
+  color: var(--color-primary) !important;
+}
+
+.MuiCheckbox-root:hover {
+  background: var(--color-hover) !important;
+}
+
+.MuiRadio-root {
+  color: var(--color-primary) !important;
+}
+
+.MuiRadio-root:hover {
+  background: var(--color-hover) !important;
+}
+
+/* ========== ENHANCED SWITCH COMPONENTS ========== */
+.MuiSwitch-root {
+  padding: 12px !important;
+}
+
+.MuiSwitch-switchBase.Mui-checked {
+  color: var(--color-primary) !important;
+}
+
+.MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track {
+  background: var(--color-primary) !important;
+  opacity: 0.5 !important;
+}
+
+.MuiSwitch-track {
+  background: var(--color-border) !important;
+  border-radius: 12px !important;
+}
+
+.MuiSwitch-thumb {
+  background: white !important;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+}
+
+/* ========== ENHANCED ALERT COMPONENTS ========== */
+.MuiAlert-root {
+  border-radius: 12px !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+.MuiAlert-standardSuccess {
+  background: linear-gradient(135deg, rgba(74, 222, 128, 0.1), rgba(74, 222, 128, 0.05)) !important;
+  border: 1px solid var(--color-success) !important;
+  color: var(--color-success) !important;
+}
+
+.MuiAlert-standardError {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05)) !important;
+  border: 1px solid var(--color-error) !important;
+  color: var(--color-error) !important;
+}
+
+.MuiAlert-standardWarning {
+  background: linear-gradient(135deg, rgba(246, 201, 14, 0.1), rgba(246, 201, 14, 0.05)) !important;
+  border: 1px solid var(--color-warning) !important;
+  color: var(--color-warning) !important;
+}
+
+.MuiAlert-standardInfo {
+  background: linear-gradient(135deg, rgba(47, 133, 90, 0.1), rgba(47, 133, 90, 0.05)) !important;
+  border: 1px solid var(--color-info) !important;
+  color: var(--color-info) !important;
+}
+
+/* ========== ENHANCED ICON COMPONENTS ========== */
+.MuiIconButton-root {
+  color: var(--color-text-secondary) !important;
+  transition: all 0.3s ease !important;
+  border-radius: 12px !important;
+}
+
+.MuiIconButton-root:hover {
+  color: var(--color-primary) !important;
+  background: var(--color-hover) !important;
+  transform: scale(1.1) !important;
+  box-shadow: var(--color-glow-green) !important;
+}
+
+/* ========== KEYFRAME ANIMATIONS FOR MUI ========== */
+@keyframes progressPulse {
+  0% { opacity: 1; }
+  100% { opacity: 0.7; }
+}
+
+/* ========== RESPONSIVE DESIGN ========== */
+@media (max-width: 768px) {
+  .MuiCard-root:hover {
+    transform: translateY(-2px) scale(1.01) !important;
+  }
+  
+  .MuiButton-contained:hover {
+    transform: translateY(-1px) scale(1.02) !important;
+  }
+  
+  .MuiTableBody-root .MuiTableRow-root:hover {
+    transform: none !important;
+  }
+}
