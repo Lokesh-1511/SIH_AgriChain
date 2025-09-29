@@ -1,0 +1,1140 @@
+/* 🌱⛓️ Agriculture-Blockchain Theme CSS - Advanced Animations & Effects */
+
+/* Root Variables for CSS Animations */
+:root {
+  /* Animation Timing Functions */
+  --ease-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-agri: cubic-bezier(0.23, 1, 0.32, 1);
+  
+  /* Animation Durations */
+  --duration-fast: 0.2s;
+  --duration-normal: 0.3s;
+  --duration-slow: 0.5s;
+  --duration-very-slow: 0.8s;
+  
+  /* Particle Animation Variables */
+  --particle-speed: 20s;
+  --glow-pulse-speed: 2s;
+  --growth-animation: 1.5s;
+}
+
+/* Theme Transition Root Animation */
+html {
+  transition: background-color var(--duration-normal) var(--ease-smooth);
+}
+
+body {
+  transition: all var(--duration-normal) var(--ease-smooth);
+  overflow-x: hidden;
+}
+
+/* ========== GLASSMORPHISM CARD SYSTEM ========== */
+
+.agri-card {
+  background: var(--color-gradient-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  border-radius: 16px;
+  box-shadow: 
+    0 8px 32px var(--color-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+  transition: all var(--duration-normal) var(--ease-smooth);
+}
+
+.agri-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-gradient-cardBorder);
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0.6;
+  transition: opacity var(--duration-normal) var(--ease-smooth);
+}
+
+.agri-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 
+    0 16px 64px var(--color-shadow),
+    var(--color-glow-green),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.agri-card:hover::before {
+  opacity: 1;
+}
+
+/* Enhanced Card Variants */
+.agri-card.premium {
+  background: var(--color-gradient-hero);
+  animation: cardPulse var(--glow-pulse-speed) ease-in-out infinite alternate;
+}
+
+.agri-card.blockchain {
+  position: relative;
+  overflow: hidden;
+}
+
+.agri-card.blockchain::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    from 0deg,
+    transparent,
+    var(--color-primary),
+    transparent,
+    var(--color-secondary),
+    transparent
+  );
+  animation: blockchainRotate 8s linear infinite;
+  opacity: 0.1;
+  z-index: -1;
+}
+
+/* ========== GRADIENT BUTTON SYSTEM ========== */
+
+.agri-btn {
+  position: relative;
+  background: var(--color-gradient-button);
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all var(--duration-normal) var(--ease-smooth);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 
+    0 4px 16px rgba(59, 125, 58, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.agri-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left var(--duration-slow) var(--ease-smooth);
+}
+
+.agri-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+  background: var(--color-gradient-buttonHover);
+  box-shadow: 
+    0 8px 32px rgba(59, 125, 58, 0.4),
+    var(--color-glow-green),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  letter-spacing: 1px;
+}
+
+.agri-btn:hover::before {
+  left: 100%;
+}
+
+.agri-btn:active {
+  transform: translateY(0) scale(1.02);
+}
+
+/* Button Variants */
+.agri-btn.secondary {
+  background: var(--color-gradient-secondary);
+  box-shadow: 
+    0 4px 16px rgba(126, 200, 80, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.agri-btn.accent {
+  background: var(--color-gradient-accent);
+  box-shadow: 
+    0 4px 16px rgba(255, 209, 102, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  color: var(--color-text);
+}
+
+.agri-btn.accent:hover {
+  box-shadow: 
+    0 8px 32px rgba(255, 209, 102, 0.5),
+    var(--color-glow-gold);
+}
+
+/* ========== NAVIGATION & HEADER EFFECTS ========== */
+
+.agri-header {
+  background: var(--color-gradient-hero);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(var(--color-primary-rgb), 0.1);
+  box-shadow: 
+    0 4px 32px var(--color-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Light theme specific header styling */
+:root.light-theme .agri-header {
+  background: var(--color-gradient-hero);
+  color: var(--color-headerText, #1A2E1A);
+  border-bottom: 1px solid rgba(91, 158, 91, 0.3);
+  box-shadow: 
+    0 2px 16px rgba(91, 158, 91, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.agri-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  animation: headerShimmer 3s ease-in-out infinite;
+}
+
+/* Header Container */
+.agri-header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 2;
+  gap: 1rem;
+}
+
+/* Header Brand */
+.agri-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 250px;
+}
+
+.agri-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  transition: transform 0.3s ease;
+}
+
+.agri-logo:hover {
+  transform: scale(1.05);
+}
+
+.agri-logo-icon {
+  font-size: 2.5rem;
+  filter: drop-shadow(0 2px 8px rgba(59, 125, 58, 0.3));
+}
+
+.agri-logo-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.agri-brand-main {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: var(--color-gradient-primary);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.5px;
+}
+
+/* Light theme brand text */
+:root.light-theme .agri-brand-main {
+  background: linear-gradient(135deg, #1A2E1A 0%, #2D5A2D 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.agri-brand-sub {
+  font-size: 0.75rem;
+  color: var(--color-textSecondary);
+  font-weight: 500;
+  margin-top: 0.125rem;
+  opacity: 0.8;
+}
+
+/* Light theme brand subtitle */
+:root.light-theme .agri-brand-sub {
+  color: #2D4A2D;
+}
+
+/* Header Navigation */
+.agri-header-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  justify-content: center;
+  padding: 0 2rem;
+  max-width: 800px;
+}
+
+.agri-nav-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text);
+  text-decoration: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  font-size: 0.875rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.1);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* Light theme nav links */
+:root.light-theme .agri-nav-link {
+  color: #1A2E1A;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(91, 158, 91, 0.3);
+}
+
+.agri-nav-icon {
+  font-size: 1.125rem;
+  opacity: 0.8;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.agri-nav-label {
+  font-weight: inherit;
+  transition: all 0.3s ease;
+}
+
+.agri-nav-indicator {
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--color-gradient-primary);
+  transform: translateX(-50%);
+  transition: width 0.3s ease;
+  border-radius: 1px;
+}
+
+.agri-nav-link:hover {
+  color: var(--color-primary);
+  background: rgba(var(--color-primary-rgb), 0.15);
+  border-color: rgba(var(--color-primary-rgb), 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(var(--color-primary-rgb), 0.2);
+}
+
+/* Light theme hover states */
+:root.light-theme .agri-nav-link:hover {
+  color: #1A2E1A;
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(91, 158, 91, 0.5);
+  box-shadow: 0 4px 16px rgba(91, 158, 91, 0.2);
+}
+
+.agri-nav-link.active {
+  color: var(--color-primary);
+  background: rgba(var(--color-primary-rgb), 0.2);
+  border-color: rgba(var(--color-primary-rgb), 0.4);
+  font-weight: 600;
+  box-shadow: 
+    inset 0 2px 4px rgba(var(--color-primary-rgb), 0.2),
+    0 4px 16px rgba(var(--color-primary-rgb), 0.15);
+}
+
+/* Light theme active states */
+:root.light-theme .agri-nav-link.active {
+  color: #1A2E1A;
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(91, 158, 91, 0.6);
+  box-shadow: 
+    inset 0 2px 4px rgba(91, 158, 91, 0.15),
+    0 2px 8px rgba(91, 158, 91, 0.25);
+}
+
+.agri-nav-link:hover .agri-nav-icon {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.agri-nav-link:hover .agri-nav-indicator {
+  width: 100%;
+}
+
+.agri-nav-link.active .agri-nav-icon {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.agri-nav-link.active .agri-nav-indicator {
+  width: 100%;
+}
+
+/* Header Actions */
+.agri-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  min-width: 300px;
+  justify-content: flex-end;
+  padding-left: 1rem;
+}
+
+/* Modern Sun/Moon Theme Toggle */
+.agri-modern-theme-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.75rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.agri-modern-theme-toggle:hover {
+  background: rgba(var(--color-primary-rgb), 0.1);
+  transform: scale(1.05);
+}
+
+.agri-toggle-track {
+  width: 60px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.2);
+  border-radius: 20px;
+  position: relative;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+/* Light theme toggle track */
+:root.light-theme .agri-toggle-track {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(91, 158, 91, 0.4);
+}
+
+.agri-toggle-slider {
+  width: 26px;
+  height: 26px;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  border-radius: 50%;
+  position: absolute;
+  top: 1px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.agri-toggle-slider.light {
+  left: 1px;
+  background: linear-gradient(135deg, #FFD166 0%, #E8A317 100%);
+}
+
+.agri-toggle-slider.dark {
+  left: 31px;
+  background: linear-gradient(135deg, #4ADE80 0%, #2F855A 100%);
+}
+
+.agri-toggle-icon {
+  font-size: 14px;
+  line-height: 1;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+/* Theme Toggle Hover Effects */
+.agri-modern-theme-toggle:hover .agri-toggle-track {
+  background: rgba(var(--color-primary-rgb), 0.15);
+  border-color: rgba(var(--color-primary-rgb), 0.4);
+}
+
+:root.light-theme .agri-modern-theme-toggle:hover .agri-toggle-track {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(91, 158, 91, 0.6);
+}
+
+.agri-modern-theme-toggle:hover .agri-toggle-slider {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Old theme toggle styles - keeping for fallback */
+.agri-theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.2);
+  color: var(--color-text);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+}
+
+/* Light theme toggle */
+:root.light-theme .agri-theme-toggle {
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(45, 90, 45, 0.4);
+  color: #1A2E1A;
+}
+
+.agri-theme-toggle:hover {
+  background: rgba(var(--color-primary-rgb), 0.1);
+  border-color: rgba(var(--color-primary-rgb), 0.3);
+  transform: translateY(-1px);
+}
+
+.agri-toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.agri-toggle-icon {
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.agri-theme-toggle:hover .agri-toggle-icon {
+  transform: scale(1.1);
+}
+
+.agri-toggle-text {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.8;
+}
+
+/* Notification Button */
+.agri-notification-btn {
+  position: relative;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(var(--color-accent-rgb), 0.2);
+  color: var(--color-text);
+  padding: 0.75rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  flex-shrink: 0;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Light theme notification button */
+:root.light-theme .agri-notification-btn {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(232, 163, 23, 0.4);
+  color: #1A2E1A;
+}
+
+.agri-notification-btn:hover {
+  background: rgba(var(--color-accent-rgb), 0.1);
+  border-color: rgba(var(--color-accent-rgb), 0.3);
+  transform: translateY(-1px);
+}
+
+:root.light-theme .agri-notification-btn:hover {
+  background: rgba(232, 163, 23, 0.1);
+  border-color: rgba(232, 163, 23, 0.4);
+}
+
+.agri-notification-icon {
+  font-size: 1.125rem;
+}
+
+.agri-notification-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: var(--color-accent);
+  color: white;
+  font-size: 0.625rem;
+  font-weight: 600;
+  padding: 0.125rem 0.375rem;
+  border-radius: 10px;
+  min-width: 16px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(var(--color-accent-rgb), 0.3);
+}
+
+/* User Profile */
+.agri-user-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.2);
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  flex-shrink: 0;
+  min-height: 44px;
+}
+
+/* Light theme user profile */
+:root.light-theme .agri-user-profile {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(91, 158, 91, 0.4);
+}
+
+:root.light-theme .agri-user-profile:hover {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(91, 158, 91, 0.6);
+}
+
+.agri-user-profile:hover {
+  background: rgba(var(--color-primary-rgb), 0.1);
+  border-color: rgba(var(--color-primary-rgb), 0.3);
+  transform: translateY(-1px);
+}
+
+.agri-user-profile:hover {
+  background: rgba(var(--color-primary-rgb), 0.1);
+  border-color: rgba(var(--color-primary-rgb), 0.3);
+  transform: translateY(-1px);
+}
+
+.agri-avatar {
+  font-size: 1.5rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.agri-user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.agri-username {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1;
+}
+
+.agri-user-role {
+  font-size: 0.75rem;
+  color: var(--color-textSecondary);
+  opacity: 0.8;
+  line-height: 1;
+}
+
+/* Light theme user text */
+:root.light-theme .agri-username {
+  color: #1A2E1A;
+}
+
+:root.light-theme .agri-user-role {
+  color: #2D4A2D;
+}
+
+/* ========== RESPONSIVE HEADER DESIGN ========== */
+
+/* Large desktop adjustments */
+@media (min-width: 1400px) {
+  .agri-header-container {
+    max-width: 1800px;
+    padding: 0 3rem;
+  }
+  
+  .agri-header-actions {
+    gap: 2rem;
+    min-width: 350px;
+  }
+}
+
+/* Tablet and small desktop adjustments */
+@media (max-width: 1024px) {
+  .agri-header-container {
+    padding: 0 1.5rem;
+    gap: 0.5rem;
+  }
+  
+  .agri-header-nav {
+    padding: 0 1rem;
+    gap: 0.5rem;
+    max-width: 600px;
+  }
+  
+  .agri-nav-link {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+  }
+  
+  .agri-nav-label {
+    display: none;
+  }
+  
+  .agri-nav-icon {
+    font-size: 1.25rem;
+  }
+  
+  .agri-header-brand,
+  .agri-header-actions {
+    min-width: 200px;
+  }
+  
+  .agri-header-actions {
+    gap: 1rem;
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .agri-header-container {
+    padding: 0 1rem;
+    gap: 0.5rem;
+  }
+  
+  .agri-brand-sub {
+    display: none;
+  }
+  
+  .agri-logo-text .agri-brand-main {
+    font-size: 1.25rem;
+  }
+  
+  .agri-user-info {
+    display: none;
+  }
+  
+  .agri-header-actions {
+    gap: 0.75rem;
+    min-width: 120px;
+  }
+  
+  .agri-header-nav {
+    gap: 0.25rem;
+    padding: 0 0.5rem;
+  }
+  
+  .agri-nav-link {
+    padding: 0.5rem;
+    min-width: 40px;
+    justify-content: center;
+  }
+}
+
+/* Very small mobile adjustments */
+@media (max-width: 480px) {
+  .agri-header-container {
+    padding: 0 0.75rem;
+  }
+  
+  .agri-header-actions {
+    gap: 0.5rem;
+    min-width: 100px;
+  }
+  
+  .agri-modern-theme-toggle {
+    padding: 0.5rem;
+  }
+  
+  .agri-toggle-track {
+    width: 50px;
+    height: 25px;
+  }
+  
+  .agri-toggle-slider {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .agri-toggle-slider.dark {
+    left: 26px;
+  }
+}
+
+/* ========== PARTICLE ANIMATION SYSTEM ========== */
+
+.agri-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.agri-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: particleFloat var(--particle-speed) ease-in-out infinite;
+}
+
+.agri-particle:nth-child(2n) {
+  background: var(--color-secondary);
+  animation-delay: -2s;
+  animation-duration: 15s;
+}
+
+.agri-particle:nth-child(3n) {
+  background: var(--color-accent);
+  animation-delay: -4s;
+  animation-duration: 25s;
+}
+
+.agri-particle:nth-child(4n) {
+  width: 6px;
+  height: 6px;
+  animation-delay: -1s;
+}
+
+.agri-particle:nth-child(5n) {
+  width: 2px;
+  height: 2px;
+  animation-delay: -3s;
+}
+
+/* ========== CHART & DATA VISUALIZATION ENHANCEMENTS ========== */
+
+.agri-chart-container {
+  position: relative;
+  background: var(--color-gradient-card);
+  border-radius: 16px;
+  padding: 24px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  animation: fadeInUp var(--duration-very-slow) var(--ease-agri);
+}
+
+.agri-chart-container::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: var(--color-gradient-cardBorder);
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity var(--duration-normal) var(--ease-smooth);
+}
+
+.agri-chart-container:hover::before {
+  opacity: 1;
+}
+
+.agri-chart-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.agri-chart-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--color-gradient-primary);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: iconPulse var(--glow-pulse-speed) ease-in-out infinite alternate;
+}
+
+/* ========== MICRO-INTERACTIONS & HOVER EFFECTS ========== */
+
+.agri-hover-scale {
+  transition: transform var(--duration-normal) var(--ease-bounce);
+}
+
+.agri-hover-scale:hover {
+  transform: scale(1.05);
+}
+
+.agri-hover-glow {
+  transition: all var(--duration-normal) var(--ease-smooth);
+}
+
+.agri-hover-glow:hover {
+  box-shadow: var(--color-glow-green);
+  transform: translateY(-2px);
+}
+
+.agri-hover-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.agri-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: var(--color-gradient-accent);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text);
+  animation: badgeGlow var(--glow-pulse-speed) ease-in-out infinite alternate;
+}
+
+.agri-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid transparent;
+  border-top: 3px solid var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  position: relative;
+}
+
+.agri-loading-spinner::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border: 3px solid transparent;
+  border-bottom: 3px solid var(--color-secondary);
+  border-radius: 50%;
+  animation: spin 1.5s linear infinite reverse;
+}
+
+/* ========== PAGE TRANSITION EFFECTS ========== */
+
+.agri-page-transition {
+  animation: pageEnter var(--duration-very-slow) var(--ease-agri);
+}
+
+.agri-fade-in {
+  animation: fadeIn var(--duration-slow) var(--ease-smooth);
+}
+
+.agri-slide-up {
+  animation: slideUp var(--duration-slow) var(--ease-smooth);
+}
+
+.agri-slide-in-left {
+  animation: slideInLeft var(--duration-slow) var(--ease-smooth);
+}
+
+.agri-slide-in-right {
+  animation: slideInRight var(--duration-slow) var(--ease-smooth);
+}
+
+/* ========== KEYFRAME ANIMATIONS ========== */
+
+@keyframes cardPulse {
+  0% { box-shadow: 0 8px 32px var(--color-shadow); }
+  100% { box-shadow: 0 8px 32px var(--color-shadow), var(--color-glow-green); }
+}
+
+@keyframes blockchainRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes headerShimmer {
+  0% { left: -100%; }
+  50% { left: 100%; }
+  100% { left: 100%; }
+}
+
+@keyframes particleFloat {
+  0% {
+    transform: translateY(100vh) translateX(0px) scale(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+    transform: translateY(90vh) translateX(10px) scale(1);
+  }
+  90% {
+    opacity: 0.6;
+    transform: translateY(10vh) translateX(-10px) scale(1);
+  }
+  100% {
+    transform: translateY(-10vh) translateX(0px) scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes iconPulse {
+  0% { box-shadow: 0 0 0 rgba(59, 125, 58, 0.4); }
+  100% { box-shadow: 0 0 20px rgba(59, 125, 58, 0.6); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes badgeGlow {
+  0% { box-shadow: 0 0 5px rgba(255, 209, 102, 0.3); }
+  100% { box-shadow: 0 0 15px rgba(255, 209, 102, 0.6); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pageEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes slideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========== RESPONSIVE ANIMATIONS ========== */
+
+@media (max-width: 768px) {
+  .agri-card:hover {
+    transform: translateY(-2px) scale(1.01);
+  }
+  
+  .agri-btn:hover {
+    transform: translateY(-1px) scale(1.02);
+  }
+  
+  .agri-particles {
+    display: none; /* Disable particles on mobile for performance */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .agri-particles {
+    display: none;
+  }
+}
+
+/* ========== ACCESSIBILITY & FOCUS STATES ========== */
+
+.agri-btn:focus,
+.agri-nav-link:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(59, 125, 58, 0.2);
+}
+
+.agri-card:focus-within {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .agri-card {
+    border: 2px solid var(--color-border);
+  }
+  
+  .agri-btn {
+    border: 2px solid var(--color-primary);
+  }
+}
