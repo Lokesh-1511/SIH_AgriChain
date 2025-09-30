@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/widgets/aadhaar_verification_widget.dart';
+import '../../../core/services/aadhaar_verification_service.dart';
 import '../providers/auth_provider.dart';
 import '../../farmer/screens/farmer_dashboard.dart';
 import 'dart:io';
@@ -23,7 +25,7 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
 
   // Form Controllers
   final _personalFormKey = GlobalKey<FormState>();
-  final _aadhaarFormKey = GlobalKey<FormState>();
+
   final _landFormKey = GlobalKey<FormState>();
   final _securityFormKey = GlobalKey<FormState>();
 
@@ -34,11 +36,8 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
   final _addressController = TextEditingController();
 
   // Aadhaar Verification
-  final _aadhaarController = TextEditingController();
-  final _otpController = TextEditingController();
   bool _aadhaarVerified = false;
-  bool _otpSent = false;
-  bool _otpVerified = false;
+  KYCDetails? _kycDetails;
 
   // Land Information
   final _landSizeController = TextEditingController();
@@ -63,8 +62,6 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
     _emailController.dispose();
     _phoneController.dispose();
     _addressController.dispose();
-    _aadhaarController.dispose();
-    _otpController.dispose();
     _landSizeController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -268,143 +265,48 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
   Widget _buildAadhaarVerificationStep() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
-      child: Form(
-        key: _aadhaarFormKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildStepHeader(
-              'Aadhaar Verification',
-              'Verify your identity with Aadhaar for secure farming',
-              Icons.verified_user,
-            ),
-            const SizedBox(height: 24),
-            
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                // ignore: deprecated_member_use
-                color: AppColors.info.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-                // ignore: deprecated_member_use
-                border: Border.all(color: AppColors.info.withOpacity(0.3)),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.security, color: AppColors.info),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      'Your Aadhaar details are encrypted and secure',
-                      style: TextStyle(color: AppColors.info, fontSize: 14),
-                    ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildStepHeader(
+            'Aadhaar Verification',
+            'Verify your identity with Aadhaar for secure farming',
+            Icons.verified_user,
+          ),
+          const SizedBox(height: 24),
+          
+          // Real Aadhaar Verification Widget
+          AadhaarVerificationWidget(
+            userId: _generatedFarmerId ?? 'temp_farmer_${DateTime.now().millisecondsSinceEpoch}',
+            userRole: 'farmer',
+            primaryColor: AppColors.farmerPrimary,
+            onVerificationComplete: (isVerified, kycDetails) {
+              setState(() {
+                _aadhaarVerified = isVerified;
+                _kycDetails = kycDetails;
+              });
+              
+              if (isVerified && kycDetails != null) {
+                // Auto-fill name from KYC if available
+                if (_nameController.text.isEmpty && kycDetails.name.isNotEmpty) {
+                  _nameController.text = kycDetails.name;
+                }
+                
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Aadhaar verified successfully! Welcome ${kycDetails.name}'),
+                    backgroundColor: AppColors.success,
+                    behavior: SnackBarBehavior.floating,
                   ),
-                ],
-              ),
-            ),
-            
-            const SizedBox(height: 20),
-            
-            _buildTextField(
-              controller: _aadhaarController,
-              label: 'Aadhaar Number',
-              icon: Icons.credit_card,
-              keyboardType: TextInputType.number,
-              enabled: !_aadhaarVerified,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your Aadhaar number';
-                }
-                if (value.length != 12) {
-                  return 'Aadhaar number must be 12 digits';
-                }
-                return null;
-              },
-            ),
-            
-            const SizedBox(height: 16),
-            
-            if (!_aadhaarVerified) ...[
-              ElevatedButton(
-                onPressed: _isLoading ? null : _verifyAadhaar,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.farmerPrimary,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                ),
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                      )
-                    : const Text('Verify Aadhaar'),
-              ),
-            ],
-            
-            if (_otpSent && !_otpVerified) ...[
-              const SizedBox(height: 20),
-              _buildTextField(
-                controller: _otpController,
-                label: 'Enter OTP',
-                icon: Icons.sms,
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter OTP';
-                  }
-                  if (value.length != 6) {
-                    return 'OTP must be 6 digits';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: _isLoading ? null : _verifyOTP,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.success,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                ),
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                      )
-                    : const Text('Verify OTP'),
-              ),
-            ],
-            
-            if (_aadhaarVerified) ...[
-              const SizedBox(height: 20),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: AppColors.success.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.success),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.check_circle, color: AppColors.success),
-                    const SizedBox(width: 12),
-                    const Expanded(
-                      child: Text(
-                        'Aadhaar verified successfully!',
-                        style: TextStyle(
-                          color: Colors.green,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ],
-        ),
+                );
+              }
+            },
+            onVerificationStart: () {
+              // Optional: Show loading or update UI when verification starts
+              debugPrint('Aadhaar verification started for farmer');
+            },
+          ),
+        ],
       ),
     );
   }
@@ -954,9 +856,10 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
+                      color: file != null ? AppColors.success : AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -1113,73 +1016,7 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
     }
   }
 
-  // Verification Methods
-  Future<void> _verifyAadhaar() async {
-    if (!(_aadhaarFormKey.currentState?.validate() ?? false)) return;
-
-    setState(() => _isLoading = true);
-
-    try {
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      final isValid = await authProvider.verifyAadhaar(_aadhaarController.text);
-
-      if (isValid) {
-        await _sendOTP();
-      } else {
-        _showErrorSnackBar('Invalid Aadhaar number');
-      }
-    } catch (e) {
-      _showErrorSnackBar('Aadhaar verification failed: $e');
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
-
-  Future<void> _sendOTP() async {
-    setState(() => _isLoading = true);
-
-    try {
-      // Mock OTP sending
-      await Future.delayed(const Duration(seconds: 2));
-      setState(() {
-        _otpSent = true;
-        _isLoading = false;
-      });
-      _showSuccessSnackBar('OTP sent to registered mobile number');
-    } catch (e) {
-      setState(() => _isLoading = false);
-      _showErrorSnackBar('Failed to send OTP: $e');
-    }
-  }
-
-  Future<void> _verifyOTP() async {
-    if (_otpController.text.isEmpty || _otpController.text.length != 6) {
-      _showErrorSnackBar('Please enter valid 6-digit OTP');
-      return;
-    }
-
-    setState(() => _isLoading = true);
-
-    try {
-      // Mock OTP verification
-      await Future.delayed(const Duration(seconds: 1));
-      
-      if (_otpController.text == '123456') {
-        setState(() {
-          _otpVerified = true;
-          _aadhaarVerified = true;
-          _isLoading = false;
-        });
-        _showSuccessSnackBar('Aadhaar verified successfully!');
-      } else {
-        setState(() => _isLoading = false);
-        _showErrorSnackBar('Invalid OTP. Please try again.');
-      }
-    } catch (e) {
-      setState(() => _isLoading = false);
-      _showErrorSnackBar('OTP verification failed: $e');
-    }
-  }
+  // Verification Methods (now handled by AadhaarVerificationWidget)
 
   Future<void> _pickDocument(String type) async {
     try {
@@ -1220,8 +1057,9 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
         'role': AppConstants.roleFarmer,
         'landSize': double.tryParse(_landSizeController.text) ?? 0.0,
         'landOwnership': _landOwnership,
-        'aadhaarNumber': _aadhaarController.text,
+        'aadhaarNumber': _kycDetails?.maskedAadhaar ?? '',
         'aadhaarVerified': _aadhaarVerified,
+        'verifiedName': _kycDetails?.name ?? '',
       };
 
       // Add document info if lease
