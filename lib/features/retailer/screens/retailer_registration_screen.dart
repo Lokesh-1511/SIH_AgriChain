@@ -6,6 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/widgets/aadhaar_verification_widget.dart';
+import '../../../core/services/aadhaar_verification_service.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../screens/retailer_dashboard.dart';
 
@@ -13,17 +15,19 @@ class RetailerRegistrationScreen extends StatefulWidget {
   const RetailerRegistrationScreen({super.key});
 
   @override
-  State<RetailerRegistrationScreen> createState() => _RetailerRegistrationScreenState();
+  State<RetailerRegistrationScreen> createState() =>
+      _RetailerRegistrationScreenState();
 }
 
-class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen> {
+class _RetailerRegistrationScreenState
+    extends State<RetailerRegistrationScreen> {
   final PageController _pageController = PageController();
   int _currentStep = 0;
   bool _isLoading = false;
 
   // Form Controllers
   final _personalFormKey = GlobalKey<FormState>();
-  final _aadhaarFormKey = GlobalKey<FormState>();
+
   final _businessFormKey = GlobalKey<FormState>();
   final _securityFormKey = GlobalKey<FormState>();
 
@@ -34,11 +38,8 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
   final _addressController = TextEditingController();
 
   // Aadhaar Verification
-  final _aadhaarController = TextEditingController();
-  final _otpController = TextEditingController();
   bool _aadhaarVerified = false;
-  bool _otpSent = false;
-  bool _otpVerified = false;
+  KYCDetails? _kycDetails;
 
   // Business Information
   final _businessNameController = TextEditingController();
@@ -66,8 +67,7 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
     _emailController.dispose();
     _phoneController.dispose();
     _addressController.dispose();
-    _aadhaarController.dispose();
-    _otpController.dispose();
+
     _businessNameController.dispose();
     _storeAddressController.dispose();
     _businessHoursController.dispose();
@@ -131,11 +131,7 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
       children: [
         Row(
           children: [
-            Icon(
-              Icons.store,
-              color: Colors.white,
-              size: 24,
-            ),
+            Icon(Icons.store, color: Colors.white, size: 24),
             const SizedBox(width: 8),
             Text(
               'Join as a Retailer',
@@ -167,10 +163,7 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
         const SizedBox(height: 8),
         Text(
           _getStepTitle(),
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-          ),
+          style: TextStyle(color: Colors.white, fontSize: 14),
         ),
       ],
     );
@@ -231,7 +224,9 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
                 if (value == null || value.isEmpty) {
                   return 'Please enter your email';
                 }
-                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                if (!RegExp(
+                  r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                ).hasMatch(value)) {
                   return 'Please enter a valid email';
                 }
                 return null;
@@ -275,141 +270,52 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
   Widget _buildAadhaarVerificationStep() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
-      child: Form(
-        key: _aadhaarFormKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildStepHeader(
-              'Aadhaar Verification',
-              'Verify your identity with Aadhaar for secure retail operations',
-              Icons.verified_user,
-            ),
-            const SizedBox(height: 24),
-            
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.info.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.info.withOpacity(0.3)),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.security, color: AppColors.info),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      'Your Aadhaar details are encrypted and secure',
-                      style: TextStyle(color: AppColors.info, fontSize: 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildStepHeader(
+            'Aadhaar Verification',
+            'Verify your identity with Aadhaar for secure retail operations',
+            Icons.verified_user,
+          ),
+          const SizedBox(height: 24),
+
+          // Real Aadhaar Verification Widget
+          AadhaarVerificationWidget(
+            userId:
+                _generatedRetailerId ??
+                'temp_retailer_${DateTime.now().millisecondsSinceEpoch}',
+            userRole: 'retailer',
+            primaryColor: AppColors.retailerPrimary,
+            onVerificationComplete: (isVerified, kycDetails) {
+              setState(() {
+                _aadhaarVerified = isVerified;
+                _kycDetails = kycDetails;
+              });
+
+              if (isVerified && kycDetails != null) {
+                // Auto-fill name from KYC if available
+                if (_nameController.text.isEmpty &&
+                    kycDetails.name.isNotEmpty) {
+                  _nameController.text = kycDetails.name;
+                }
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Aadhaar verified successfully! Welcome ${kycDetails.name}',
                     ),
+                    backgroundColor: AppColors.success,
+                    behavior: SnackBarBehavior.floating,
                   ),
-                ],
-              ),
-            ),
-            
-            const SizedBox(height: 20),
-            
-            _buildTextField(
-              controller: _aadhaarController,
-              label: 'Aadhaar Number',
-              icon: Icons.credit_card,
-              keyboardType: TextInputType.number,
-              enabled: !_aadhaarVerified,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your Aadhaar number';
-                }
-                if (value.length != 12) {
-                  return 'Aadhaar number must be 12 digits';
-                }
-                return null;
-              },
-            ),
-            
-            const SizedBox(height: 16),
-            
-            if (!_aadhaarVerified) ...[
-              ElevatedButton(
-                onPressed: _isLoading ? null : _verifyAadhaar,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.retailerPrimary,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                ),
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                      )
-                    : const Text('Verify Aadhaar'),
-              ),
-            ],
-            
-            if (_otpSent && !_otpVerified) ...[
-              const SizedBox(height: 20),
-              _buildTextField(
-                controller: _otpController,
-                label: 'Enter OTP',
-                icon: Icons.sms,
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter OTP';
-                  }
-                  if (value.length != 6) {
-                    return 'OTP must be 6 digits';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: _isLoading ? null : _verifyOTP,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.success,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                ),
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                      )
-                    : const Text('Verify OTP'),
-              ),
-            ],
-            
-            if (_aadhaarVerified) ...[
-              const SizedBox(height: 20),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: AppColors.success.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.success),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.check_circle, color: AppColors.success),
-                    const SizedBox(width: 12),
-                    const Expanded(
-                      child: Text(
-                        'Aadhaar verified successfully!',
-                        style: TextStyle(
-                          color: Colors.green,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ],
-        ),
+                );
+              }
+            },
+            onVerificationStart: () {
+              debugPrint('Aadhaar verification started for retailer');
+            },
+          ),
+        ],
       ),
     );
   }
@@ -453,7 +359,7 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
               },
             ),
             const SizedBox(height: 16),
-            
+
             // Store Type Dropdown
             Container(
               decoration: BoxDecoration(
@@ -465,21 +371,39 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
                 decoration: InputDecoration(
                   labelText: 'Store Type',
                   labelStyle: TextStyle(color: AppColors.textSecondary),
-                  prefixIcon: Icon(Icons.store_mall_directory, color: AppColors.retailerPrimary),
+                  prefixIcon: Icon(
+                    Icons.store_mall_directory,
+                    color: AppColors.retailerPrimary,
+                  ),
                   border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                 ),
                 items: const [
-                  DropdownMenuItem(value: 'grocery', child: Text('Grocery Store')),
-                  DropdownMenuItem(value: 'supermarket', child: Text('Supermarket')),
-                  DropdownMenuItem(value: 'convenience', child: Text('Convenience Store')),
-                  DropdownMenuItem(value: 'organic', child: Text('Organic Store')),
+                  DropdownMenuItem(
+                    value: 'grocery',
+                    child: Text('Grocery Store'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'supermarket',
+                    child: Text('Supermarket'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'convenience',
+                    child: Text('Convenience Store'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'organic',
+                    child: Text('Organic Store'),
+                  ),
                   DropdownMenuItem(value: 'other', child: Text('Other')),
                 ],
                 onChanged: (value) => setState(() => _storeType = value!),
               ),
             ),
-            
+
             const SizedBox(height: 16),
             _buildTextField(
               controller: _businessHoursController,
@@ -537,15 +461,18 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
               Icons.lock,
             ),
             const SizedBox(height: 24),
-            
+
             _buildTextField(
               controller: _passwordController,
               label: 'Password',
               icon: Icons.lock,
               obscureText: !_isPasswordVisible,
               suffixIcon: IconButton(
-                icon: Icon(_isPasswordVisible ? Icons.visibility : Icons.visibility_off),
-                onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
+                icon: Icon(
+                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                ),
+                onPressed: () =>
+                    setState(() => _isPasswordVisible = !_isPasswordVisible),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -557,17 +484,23 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
                 return null;
               },
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             _buildTextField(
               controller: _confirmPasswordController,
               label: 'Confirm Password',
               icon: Icons.lock_outline,
               obscureText: !_isConfirmPasswordVisible,
               suffixIcon: IconButton(
-                icon: Icon(_isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off),
-                onPressed: () => setState(() => _isConfirmPasswordVisible = !_isConfirmPasswordVisible),
+                icon: Icon(
+                  _isConfirmPasswordVisible
+                      ? Icons.visibility
+                      : Icons.visibility_off,
+                ),
+                onPressed: () => setState(
+                  () => _isConfirmPasswordVisible = !_isConfirmPasswordVisible,
+                ),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -579,18 +512,23 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
                 return null;
               },
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             Row(
               children: [
                 Transform.scale(
                   scale: 1.5,
                   child: Checkbox(
                     value: _agreeToTerms,
-                    shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                    onChanged: (value) => setState(() => _agreeToTerms = value ?? false),
-                    fillColor: MaterialStateProperty.resolveWith<Color>((states) {
+                    shape: BeveledRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    onChanged: (value) =>
+                        setState(() => _agreeToTerms = value ?? false),
+                    fillColor: MaterialStateProperty.resolveWith<Color>((
+                      states,
+                    ) {
                       if (states.contains(MaterialState.selected)) {
                         return AppColors.retailerPrimary;
                       }
@@ -652,15 +590,11 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
               color: AppColors.success.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              Icons.check_circle,
-              size: 64,
-              color: AppColors.success,
-            ),
+            child: Icon(Icons.check_circle, size: 64, color: AppColors.success),
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           Text(
             'Registration Successful!',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -669,16 +603,18 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
             ),
             textAlign: TextAlign.center,
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           if (_generatedRetailerId != null) ...[
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: AppColors.retailerPrimary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.retailerPrimary.withOpacity(0.3)),
+                border: Border.all(
+                  color: AppColors.retailerPrimary.withOpacity(0.3),
+                ),
               ),
               child: Column(
                 children: [
@@ -703,18 +639,15 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
             ),
             const SizedBox(height: 24),
           ],
-          
+
           Text(
             'Welcome to AGRICHAIN! Your retailer account has been successfully created and verified.',
-            style: TextStyle(
-              fontSize: 16,
-              color: AppColors.textSecondary,
-            ),
+            style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
             textAlign: TextAlign.center,
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           ElevatedButton(
             onPressed: _navigateToDashboard,
             style: ElevatedButton.styleFrom(
@@ -727,10 +660,7 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
             ),
             child: const Text(
               'Go to Dashboard',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
           ),
         ],
@@ -760,11 +690,7 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
               color: AppColors.retailerPrimary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
-              icon,
-              color: AppColors.retailerPrimary,
-              size: 24,
-            ),
+            child: Icon(icon, color: AppColors.retailerPrimary, size: 24),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -819,9 +745,7 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
         labelStyle: TextStyle(color: AppColors.textSecondary),
         prefixIcon: Icon(icon, color: AppColors.retailerPrimary),
         suffixIcon: suffixIcon,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: AppColors.retailerPrimary, width: 1),
@@ -861,8 +785,8 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
             color: file != null ? AppColors.success : AppColors.border,
           ),
           borderRadius: BorderRadius.circular(12),
-          color: file != null 
-              ? AppColors.success.withOpacity(0.05) 
+          color: file != null
+              ? AppColors.success.withOpacity(0.05)
               : Colors.white,
         ),
         child: Row(
@@ -870,14 +794,16 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: file != null 
-                    ? AppColors.success.withOpacity(0.1) 
+                color: file != null
+                    ? AppColors.success.withOpacity(0.1)
                     : AppColors.textSecondary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
                 file != null ? Icons.check_circle : Icons.upload_file,
-                color: file != null ? AppColors.success : AppColors.textSecondary,
+                color: file != null
+                    ? AppColors.success
+                    : AppColors.textSecondary,
               ),
             ),
             const SizedBox(width: 16),
@@ -897,7 +823,9 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
                     file != null ? 'Document uploaded' : subtitle,
                     style: TextStyle(
                       fontSize: 14,
-                      color: file != null ? AppColors.success : AppColors.textSecondary,
+                      color: file != null
+                          ? AppColors.success
+                          : AppColors.textSecondary,
                     ),
                   ),
                 ],
@@ -1037,73 +965,7 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
     }
   }
 
-  // Verification Methods
-  Future<void> _verifyAadhaar() async {
-    if (!(_aadhaarFormKey.currentState?.validate() ?? false)) return;
-
-    setState(() => _isLoading = true);
-
-    try {
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      final isValid = await authProvider.verifyAadhaar(_aadhaarController.text);
-
-      if (isValid) {
-        await _sendOTP();
-      } else {
-        _showErrorSnackBar('Invalid Aadhaar number');
-      }
-    } catch (e) {
-      _showErrorSnackBar('Aadhaar verification failed: $e');
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
-
-  Future<void> _sendOTP() async {
-    setState(() => _isLoading = true);
-
-    try {
-      // Mock OTP sending
-      await Future.delayed(const Duration(seconds: 2));
-      setState(() {
-        _otpSent = true;
-        _isLoading = false;
-      });
-      _showSuccessSnackBar('OTP sent to registered mobile number');
-    } catch (e) {
-      setState(() => _isLoading = false);
-      _showErrorSnackBar('Failed to send OTP: $e');
-    }
-  }
-
-  Future<void> _verifyOTP() async {
-    if (_otpController.text.isEmpty || _otpController.text.length != 6) {
-      _showErrorSnackBar('Please enter valid 6-digit OTP');
-      return;
-    }
-
-    setState(() => _isLoading = true);
-
-    try {
-      // Mock OTP verification
-      await Future.delayed(const Duration(seconds: 1));
-      
-      if (_otpController.text == '123456') {
-        setState(() {
-          _otpVerified = true;
-          _aadhaarVerified = true;
-          _isLoading = false;
-        });
-        _showSuccessSnackBar('Aadhaar verified successfully!');
-      } else {
-        setState(() => _isLoading = false);
-        _showErrorSnackBar('Invalid OTP. Please try again.');
-      }
-    } catch (e) {
-      setState(() => _isLoading = false);
-      _showErrorSnackBar('OTP verification failed: $e');
-    }
-  }
+  // Verification Methods (now handled by AadhaarVerificationWidget)
 
   Future<void> _pickDocument(String type) async {
     try {
@@ -1131,7 +993,7 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
 
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      
+
       // Prepare registration data
       Map<String, dynamic> userData = {
         'name': _nameController.text.trim(),
@@ -1146,8 +1008,9 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
         'businessHours': _businessHoursController.text.trim(),
         'gstNumber': _gstNumberController.text.trim(),
         'licenseNumber': _licenseNumberController.text.trim(),
-        'aadhaarNumber': _aadhaarController.text,
+        'aadhaarNumber': _kycDetails?.maskedAadhaar ?? '',
         'aadhaarVerified': _aadhaarVerified,
+        'verifiedName': _kycDetails?.name ?? '',
         'licenseImagePath': _licenseImage?.path,
       };
 
@@ -1156,7 +1019,7 @@ class _RetailerRegistrationScreenState extends State<RetailerRegistrationScreen>
       if (success) {
         // Generate unique retailer ID
         _generatedRetailerId = _generateRetailerId();
-        
+
         _pageController.nextPage(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,

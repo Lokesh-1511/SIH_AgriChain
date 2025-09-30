@@ -10,6 +10,10 @@ void main() {
   runApp(const AgriChainApp());
 }
 
+// TODO: Change the verification in the Aadhar screen to OTP verification
+// TODO: Add the functionality to change the language in the settings screen
+// TODO: picture update;
+
 class AgriChainApp extends StatelessWidget {
   const AgriChainApp({super.key});
 
