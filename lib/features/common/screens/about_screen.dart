@@ -28,11 +28,7 @@ class AboutScreen extends StatelessWidget {
                       color: Colors.green[700],
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Icon(
-                      Icons.eco,
-                      size: 60,
-                      color: Colors.white,
-                    ),
+                    child: const Icon(Icons.eco, size: 60, color: Colors.white),
                   ),
                   const SizedBox(height: 16),
                   const Text(
@@ -45,10 +41,7 @@ class AboutScreen extends StatelessWidget {
                   ),
                   const Text(
                     'Version 1.0.0',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black54,
-                    ),
+                    style: TextStyle(fontSize: 16, color: Colors.black54),
                   ),
                 ],
               ),
@@ -78,12 +71,12 @@ class AboutScreen extends StatelessWidget {
             _buildSection(
               'Key Features',
               '• Direct connection between farmers and buyers\n'
-              '• Real-time crop tracking and traceability\n'
-              '• Secure blockchain-based transactions\n'
-              '• Market price transparency\n'
-              '• Quality assurance and certification\n'
-              '• Weather and agricultural insights\n'
-              '• Insurance and financial services integration',
+                  '• Real-time crop tracking and traceability\n'
+                  '• Secure blockchain-based transactions\n'
+                  '• Market price transparency\n'
+                  '• Quality assurance and certification\n'
+                  '• Weather and agricultural insights\n'
+                  '• Insurance and financial services integration',
               Icons.star,
             ),
 
@@ -143,10 +136,7 @@ class AboutScreen extends StatelessWidget {
             Center(
               child: Text(
                 '© 2025 AgriChain. All rights reserved.',
-                style: TextStyle(
-                  color: Colors.black54,
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: Colors.black54, fontSize: 14),
               ),
             ),
           ],
@@ -191,13 +181,7 @@ class AboutScreen extends StatelessWidget {
       children: [
         Icon(icon, size: 18, color: Colors.green[700]),
         const SizedBox(width: 8),
-        Text(
-          text,
-          style: const TextStyle(
-            fontSize: 16,
-            color: Colors.black87,
-          ),
-        ),
+        Text(text, style: const TextStyle(fontSize: 16, color: Colors.black87)),
       ],
     );
   }

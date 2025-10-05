@@ -436,7 +436,8 @@ class ConsumerHomeTab extends StatelessWidget {
               crossAxisCount: 2,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
-              childAspectRatio: 0.95, // Increased further from 0.85 to prevent overflow
+              childAspectRatio:
+                  0.95, // Increased further from 0.85 to prevent overflow
             ),
             itemCount: _getFilteredProducts().length,
             itemBuilder: (context, index) {

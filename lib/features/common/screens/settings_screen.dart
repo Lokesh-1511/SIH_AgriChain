@@ -441,9 +441,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _showContactUs(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const ContactScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const ContactScreen()),
     );
   }
 
@@ -462,27 +460,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _showAppInfo(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const AboutScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const AboutScreen()),
     );
   }
 
   void _showTermsOfService(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const TermsOfServiceScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const TermsOfServiceScreen()),
     );
   }
 
   void _showPrivacyPolicy(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const PrivacyPolicyScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const PrivacyPolicyScreen()),
     );
   }
 
