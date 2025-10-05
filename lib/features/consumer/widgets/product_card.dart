@@ -89,139 +89,141 @@ class ProductCard extends StatelessWidget {
             ),
 
             // Product Details
-            Expanded( // Added Expanded to prevent overflow
+            Expanded(
+              // Added Expanded to prevent overflow
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                  // Product name
-                  Text(
-                    product['name'],
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-
-                  const SizedBox(height: 4),
-
-                  // Organic badge
-                  if (product['organic'] == true)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 2,
+                    // Product name
+                    Text(
+                      product['name'],
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
                       ),
-                      decoration: BoxDecoration(
-                        color: AppColors.success.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        'ORGANIC',
-                        style: TextStyle(
-                          color: AppColors.success,
-                          fontSize: 8,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
 
-                  const SizedBox(height: 6),
+                    const SizedBox(height: 4),
 
-                  // Rating and reviews
-                  Row(
-                    children: [
-                      Icon(Icons.star, color: AppColors.warning, size: 12),
-                      const SizedBox(width: 2),
-                      Text(
-                        '${product['rating']}',
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: AppColors.textSecondary,
-                          fontWeight: FontWeight.w500,
+                    // Organic badge
+                    if (product['organic'] == true)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.success.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          'ORGANIC',
+                          style: TextStyle(
+                            color: AppColors.success,
+                            fontSize: 8,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '(${product['reviews']})',
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
 
-                  const SizedBox(height: 8),
+                    const SizedBox(height: 6),
 
-                  // Price
-                  Row(
-                    children: [
-                      Text(
-                        '₹${product['price'].toInt()}',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.consumerPrimary,
+                    // Rating and reviews
+                    Row(
+                      children: [
+                        Icon(Icons.star, color: AppColors.warning, size: 12),
+                        const SizedBox(width: 2),
+                        Text(
+                          '${product['rating']}',
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: AppColors.textSecondary,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
-                      if (product['originalPrice'] != null &&
-                          product['originalPrice'] > product['price'])
-                        Padding(
-                          padding: const EdgeInsets.only(left: 6),
-                          child: Text(
-                            '₹${product['originalPrice'].toInt()}',
-                            style: TextStyle(
-                              fontSize: 12,
-                              decoration: TextDecoration.lineThrough,
-                              color: AppColors.textSecondary,
+                        const SizedBox(width: 4),
+                        Text(
+                          '(${product['reviews']})',
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    // Price
+                    Row(
+                      children: [
+                        Text(
+                          '₹${product['price'].toInt()}',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.consumerPrimary,
+                          ),
+                        ),
+                        if (product['originalPrice'] != null &&
+                            product['originalPrice'] > product['price'])
+                          Padding(
+                            padding: const EdgeInsets.only(left: 6),
+                            child: Text(
+                              '₹${product['originalPrice'].toInt()}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                decoration: TextDecoration.lineThrough,
+                                color: AppColors.textSecondary,
+                              ),
                             ),
                           ),
-                        ),
-                    ],
-                  ),
+                      ],
+                    ),
 
-                  const SizedBox(height: 8),
+                    const SizedBox(height: 8),
 
-                  const Spacer(), // Push button to bottom
-
-                  // Add to cart button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 32,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Add to cart logic
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('${product['name']} added to cart!'),
-                            duration: const Duration(seconds: 1),
+                    const Spacer(), // Push button to bottom
+                    // Add to cart button
+                    SizedBox(
+                      width: double.infinity,
+                      height: 32,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Add to cart logic
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                '${product['name']} added to cart!',
+                              ),
+                              duration: const Duration(seconds: 1),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.consumerPrimary,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.consumerPrimary,
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          padding: EdgeInsets.zero,
                         ),
-                        padding: EdgeInsets.zero,
-                      ),
-                      child: const Text(
-                        'Add to Cart',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
+                        child: const Text(
+                          'Add to Cart',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
                 ),
               ),
             ),

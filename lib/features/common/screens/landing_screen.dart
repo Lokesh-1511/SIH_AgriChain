@@ -297,22 +297,22 @@ class _LandingScreenState extends State<LandingScreen>
               Text(
                 title,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
               ),
               const SizedBox(height: 8),
               Text(
                 subtitle,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
+                  color: AppColors.textSecondary,
+                ),
               ),
             ],
           ),
         ),
-      ),  
+      ),
     );
   }
 
@@ -326,9 +326,7 @@ class _LandingScreenState extends State<LandingScreen>
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const AboutScreen(),
-                  ),
+                  MaterialPageRoute(builder: (context) => const AboutScreen()),
                 );
               },
               child: const Text('About'),
