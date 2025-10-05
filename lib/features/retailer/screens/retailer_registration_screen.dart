@@ -8,6 +8,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/widgets/aadhaar_verification_widget.dart';
 import '../../../core/services/aadhaar_verification_service.dart';
+import '../../../core/services/aadhaar_state_service.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../screens/retailer_dashboard.dart';
 
@@ -59,6 +60,32 @@ class _RetailerRegistrationScreenState
 
   // Generated ID
   String? _generatedRetailerId;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedVerificationState();
+  }
+
+  /// Load saved Aadhaar verification state from local storage
+  Future<void> _loadSavedVerificationState() async {
+    try {
+      final savedState = await AadhaarStateService.loadVerificationState(
+        userId: _generatedRetailerId ?? 'temp_retailer',
+        userRole: 'retailer',
+      );
+
+      if (savedState != null && savedState.isVerified) {
+        setState(() {
+          _aadhaarVerified = true;
+          _kycDetails = savedState.kycDetails;
+        });
+        debugPrint('✅ Restored Aadhaar verification state for retailer');
+      }
+    } catch (e) {
+      debugPrint('❌ Failed to load saved verification state: $e');
+    }
+  }
 
   @override
   void dispose() {
@@ -287,11 +314,17 @@ class _RetailerRegistrationScreenState
                 'temp_retailer_${DateTime.now().millisecondsSinceEpoch}',
             userRole: 'retailer',
             primaryColor: AppColors.retailerPrimary,
+            initialVerificationState: _aadhaarVerified,
+            initialKycDetails: _kycDetails,
             onVerificationComplete: (isVerified, kycDetails) {
+              debugPrint('📥 Retailer verification callback: isVerified=$isVerified, kycDetails=${kycDetails?.toJson()}');
+              
               setState(() {
                 _aadhaarVerified = isVerified;
                 _kycDetails = kycDetails;
               });
+
+              debugPrint('📊 Retailer current state: _aadhaarVerified=$_aadhaarVerified, _kycDetails=${_kycDetails?.toJson()}');
 
               if (isVerified && kycDetails != null) {
                 // Auto-fill name from KYC if available
@@ -941,8 +974,17 @@ class _RetailerRegistrationScreenState
       case 0:
         return _personalFormKey.currentState?.validate() ?? false;
       case 1:
+        // Strengthened Aadhaar verification validation
         if (!_aadhaarVerified) {
-          _showErrorSnackBar('Please complete Aadhaar verification');
+          _showErrorSnackBar(
+            'Please complete Aadhaar verification to continue',
+          );
+          return false;
+        }
+        if (_kycDetails == null) {
+          _showErrorSnackBar(
+            'Aadhaar verification incomplete. Please verify your Aadhaar number.',
+          );
           return false;
         }
         return true;
