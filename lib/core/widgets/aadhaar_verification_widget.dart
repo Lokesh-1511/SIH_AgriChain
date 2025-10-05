@@ -689,7 +689,7 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
               child: ElevatedButton(
                 onPressed: _isLoading ? null : _verifyOTP,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.success,
+                  backgroundColor: widget.primaryColor,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
@@ -731,29 +731,7 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
   Widget _buildSuccessView() {
     return Column(
       children: [
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: AppColors.success.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.success.withOpacity(0.3)),
-          ),
-          child: Row(
-            children: [
-              ScaleTransition(
-                scale: _successAnimation,
-                child: Icon(
-                  Icons.verified_user,
-                  color: AppColors.success,
-                  size: 28,
-                ),
-              ),
-              
-            ],
-          ),
-        ),
-
-        const SizedBox(height: 16),
+        
 
         OutlinedButton(
           onPressed: _resetVerification,
