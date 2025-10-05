@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/services/aadhaar_verification_service.dart';
+import '../../core/services/aadhaar_state_service.dart' as state_service;
+import 'otp_notification_popup.dart';
 
 /// Universal Aadhaar Verification Widget
 /// Used across Farmer, Distributor, Retailer, Consumer, Admin apps
@@ -12,6 +14,8 @@ class AadhaarVerificationWidget extends StatefulWidget {
   final Function(bool isVerified, KYCDetails? kycDetails)
   onVerificationComplete;
   final VoidCallback? onVerificationStart;
+  final bool? initialVerificationState;
+  final KYCDetails? initialKycDetails;
 
   const AadhaarVerificationWidget({
     super.key,
@@ -20,6 +24,8 @@ class AadhaarVerificationWidget extends StatefulWidget {
     required this.primaryColor,
     required this.onVerificationComplete,
     this.onVerificationStart,
+    this.initialVerificationState,
+    this.initialKycDetails,
   });
 
   @override
@@ -66,7 +72,18 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
     );
 
     _animationController.forward();
-    _checkExistingVerification();
+    
+    // Use initial state if provided, otherwise check existing verification
+    if (widget.initialVerificationState == true && widget.initialKycDetails != null) {
+      setState(() {
+        _isVerified = true;
+        _kycDetails = widget.initialKycDetails;
+      });
+      _successController.forward();
+      debugPrint('✅ Using initial verification state provided by parent');
+    } else {
+      _checkExistingVerification();
+    }
   }
 
   @override
@@ -78,9 +95,33 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
     super.dispose();
   }
 
-  /// Check if user already has verified Aadhaar
+  /// Check if user already has verified Aadhaar (both local storage and backend)
   Future<void> _checkExistingVerification() async {
     try {
+      // First check local storage for faster loading
+      final savedState =
+          await state_service.AadhaarStateService.loadVerificationState(
+            userId: widget.userId,
+            userRole: widget.userRole,
+          );
+
+      if (savedState != null && savedState.isVerified) {
+        setState(() {
+          _isVerified = true;
+          _kycDetails = savedState.kycDetails;
+        });
+        _successController.forward();
+        
+        // Use a small delay to ensure parent widget has finished initializing
+        Future.delayed(const Duration(milliseconds: 100), () {
+          widget.onVerificationComplete(true, savedState.kycDetails);
+        });
+        
+        debugPrint('✅ Loaded Aadhaar verification from local storage');
+        return;
+      }
+
+      // If not in local storage, check backend
       final status = await AadhaarVerificationService.getVerificationStatus(
         userId: widget.userId,
         userRole: widget.userRole,
@@ -92,6 +133,15 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
         });
         _successController.forward();
         widget.onVerificationComplete(true, null);
+        debugPrint('✅ Loaded Aadhaar verification from backend');
+
+        // Save to local storage for future quick access
+        await state_service.AadhaarStateService.saveVerificationState(
+          userId: widget.userId,
+          userRole: widget.userRole,
+          isVerified: true,
+          kycDetails: null,
+        );
       }
     } catch (e) {
       // User might not exist yet, continue with fresh verification
@@ -137,7 +187,17 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
           _transactionId = response.transactionId;
         });
         _showSuccessSnackBar(
-          'OTP sent successfully! Check your Aadhaar-linked mobile.\n');
+          'OTP sent successfully! Check your Aadhaar-linked mobile.\n',
+        );
+
+        // Show OTP popup notification with debug OTP (development only)
+        if (response.debugOtp != null && response.mobileNumber != null) {
+          OtpNotificationPopup.show(
+            context: context,
+            otp: response.debugOtp!,
+            mobileNumber: response.mobileNumber!,
+          );
+        }
       }
     } on AadhaarVerificationException catch (e) {
       setState(() {
@@ -185,12 +245,25 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
       );
 
       if (response.success) {
+        debugPrint('🎉 OTP Verification successful!');
+        debugPrint('🔍 KYC Details: ${response.kycDetails?.toJson()}');
+        
         setState(() {
           _isVerified = true;
           _kycDetails = response.kycDetails;
         });
         _successController.forward();
         _showSuccessSnackBar('Aadhaar verified successfully! ✅');
+
+        // Save verification state to local storage
+        await state_service.AadhaarStateService.saveVerificationState(
+          userId: widget.userId,
+          userRole: widget.userRole,
+          isVerified: true,
+          kycDetails: response.kycDetails,
+        );
+
+        debugPrint('✅ Calling onVerificationComplete with: isVerified=true, kycDetails=${response.kycDetails?.toJson()}');
         widget.onVerificationComplete(true, response.kycDetails);
       }
     } on AadhaarVerificationException catch (e) {
@@ -227,7 +300,22 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
     _aadhaarController.clear();
     _otpController.clear();
     _successController.reset();
+
+    // Clear saved verification state
+    state_service.AadhaarStateService.clearVerificationState(
+      userId: widget.userId,
+      userRole: widget.userRole,
+    );
+
+    // Notify parent that verification is no longer valid
+    widget.onVerificationComplete(false, null);
   }
+
+  /// Get current verification status for external validation
+  bool get isVerified => _isVerified;
+
+  /// Get current KYC details
+  KYCDetails? get kycDetails => _kycDetails;
 
   @override
   Widget build(BuildContext context) {
@@ -537,6 +625,7 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
           child: TextFormField(
             controller: _otpController,
             keyboardType: TextInputType.number,
+            style: TextStyle(color: AppColors.textPrimary),
             inputFormatters: [
               FilteringTextInputFormatter.digitsOnly,
               LengthLimitingTextInputFormatter(6),
@@ -659,39 +748,7 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
                   size: 28,
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Aadhaar Verified Successfully! ✅',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.success,
-                      ),
-                    ),
-                    if (_kycDetails != null) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        'Name: ${_kycDetails!.name}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                      Text(
-                        'Aadhaar: ${_kycDetails!.maskedAadhaar}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
+              
             ],
           ),
         ),

@@ -377,11 +377,21 @@ class AadhaarInitiateResponse {
   final bool success;
   final String message;
   final String? transactionId;
+  final String? mobileNumber;
+  final String? debugOtp;
+  final int? otpLength;
+  final int? expiresInMinutes;
+  final String? debugNote;
 
   AadhaarInitiateResponse({
     required this.success,
     required this.message,
     this.transactionId,
+    this.mobileNumber,
+    this.debugOtp,
+    this.otpLength,
+    this.expiresInMinutes,
+    this.debugNote,
   });
 
   factory AadhaarInitiateResponse.fromJson(Map<String, dynamic> json) {
@@ -389,6 +399,13 @@ class AadhaarInitiateResponse {
       success: json['success'] ?? false,
       message: json['message'] ?? '',
       transactionId: json['transaction_id'],
+      mobileNumber: json['mobile_number'],
+      debugOtp: json['debug_otp'],
+      otpLength: json['otp_length'],
+      expiresInMinutes: json['expires_in_minutes'] is String
+          ? int.tryParse(json['expires_in_minutes'])
+          : json['expires_in_minutes'],
+      debugNote: json['debug_note'],
     );
   }
 }
@@ -459,10 +476,18 @@ class KYCDetails {
 
   factory KYCDetails.fromJson(Map<String, dynamic> json) {
     return KYCDetails(
-      name: json['name'] ?? '',
+      name: json['name'] ?? 'Verified User',
       maskedAadhaar: json['masked_aadhaar'] ?? '',
-      verificationStatus: json['verification_status'] ?? 'PENDING',
+      verificationStatus: 'VERIFIED',
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'masked_aadhaar': maskedAadhaar,
+      'verification_status': verificationStatus,
+    };
   }
 }
 

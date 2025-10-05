@@ -67,13 +67,38 @@ router.post('/verify', async (req, res) => {
     // Invalidate the OTP after successful verification
     invalidateOTP(transaction_id);
     
+    // Generate mock KYC details for development
+    const aadhaarNumber = otpData?.aadhaarNumber || '';
+    const mockKycDetails = {
+      name: 'John Doe',
+      date_of_birth: '1990-01-01',
+      gender: 'M',
+      address: {
+        care_of: 'S/O John Smith',
+        house: '123',
+        street: 'Main Street',
+        locality: 'City Center',
+        village_town_city: 'Mumbai',
+        sub_district: 'Mumbai Suburban',
+        district: 'Mumbai',
+        state: 'Maharashtra',
+        post_office: 'Mumbai Central',
+        pincode: '400001'
+      },
+      masked_aadhaar: `XXXX-XXXX-${aadhaarNumber.slice(-4)}`,
+      photo_url: null
+    };
+    
     res.json({
       success: true,
       message: 'OTP verified successfully',
       aadhaar_verified: true,
       user_id: otpData?.user_id,
       user_role: otpData?.user_role,
-      verified_at: new Date().toISOString()
+      verified_at: new Date().toISOString(),
+      data: {
+        kyc_details: mockKycDetails
+      }
     });
     
   } catch (error) {

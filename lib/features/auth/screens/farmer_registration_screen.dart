@@ -6,6 +6,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/widgets/aadhaar_verification_widget.dart';
 import '../../../core/services/aadhaar_verification_service.dart';
+import '../../../core/services/aadhaar_state_service.dart';
 import '../providers/auth_provider.dart';
 import '../../farmer/screens/farmer_dashboard.dart';
 import 'dart:io';
@@ -15,7 +16,8 @@ class FarmerRegistrationScreen extends StatefulWidget {
   const FarmerRegistrationScreen({super.key});
 
   @override
-  State<FarmerRegistrationScreen> createState() => _FarmerRegistrationScreenState();
+  State<FarmerRegistrationScreen> createState() =>
+      _FarmerRegistrationScreenState();
 }
 
 class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
@@ -38,6 +40,32 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
   // Aadhaar Verification
   bool _aadhaarVerified = false;
   KYCDetails? _kycDetails;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedVerificationState();
+  }
+
+  /// Load saved Aadhaar verification state from local storage
+  Future<void> _loadSavedVerificationState() async {
+    try {
+      final savedState = await AadhaarStateService.loadVerificationState(
+        userId: _generatedFarmerId ?? 'temp_farmer',
+        userRole: 'farmer',
+      );
+
+      if (savedState != null && savedState.isVerified) {
+        setState(() {
+          _aadhaarVerified = true;
+          _kycDetails = savedState.kycDetails;
+        });
+        debugPrint('✅ Restored Aadhaar verification state from local storage');
+      }
+    } catch (e) {
+      debugPrint('❌ Failed to load saved verification state: $e');
+    }
+  }
 
   // Land Information
   final _landSizeController = TextEditingController();
@@ -121,11 +149,7 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
       children: [
         Row(
           children: [
-            Icon(
-              Icons.agriculture,
-              color: Colors.white,
-              size: 24,
-            ),
+            Icon(Icons.agriculture, color: Colors.white, size: 24),
             const SizedBox(width: 8),
             Text(
               'Join as a Farmer',
@@ -157,10 +181,7 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
         const SizedBox(height: 8),
         Text(
           _getStepTitle(),
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-          ),
+          style: TextStyle(color: Colors.white, fontSize: 14),
         ),
       ],
     );
@@ -221,7 +242,9 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
                 if (value == null || value.isEmpty) {
                   return 'Please enter your email';
                 }
-                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                if (!RegExp(
+                  r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                ).hasMatch(value)) {
                   return 'Please enter a valid email';
                 }
                 return null;
@@ -274,27 +297,43 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
             Icons.verified_user,
           ),
           const SizedBox(height: 24),
-          
+
           // Real Aadhaar Verification Widget
           AadhaarVerificationWidget(
-            userId: _generatedFarmerId ?? 'temp_farmer_${DateTime.now().millisecondsSinceEpoch}',
+            userId:
+                _generatedFarmerId ??
+                'temp_farmer_${DateTime.now().millisecondsSinceEpoch}',
             userRole: 'farmer',
             primaryColor: AppColors.farmerPrimary,
+            initialVerificationState: _aadhaarVerified,
+            initialKycDetails: _kycDetails,
             onVerificationComplete: (isVerified, kycDetails) {
-              setState(() {
-                _aadhaarVerified = isVerified;
-                _kycDetails = kycDetails;
-              });
+              debugPrint('📥 Received verification callback: isVerified=$isVerified, kycDetails=${kycDetails?.toJson()}');
               
+              // Only update state if we don't already have valid verification
+              // This prevents the callback from overwriting existing preserved state
+              if (!_aadhaarVerified || _kycDetails == null) {
+                setState(() {
+                  _aadhaarVerified = isVerified;
+                  _kycDetails = kycDetails;
+                });
+                debugPrint('📊 Updated state from callback: _aadhaarVerified=$_aadhaarVerified, _kycDetails=${_kycDetails?.toJson()}');
+              } else {
+                debugPrint('� Preserved existing state: _aadhaarVerified=$_aadhaarVerified, _kycDetails=${_kycDetails?.toJson()}');
+              }
+
               if (isVerified && kycDetails != null) {
                 // Auto-fill name from KYC if available
-                if (_nameController.text.isEmpty && kycDetails.name.isNotEmpty) {
+                if (_nameController.text.isEmpty &&
+                    kycDetails.name.isNotEmpty) {
                   _nameController.text = kycDetails.name;
                 }
-                
+
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Aadhaar verified successfully! Welcome ${kycDetails.name}'),
+                    content: Text(
+                      'Aadhaar verified successfully! Welcome ${kycDetails.name}',
+                    ),
                     backgroundColor: AppColors.success,
                     behavior: SnackBarBehavior.floating,
                   ),
@@ -325,7 +364,7 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
               Icons.landscape,
             ),
             const SizedBox(height: 24),
-            
+
             _buildTextField(
               controller: _landSizeController,
               label: 'Land Size (in acres)',
@@ -335,15 +374,16 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
                 if (value == null || value.isEmpty) {
                   return 'Please enter your land size';
                 }
-                if (double.tryParse(value) == null || double.parse(value) <= 0) {
+                if (double.tryParse(value) == null ||
+                    double.parse(value) <= 0) {
                   return 'Please enter a valid land size';
                 }
                 return null;
               },
             ),
-            
+
             const SizedBox(height: 20),
-            
+
             Text(
               'Land Ownership Type',
               style: TextStyle(
@@ -352,9 +392,9 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
                 color: AppColors.textPrimary,
               ),
             ),
-            
+
             const SizedBox(height: 12),
-            
+
             Container(
               decoration: BoxDecoration(
                 border: Border.all(color: AppColors.border),
@@ -363,41 +403,55 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
               child: Column(
                 children: [
                   RadioListTile<String>(
-                    title: const Text('Owned', style: TextStyle(color: AppColors.textPrimary,),),
-                    subtitle: const Text('I own this land', style: TextStyle(color: AppColors.textSecondary,),),
-                    
+                    title: const Text(
+                      'Owned',
+                      style: TextStyle(color: AppColors.textPrimary),
+                    ),
+                    subtitle: const Text(
+                      'I own this land',
+                      style: TextStyle(color: AppColors.textSecondary),
+                    ),
+
                     value: 'owned',
                     groupValue: _landOwnership,
                     fillColor: WidgetStateProperty.resolveWith<Color>((states) {
-                        if (states.contains(WidgetState.selected)) {
-                          return AppColors.farmerPrimary; // selected color
-                        }
-                        return Colors.grey; // unselected color
-                 }),
+                      if (states.contains(WidgetState.selected)) {
+                        return AppColors.farmerPrimary; // selected color
+                      }
+                      return Colors.grey; // unselected color
+                    }),
 
-                    onChanged: (value) => setState(() => _landOwnership = value!),
+                    onChanged: (value) =>
+                        setState(() => _landOwnership = value!),
                   ),
                   Divider(height: 1, color: AppColors.border),
                   RadioListTile<String>(
-                    title: const Text('Lease/Rent', style: TextStyle(color: AppColors.textPrimary,),),
-                    subtitle: const Text('I lease or rent this land', style: TextStyle(color: AppColors.textSecondary,),),
+                    title: const Text(
+                      'Lease/Rent',
+                      style: TextStyle(color: AppColors.textPrimary),
+                    ),
+                    subtitle: const Text(
+                      'I lease or rent this land',
+                      style: TextStyle(color: AppColors.textSecondary),
+                    ),
                     value: 'lease',
                     groupValue: _landOwnership,
                     fillColor: WidgetStateProperty.resolveWith<Color>((states) {
-                        if (states.contains(WidgetState.selected)) {
-                          return AppColors.farmerPrimary; // selected color
-                        }
-                        return Colors.grey; // unselected color
+                      if (states.contains(WidgetState.selected)) {
+                        return AppColors.farmerPrimary; // selected color
+                      }
+                      return Colors.grey; // unselected color
                     }),
-                    onChanged: (value) => setState(() => _landOwnership = value!),
+                    onChanged: (value) =>
+                        setState(() => _landOwnership = value!),
                   ),
                 ],
               ),
             ),
-            
+
             if (_landOwnership.isNotEmpty) ...[
               const SizedBox(height: 20),
-              
+
               Text(
                 'Required Documents',
                 style: TextStyle(
@@ -406,25 +460,28 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
                   color: AppColors.textPrimary,
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               if (_landOwnership == 'owned') ...[
                 _buildDocumentUpload(
                   title: 'Land Record',
-                  subtitle: 'Upload your land ownership document (Khatiyan/Patta/Registry)',
+                  subtitle:
+                      'Upload your land ownership document (Khatiyan/Patta/Registry)',
                   file: _ownerRecordFile,
                   onTap: () => _pickDocument('owner_record'),
                 ),
-                
+
                 const SizedBox(height: 8),
-                
+
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: AppColors.success.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: AppColors.success.withOpacity(0.3)),
+                    border: Border.all(
+                      color: AppColors.success.withOpacity(0.3),
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -450,9 +507,9 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
                   file: _ownerRecordFile,
                   onTap: () => _pickDocument('owner_record'),
                 ),
-                
+
                 const SizedBox(height: 12),
-                
+
                 _buildDocumentUpload(
                   title: 'Lease Agreement',
                   subtitle: 'Upload lease/rent agreement',
@@ -461,9 +518,9 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
                 ),
               ],
             ],
-            
+
             const SizedBox(height: 20),
-            
+
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -505,15 +562,18 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
               Icons.lock,
             ),
             const SizedBox(height: 24),
-            
+
             _buildTextField(
               controller: _passwordController,
               label: 'Password',
               icon: Icons.lock,
               obscureText: !_isPasswordVisible,
               suffixIcon: IconButton(
-                icon: Icon(_isPasswordVisible ? Icons.visibility : Icons.visibility_off),
-                onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
+                icon: Icon(
+                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                ),
+                onPressed: () =>
+                    setState(() => _isPasswordVisible = !_isPasswordVisible),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -525,17 +585,23 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
                 return null;
               },
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             _buildTextField(
               controller: _confirmPasswordController,
               label: 'Confirm Password',
               icon: Icons.lock_outline,
               obscureText: !_isConfirmPasswordVisible,
               suffixIcon: IconButton(
-                icon: Icon(_isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off),
-                onPressed: () => setState(() => _isConfirmPasswordVisible = !_isConfirmPasswordVisible),
+                icon: Icon(
+                  _isConfirmPasswordVisible
+                      ? Icons.visibility
+                      : Icons.visibility_off,
+                ),
+                onPressed: () => setState(
+                  () => _isConfirmPasswordVisible = !_isConfirmPasswordVisible,
+                ),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -547,18 +613,23 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
                 return null;
               },
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             Row(
               children: [
                 Transform.scale(
                   scale: 1.5, // 1.0 = normal, increase for bigger size
                   child: Checkbox(
                     value: _agreeToTerms,
-                    shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                    onChanged: (value) => setState(() => _agreeToTerms = value ?? false),
-                    fillColor: MaterialStateProperty.resolveWith<Color>((states) {
+                    shape: BeveledRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    onChanged: (value) =>
+                        setState(() => _agreeToTerms = value ?? false),
+                    fillColor: MaterialStateProperty.resolveWith<Color>((
+                      states,
+                    ) {
                       if (states.contains(MaterialState.selected)) {
                         return AppColors.farmerPrimary;
                       }
@@ -621,15 +692,11 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
               color: AppColors.success.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              Icons.check_circle,
-              size: 64,
-              color: AppColors.success,
-            ),
+            child: Icon(Icons.check_circle, size: 64, color: AppColors.success),
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           Text(
             'Registration Successful!',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -638,16 +705,18 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
             ),
             textAlign: TextAlign.center,
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           if (_generatedFarmerId != null) ...[
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: AppColors.farmerPrimary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.farmerPrimary.withOpacity(0.3)),
+                border: Border.all(
+                  color: AppColors.farmerPrimary.withOpacity(0.3),
+                ),
               ),
               child: Column(
                 children: [
@@ -672,18 +741,15 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
             ),
             const SizedBox(height: 24),
           ],
-          
+
           Text(
             'Welcome to AGRICHAIN! Your farmer account has been successfully created and verified.',
-            style: TextStyle(
-              fontSize: 16,
-              color: AppColors.textSecondary,
-            ),
+            style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
             textAlign: TextAlign.center,
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           ElevatedButton(
             onPressed: _navigateToDashboard,
             style: ElevatedButton.styleFrom(
@@ -696,10 +762,7 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
             ),
             child: const Text(
               'Go to Dashboard',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
           ),
         ],
@@ -711,7 +774,7 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color:AppColors.background,
+        color: AppColors.background,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -729,11 +792,7 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
               color: AppColors.farmerPrimary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
-              icon,
-              color: AppColors.farmerPrimary,
-              size: 24,
-            ),
+            child: Icon(icon, color: AppColors.farmerPrimary, size: 24),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -788,17 +847,21 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
         labelStyle: TextStyle(color: AppColors.textSecondary),
         prefixIcon: Icon(icon, color: AppColors.farmerPrimary),
         suffixIcon: suffixIcon,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: AppColors.farmerPrimary, width: 1), // light grey border
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: AppColors.farmerPrimary, width: 2), // colored border when focused
-                  ),
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: AppColors.farmerPrimary,
+            width: 1,
+          ), // light grey border
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: AppColors.farmerPrimary,
+            width: 2,
+          ), // colored border when focused
+        ),
         disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: AppColors.border.withOpacity(0.5)),
@@ -830,8 +893,8 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
             color: file != null ? AppColors.success : AppColors.border,
           ),
           borderRadius: BorderRadius.circular(12),
-          color: file != null 
-              ? AppColors.success.withOpacity(0.05) 
+          color: file != null
+              ? AppColors.success.withOpacity(0.05)
               : Colors.white,
         ),
         child: Row(
@@ -839,14 +902,16 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: file != null 
-                    ? AppColors.success.withOpacity(0.1) 
+                color: file != null
+                    ? AppColors.success.withOpacity(0.1)
                     : AppColors.textSecondary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
                 file != null ? Icons.check_circle : Icons.upload_file,
-                color: file != null ? AppColors.success : AppColors.textSecondary,
+                color: file != null
+                    ? AppColors.success
+                    : AppColors.textSecondary,
               ),
             ),
             const SizedBox(width: 16),
@@ -859,7 +924,9 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: file != null ? AppColors.success : AppColors.textPrimary,
+                      color: file != null
+                          ? AppColors.success
+                          : AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -867,7 +934,9 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
                     file != null ? 'Document uploaded' : subtitle,
                     style: TextStyle(
                       fontSize: 14,
-                      color: file != null ? AppColors.success : AppColors.textSecondary,
+                      color: file != null
+                          ? AppColors.success
+                          : AppColors.textSecondary,
                     ),
                   ),
                 ],
@@ -918,8 +987,7 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
             child: ElevatedButton(
               onPressed: () {
                 _isLoading ? null : _nextStep();
-                 FocusScope.of(context).unfocus();
-                
+                FocusScope.of(context).unfocus();
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.farmerPrimary,
@@ -935,8 +1003,7 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
                         strokeWidth: 2,
                       ),
                     )
-                  : Text(_getNextButtonText(), ),
-              
+                  : Text(_getNextButtonText()),
             ),
           ),
         ],
@@ -949,7 +1016,9 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
       case 0:
         return 'Continue';
       case 1:
-        return _aadhaarVerified ? 'Continue' : 'Complete Verification';
+        return (_aadhaarVerified && _kycDetails != null)
+            ? 'Continue'
+            : 'Complete Verification';
       case 2:
         return 'Continue';
       case 3:
@@ -985,8 +1054,17 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
       case 0:
         return _personalFormKey.currentState?.validate() ?? false;
       case 1:
+        // Strengthened Aadhaar verification validation
         if (!_aadhaarVerified) {
-          _showErrorSnackBar('Please complete Aadhaar verification');
+          _showErrorSnackBar(
+            'Please complete Aadhaar verification to continue',
+          );
+          return false;
+        }
+        if (_kycDetails == null) {
+          _showErrorSnackBar(
+            'Aadhaar verification incomplete. Please verify your Aadhaar number.',
+          );
           return false;
         }
         return true;
@@ -999,7 +1077,9 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
           }
         } else if (_landOwnership == 'lease') {
           if (_ownerRecordFile == null || _leaseDocFile == null) {
-            _showErrorSnackBar('Please upload required documents for lease land');
+            _showErrorSnackBar(
+              'Please upload required documents for lease land',
+            );
             return false;
           }
         }
@@ -1046,7 +1126,7 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
 
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      
+
       // Prepare registration data
       Map<String, dynamic> userData = {
         'name': _nameController.text.trim(),
@@ -1073,7 +1153,7 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
       if (success) {
         // Generate unique farmer ID
         _generatedFarmerId = _generateFarmerId();
-        
+
         _pageController.nextPage(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
