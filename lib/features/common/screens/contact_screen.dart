@@ -23,7 +23,7 @@ class _ContactScreenState extends State<ContactScreen> {
     'Feature Request',
     'Bug Report',
     'Partnership',
-    'Other'
+    'Other',
   ];
 
   @override
@@ -157,7 +157,10 @@ class _ContactScreenState extends State<ContactScreen> {
                       decoration: InputDecoration(
                         labelText: 'Full Name',
                         labelStyle: const TextStyle(color: Colors.black54),
-                        prefixIcon: const Icon(Icons.person, color: Colors.green),
+                        prefixIcon: const Icon(
+                          Icons.person,
+                          color: Colors.green,
+                        ),
                         filled: true,
                         fillColor: Colors.grey[50],
                         border: OutlineInputBorder(
@@ -170,7 +173,10 @@ class _ContactScreenState extends State<ContactScreen> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.green[700]!, width: 2),
+                          borderSide: BorderSide(
+                            color: Colors.green[700]!,
+                            width: 2,
+                          ),
                         ),
                       ),
                       validator: (value) {
@@ -191,7 +197,10 @@ class _ContactScreenState extends State<ContactScreen> {
                       decoration: InputDecoration(
                         labelText: 'Email Address',
                         labelStyle: const TextStyle(color: Colors.black54),
-                        prefixIcon: const Icon(Icons.email, color: Colors.green),
+                        prefixIcon: const Icon(
+                          Icons.email,
+                          color: Colors.green,
+                        ),
                         filled: true,
                         fillColor: Colors.grey[50],
                         border: OutlineInputBorder(
@@ -204,7 +213,10 @@ class _ContactScreenState extends State<ContactScreen> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.green[700]!, width: 2),
+                          borderSide: BorderSide(
+                            color: Colors.green[700]!,
+                            width: 2,
+                          ),
                         ),
                       ),
                       validator: (value) {
@@ -227,7 +239,10 @@ class _ContactScreenState extends State<ContactScreen> {
                       decoration: InputDecoration(
                         labelText: 'Category',
                         labelStyle: const TextStyle(color: Colors.black54),
-                        prefixIcon: const Icon(Icons.category, color: Colors.green),
+                        prefixIcon: const Icon(
+                          Icons.category,
+                          color: Colors.green,
+                        ),
                         filled: true,
                         fillColor: Colors.grey[50],
                         border: OutlineInputBorder(
@@ -240,7 +255,10 @@ class _ContactScreenState extends State<ContactScreen> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.green[700]!, width: 2),
+                          borderSide: BorderSide(
+                            color: Colors.green[700]!,
+                            width: 2,
+                          ),
                         ),
                       ),
                       items: _categories.map((String category) {
@@ -265,7 +283,10 @@ class _ContactScreenState extends State<ContactScreen> {
                       decoration: InputDecoration(
                         labelText: 'Subject',
                         labelStyle: const TextStyle(color: Colors.black54),
-                        prefixIcon: const Icon(Icons.subject, color: Colors.green),
+                        prefixIcon: const Icon(
+                          Icons.subject,
+                          color: Colors.green,
+                        ),
                         filled: true,
                         fillColor: Colors.grey[50],
                         border: OutlineInputBorder(
@@ -278,7 +299,10 @@ class _ContactScreenState extends State<ContactScreen> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.green[700]!, width: 2),
+                          borderSide: BorderSide(
+                            color: Colors.green[700]!,
+                            width: 2,
+                          ),
                         ),
                       ),
                       validator: (value) {
@@ -299,7 +323,10 @@ class _ContactScreenState extends State<ContactScreen> {
                       decoration: InputDecoration(
                         labelText: 'Message',
                         labelStyle: const TextStyle(color: Colors.black54),
-                        prefixIcon: const Icon(Icons.message, color: Colors.green),
+                        prefixIcon: const Icon(
+                          Icons.message,
+                          color: Colors.green,
+                        ),
                         alignLabelWithHint: true,
                         filled: true,
                         fillColor: Colors.grey[50],
@@ -313,7 +340,10 @@ class _ContactScreenState extends State<ContactScreen> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.green[700]!, width: 2),
+                          borderSide: BorderSide(
+                            color: Colors.green[700]!,
+                            width: 2,
+                          ),
                         ),
                       ),
                       validator: (value) {
@@ -412,10 +442,7 @@ class _ContactScreenState extends State<ContactScreen> {
             Text(
               content,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.black54,
-              ),
+              style: const TextStyle(fontSize: 12, color: Colors.black54),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),

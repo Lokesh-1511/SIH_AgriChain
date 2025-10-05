@@ -130,7 +130,8 @@ class _InventoryScreenState extends State<InventoryScreen> {
                 crossAxisCount: 2,
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
-                childAspectRatio: 1.0, // Increased further from 0.9 to prevent overflow
+                childAspectRatio:
+                    1.0, // Increased further from 0.9 to prevent overflow
               ),
               itemCount: _getFilteredProducts().length,
               itemBuilder: (context, index) {
