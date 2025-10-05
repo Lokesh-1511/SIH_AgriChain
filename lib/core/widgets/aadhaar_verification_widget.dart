@@ -9,7 +9,8 @@ class AadhaarVerificationWidget extends StatefulWidget {
   final String userId;
   final String userRole;
   final Color primaryColor;
-  final Function(bool isVerified, KYCDetails? kycDetails) onVerificationComplete;
+  final Function(bool isVerified, KYCDetails? kycDetails)
+  onVerificationComplete;
   final VoidCallback? onVerificationStart;
 
   const AadhaarVerificationWidget({
@@ -22,7 +23,8 @@ class AadhaarVerificationWidget extends StatefulWidget {
   });
 
   @override
-  State<AadhaarVerificationWidget> createState() => _AadhaarVerificationWidgetState();
+  State<AadhaarVerificationWidget> createState() =>
+      _AadhaarVerificationWidgetState();
 }
 
 class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
@@ -38,7 +40,7 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
   String? _transactionId;
   String? _errorMessage;
   KYCDetails? _kycDetails;
-  
+
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late AnimationController _successController;
@@ -54,7 +56,7 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
-    
+
     _successController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
@@ -62,7 +64,7 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
     _successAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _successController, curve: Curves.elasticOut),
     );
-    
+
     _animationController.forward();
     _checkExistingVerification();
   }
@@ -83,7 +85,7 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
         userId: widget.userId,
         userRole: widget.userRole,
       );
-      
+
       if (status.aadhaarVerified) {
         setState(() {
           _isVerified = true;
@@ -100,7 +102,7 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
   /// Step 1: Send OTP to Aadhaar-linked mobile
   Future<void> _sendOTP() async {
     if (!_aadhaarFormKey.currentState!.validate()) return;
-    
+
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -109,6 +111,20 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
     widget.onVerificationStart?.call();
 
     try {
+      // Step 1: Test backend connectivity first
+      debugPrint('🔍 Testing backend connectivity...');
+      final isConnected = await AadhaarVerificationService.testConnectivity();
+
+      if (!isConnected) {
+        throw AadhaarVerificationException(
+          'Cannot connect to verification server. Please check if backend is running.',
+          AadhaarErrorCode.networkError,
+        );
+      }
+
+      debugPrint('✅ Backend connected, initiating verification...');
+
+      // Step 2: Initiate Aadhaar verification
       final response = await AadhaarVerificationService.initiateVerification(
         aadhaarNumber: _aadhaarController.text.replaceAll('-', ''),
         userId: widget.userId,
@@ -120,18 +136,30 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
           _otpSent = true;
           _transactionId = response.transactionId;
         });
-        _showSuccessSnackBar('OTP sent to your Aadhaar-linked mobile number');
+        _showSuccessSnackBar(
+          'OTP sent successfully! Check your Aadhaar-linked mobile.\n');
       }
     } on AadhaarVerificationException catch (e) {
       setState(() {
         _errorMessage = e.message;
       });
-      _showErrorSnackBar(e.message);
+
+      // Show more detailed error based on error type
+      String errorMsg = e.message;
+      if (e.errorCode == AadhaarErrorCode.networkError) {
+        errorMsg =
+            'Network Error: ${e.message}\n\n'
+            'Please ensure:\n'
+            '• Backend server is running on localhost:8000\n'
+            '• Your device can connect to the server';
+      }
+
+      _showErrorSnackBar(errorMsg);
     } catch (e) {
       setState(() {
-        _errorMessage = 'An unexpected error occurred. Please try again.';
+        _errorMessage = 'Connection failed: ${e.toString()}';
       });
-      _showErrorSnackBar('An unexpected error occurred. Please try again.');
+      _showErrorSnackBar('Connection failed: ${e.toString()}');
     } finally {
       setState(() {
         _isLoading = false;
@@ -170,7 +198,7 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
         _errorMessage = e.message;
       });
       _showErrorSnackBar(e.message);
-      
+
       // If OTP is invalid, allow user to try again
       if (e.errorCode == AadhaarErrorCode.invalidOTP) {
         _otpController.clear();
@@ -223,14 +251,14 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
           children: [
             _buildHeader(),
             const SizedBox(height: 20),
-            
-            if (_isVerified) 
+
+            if (_isVerified)
               _buildSuccessView()
             else if (_otpSent)
               _buildOTPVerificationView()
             else
               _buildAadhaarInputView(),
-              
+
             if (_errorMessage != null) ...[
               const SizedBox(height: 16),
               _buildErrorMessage(),
@@ -274,12 +302,9 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
                 _isVerified
                     ? 'Your Aadhaar has been successfully verified'
                     : _otpSent
-                        ? 'Enter the OTP sent to your mobile'
-                        : 'Verify your identity with Aadhaar',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColors.textSecondary,
-                ),
+                    ? 'Enter the OTP sent to your mobile'
+                    : 'Verify your identity with Aadhaar',
+                style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
               ),
             ],
           ),
@@ -299,11 +324,7 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
             color: AppColors.success,
             shape: BoxShape.circle,
           ),
-          child: const Icon(
-            Icons.check,
-            color: Colors.white,
-            size: 20,
-          ),
+          child: const Icon(Icons.check, color: Colors.white, size: 20),
         ),
       );
     } else if (_otpSent) {
@@ -313,11 +334,7 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
           color: AppColors.warning,
           shape: BoxShape.circle,
         ),
-        child: const Icon(
-          Icons.sms,
-          color: Colors.white,
-          size: 20,
-        ),
+        child: const Icon(Icons.sms, color: Colors.white, size: 20),
       );
     } else {
       return Container(
@@ -326,11 +343,7 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
           color: AppColors.textHint,
           shape: BoxShape.circle,
         ),
-        child: const Icon(
-          Icons.security,
-          color: Colors.white,
-          size: 20,
-        ),
+        child: const Icon(Icons.security, color: Colors.white, size: 20),
       );
     }
   }
@@ -354,23 +367,21 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
               Expanded(
                 child: Text(
                   'Your Aadhaar details are encrypted and secure',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: AppColors.info,
-                  ),
+                  style: TextStyle(fontSize: 12, color: AppColors.info),
                 ),
               ),
             ],
           ),
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         Form(
           key: _aadhaarFormKey,
           child: TextFormField(
             controller: _aadhaarController,
             keyboardType: TextInputType.number,
+            style: TextStyle(color: AppColors.textPrimary),
             inputFormatters: [
               FilteringTextInputFormatter.digitsOnly,
               LengthLimitingTextInputFormatter(12),
@@ -403,15 +414,44 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
                 return 'Please enter your Aadhaar number';
               }
               if (cleanValue.length != 12) {
-                return 'Aadhaar number must be 12 digits';
+                return 'Aadhaar number must be exactly 12 digits';
               }
+              if (!RegExp(r'^\d{12}$').hasMatch(cleanValue)) {
+                return 'Aadhaar number must contain only digits';
+              }
+
+              // Check for obviously fake patterns
+              final fakePatterns = {
+                '000000000000': 'All zeros are not valid',
+                '111111111111': 'All ones are not valid',
+                '123456789012': 'Sequential numbers are not valid',
+                '999999999999': 'All nines are not valid',
+                '123412341234': 'Repetitive patterns are not valid',
+                '111122223333': 'Block patterns are not valid',
+              };
+
+              if (fakePatterns.containsKey(cleanValue)) {
+                return 'Invalid Aadhaar: ${fakePatterns[cleanValue]}';
+              }
+
+              // Check if starts with 0 or 1 (invalid for real Aadhaar)
+              if (cleanValue.startsWith('0') || cleanValue.startsWith('1')) {
+                return 'Invalid Aadhaar: Cannot start with 0 or 1';
+              }
+
+              // Check for too many repeated digits
+              final uniqueDigits = cleanValue.split('').toSet().length;
+              if (uniqueDigits < 4) {
+                return 'Invalid Aadhaar: Too many repeated digits';
+              }
+
               return null;
             },
           ),
         ),
-        
+
         const SizedBox(height: 20),
-        
+
         ElevatedButton(
           onPressed: _isLoading ? null : _sendOTP,
           style: ElevatedButton.styleFrom(
@@ -428,7 +468,7 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
                   height: 20,
                   width: 20,
                   child: CircularProgressIndicator(
-                    color: Colors.white,
+                    color: Colors.green,
                     strokeWidth: 2,
                   ),
                 )
@@ -439,7 +479,10 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
                     const SizedBox(width: 8),
                     const Text(
                       'Send OTP',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ],
                 ),
@@ -478,10 +521,7 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
                     ),
                     Text(
                       'Please enter the 6-digit OTP received',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: AppColors.warning,
-                      ),
+                      style: TextStyle(fontSize: 11, color: AppColors.warning),
                     ),
                   ],
                 ),
@@ -489,9 +529,9 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
             ],
           ),
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         Form(
           key: _otpFormKey,
           child: TextFormField(
@@ -533,9 +573,9 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
             },
           ),
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         Row(
           children: [
             Expanded(
@@ -549,7 +589,7 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
                   ),
                 ),
                 child: Text(
-                  'Change Number',
+                  'Re-enter ID',
                   style: TextStyle(color: widget.primaryColor),
                 ),
               ),
@@ -584,7 +624,10 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
                           const SizedBox(width: 8),
                           const Text(
                             'Verify OTP',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ],
                       ),
@@ -652,9 +695,9 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
             ],
           ),
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         OutlinedButton(
           onPressed: _resetVerification,
           style: OutlinedButton.styleFrom(
@@ -666,10 +709,7 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
           ),
           child: Text(
             'Verify Different Aadhaar',
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 12,
-            ),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
           ),
         ),
       ],
@@ -691,10 +731,7 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
           Expanded(
             child: Text(
               _errorMessage!,
-              style: TextStyle(
-                fontSize: 12,
-                color: AppColors.error,
-              ),
+              style: TextStyle(fontSize: 12, color: AppColors.error),
             ),
           ),
         ],
@@ -738,7 +775,7 @@ class _AadhaarNumberFormatter extends TextInputFormatter {
     TextEditingValue newValue,
   ) {
     final text = newValue.text.replaceAll('-', '');
-    
+
     if (text.length <= 4) {
       return newValue.copyWith(text: text);
     } else if (text.length <= 8) {
@@ -748,13 +785,14 @@ class _AadhaarNumberFormatter extends TextInputFormatter {
         selection: TextSelection.collapsed(offset: formatted.length),
       );
     } else if (text.length <= 12) {
-      final formatted = '${text.substring(0, 4)}-${text.substring(4, 8)}-${text.substring(8)}';
+      final formatted =
+          '${text.substring(0, 4)}-${text.substring(4, 8)}-${text.substring(8)}';
       return newValue.copyWith(
         text: formatted,
         selection: TextSelection.collapsed(offset: formatted.length),
       );
     }
-    
+
     return oldValue;
   }
 }
