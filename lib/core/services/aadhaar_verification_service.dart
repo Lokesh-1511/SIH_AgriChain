@@ -1,22 +1,96 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 
 /// Service for Real Aadhaar ID Verification using UIDAI API
 /// Integrates with Python FastAPI backend for KYC across all user roles
 class AadhaarVerificationService {
-  static const String _baseUrl = kDebugMode
-      ? 'http://10.0.2.2:8000' // Android emulator - maps to host localhost:8000
-      : 'https://your-production-api.com'; // Production URL
+  // Updated URLs for Node.js backend
+  static String get _baseUrl {
+    if (kDebugMode) {
+      // Platform-specific URLs for development (Node.js backend on port 3000)
+      if (kIsWeb) {
+        return 'http://localhost:3000'; // Web
+      } else if (Platform.isAndroid) {
+        return 'http://10.252.175.5:3000'; // Physical Android device - use host machine IP
+      } else {
+        return 'http://localhost:3000'; // iOS simulator, desktop
+      }
+    } else {
+      return 'https://your-production-api.com'; // Production URL
+    }
+  }
 
-  static const String _apiVersion = '/api/v1';
-  static const Duration _timeoutDuration = Duration(seconds: 30);
+  static const Duration _timeoutDuration = Duration(
+    seconds: 10,
+  ); // Shorter timeout for faster feedback
 
   /// Headers for API requests
   static Map<String, String> get _headers => {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   };
+
+  /// Test backend connection
+  static Future<bool> testConnection() async {
+    debugPrint('🔍 Testing backend connectivity...');
+
+    final urlsToTry = <String>[];
+
+    // Add platform-specific URLs for Node.js backend
+    if (kIsWeb) {
+      urlsToTry.addAll(['http://localhost:3000', 'http://127.0.0.1:3000']);
+    } else if (Platform.isAndroid) {
+      urlsToTry.addAll([
+        'http://10.252.175.5:3000', // Physical Android device - host machine IP
+        'http://10.0.2.2:3000', // Fallback for emulator
+      ]);
+    } else {
+      urlsToTry.addAll(['http://localhost:3000', 'http://127.0.0.1:3000']);
+    }
+
+    for (String baseUrl in urlsToTry) {
+      try {
+        final url = Uri.parse('$baseUrl/api/health');
+        debugPrint('🌐 Backend URL: $baseUrl');
+        debugPrint('📡 Testing: $url');
+
+        final response = await http
+            .get(url, headers: _headers)
+            .timeout(const Duration(seconds: 8));
+
+        debugPrint('📊 Response status: ${response.statusCode}');
+
+        if (response.statusCode == 200) {
+          debugPrint('✅ Backend connection successful!');
+          final data = json.decode(response.body);
+          debugPrint('� Backend: ${data['service']} v${data['version']}');
+          debugPrint('🎯 Using base URL: $baseUrl');
+          return true;
+        } else {
+          debugPrint('❌ HTTP ${response.statusCode}: ${response.body}');
+        }
+      } on SocketException catch (e) {
+        debugPrint('🔌 Socket error for $baseUrl: $e');
+      } on TimeoutException catch (e) {
+        debugPrint('⏱️ Timeout connecting to $baseUrl: $e');
+      } catch (e) {
+        debugPrint('❌ Connection error for $baseUrl: $e');
+      }
+    }
+
+    debugPrint('� ALL CONNECTION ATTEMPTS FAILED');
+    debugPrint('💡 Troubleshooting:');
+    debugPrint(
+      '   1. Check if Node.js backend is running: cd backend && node server.js',
+    );
+    debugPrint('   2. Backend should be on port 3000');
+    debugPrint('   3. For Android emulator, use: http://10.0.2.2:3000');
+    debugPrint('   4. Tested URLs: ${urlsToTry.join(', ')}');
+    return false;
+  }
 
   /// Step 1: Initiate Aadhaar verification by sending OTP
   /// Input: Aadhaar number, user ID, user role
@@ -27,6 +101,15 @@ class AadhaarVerificationService {
     required String userRole,
   }) async {
     try {
+      // Test backend connection first
+      final isConnected = await testConnection();
+      if (!isConnected) {
+        throw AadhaarVerificationException(
+          'Cannot connect to verification server. Please check if backend is running.',
+          AadhaarErrorCode.networkError,
+        );
+      }
+
       // Validate input
       if (!_isValidAadhaar(aadhaarNumber)) {
         throw AadhaarVerificationException(
@@ -35,7 +118,7 @@ class AadhaarVerificationService {
         );
       }
 
-      final url = Uri.parse('$_baseUrl/aadhaar/initiate');
+      final url = Uri.parse('$_baseUrl/api/aadhaar/validate');
 
       final requestBody = {
         'aadhaar_number': aadhaarNumber,
@@ -43,16 +126,26 @@ class AadhaarVerificationService {
         'user_role': userRole,
       };
 
-      debugPrint('Initiating Aadhaar verification for user: $userId');
+      debugPrint('🔄 Initiating Aadhaar verification...');
+      debugPrint('📡 API URL: $url');
+      debugPrint('👤 User ID: $userId, Role: $userRole');
+      debugPrint('📱 Platform: ${Platform.operatingSystem}');
+      debugPrint('🌐 Using base URL: $_baseUrl');
 
       final response = await http
           .post(url, headers: _headers, body: jsonEncode(requestBody))
           .timeout(_timeoutDuration);
 
+      debugPrint('📨 Response Status: ${response.statusCode}');
+      debugPrint('📄 Response Body: ${response.body}');
+
       final responseData = jsonDecode(response.body);
+      debugPrint('🔍 Parsed Response Data: $responseData');
 
       if (response.statusCode == 200) {
-        debugPrint('OTP sent successfully');
+        debugPrint('✅ OTP sent successfully');
+        debugPrint('🔑 Transaction ID: ${responseData['transaction_id']}');
+        debugPrint('📱 Debug OTP: ${responseData['debug_otp']}');
         return AadhaarInitiateResponse.fromJson(responseData);
       } else if (response.statusCode == 429) {
         throw AadhaarVerificationException(
@@ -60,17 +153,62 @@ class AadhaarVerificationService {
           AadhaarErrorCode.rateLimitExceeded,
         );
       } else {
+        // Handle different types of validation errors
+        String errorMessage =
+            responseData['detail'] ??
+            responseData['message'] ??
+            'Failed to send OTP';
+        String? errorCode = responseData['error_code'];
+
+        // Provide specific error messages for Aadhaar validation failures
+        if (errorCode != null) {
+          switch (errorCode) {
+            case 'FAKE_PATTERN':
+              errorMessage =
+                  'Invalid Aadhaar Number!\n${responseData['message']}\nPlease enter a real Aadhaar number.';
+              break;
+            case 'INVALID_CHECKSUM':
+              errorMessage =
+                  'Fake Aadhaar Detected!\nThis number failed official validation.\nPlease enter your real Aadhaar number.';
+              break;
+            case 'TOO_REPETITIVE':
+              errorMessage =
+                  'Invalid Aadhaar Format!\n${responseData['message']}\nReal Aadhaar numbers have varied digits.';
+              break;
+            case 'INVALID_PREFIX':
+              errorMessage =
+                  'Invalid Aadhaar Number!\n${responseData['message']}\nReal Aadhaar numbers start with digits 2-9.';
+              break;
+            case 'INVALID_LENGTH':
+              errorMessage =
+                  'Incomplete Aadhaar Number!\nAadhaar must be exactly 12 digits.\nPlease check and enter again.';
+              break;
+            case 'INVALID_FORMAT':
+              errorMessage =
+                  'Invalid Characters!\nAadhaar numbers contain only digits (0-9).\nPlease remove any spaces or special characters.';
+              break;
+            default:
+              errorMessage = responseData['message'] ?? errorMessage;
+          }
+        }
+
         throw AadhaarVerificationException(
-          responseData['detail'] ?? 'Failed to send OTP',
-          AadhaarErrorCode.apiError,
+          errorMessage,
+          AadhaarErrorCode.invalidAadhaar,
         );
       }
     } on AadhaarVerificationException {
       rethrow;
-    } catch (e) {
-      debugPrint('Aadhaar initiation error: $e');
+    } on http.ClientException catch (e) {
+      debugPrint('❌ Network Connection Error: $e');
       throw AadhaarVerificationException(
-        'Network error. Please check your connection and try again.',
+        'Cannot connect to server. Please check if backend is running on $_baseUrl',
+        AadhaarErrorCode.networkError,
+      );
+    } catch (e) {
+      debugPrint('❌ Aadhaar initiation error: $e');
+      throw AadhaarVerificationException(
+        'Network error: ${e.toString()}',
         AadhaarErrorCode.networkError,
       );
     }
@@ -101,7 +239,7 @@ class AadhaarVerificationService {
         );
       }
 
-      final url = Uri.parse('$_baseUrl/aadhaar/verify');
+      final url = Uri.parse('$_baseUrl/api/otp/verify');
 
       final requestBody = {
         'aadhaar_number': aadhaarNumber,
@@ -180,6 +318,34 @@ class AadhaarVerificationService {
         'Failed to check verification status',
         AadhaarErrorCode.networkError,
       );
+    }
+  }
+
+  /// Test backend connectivity and server health
+  static Future<bool> testConnectivity() async {
+    try {
+      debugPrint('🔍 Testing backend connectivity...');
+      debugPrint('🌐 Backend URL: $_baseUrl');
+
+      final url = Uri.parse('$_baseUrl/api/health');
+      final response = await http
+          .get(url, headers: _headers)
+          .timeout(Duration(seconds: 10));
+
+      debugPrint('🏥 Health Check Status: ${response.statusCode}');
+      debugPrint('📄 Health Check Response: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        debugPrint('✅ Backend is healthy: ${data['status']}');
+        return true;
+      } else {
+        debugPrint('⚠️ Backend health check failed');
+        return false;
+      }
+    } catch (e) {
+      debugPrint('❌ Backend connectivity test failed: $e');
+      return false;
     }
   }
 
