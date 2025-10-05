@@ -5,9 +5,9 @@ import 'package:flutter/foundation.dart';
 /// Service for Real Aadhaar ID Verification using UIDAI API
 /// Integrates with Python FastAPI backend for KYC across all user roles
 class AadhaarVerificationService {
-  static const String _baseUrl = kDebugMode 
-      ? 'http://localhost:8000'  // Local development
-      : 'https://your-production-api.com';  // Production URL
+  static const String _baseUrl = kDebugMode
+      ? 'http://10.0.2.2:8000' // Android emulator - maps to host localhost:8000
+      : 'https://your-production-api.com'; // Production URL
 
   static const String _apiVersion = '/api/v1';
   static const Duration _timeoutDuration = Duration(seconds: 30);
@@ -36,7 +36,7 @@ class AadhaarVerificationService {
       }
 
       final url = Uri.parse('$_baseUrl/aadhaar/initiate');
-      
+
       final requestBody = {
         'aadhaar_number': aadhaarNumber,
         'user_id': userId,
@@ -45,11 +45,9 @@ class AadhaarVerificationService {
 
       debugPrint('Initiating Aadhaar verification for user: $userId');
 
-      final response = await http.post(
-        url,
-        headers: _headers,
-        body: jsonEncode(requestBody),
-      ).timeout(_timeoutDuration);
+      final response = await http
+          .post(url, headers: _headers, body: jsonEncode(requestBody))
+          .timeout(_timeoutDuration);
 
       final responseData = jsonDecode(response.body);
 
@@ -104,7 +102,7 @@ class AadhaarVerificationService {
       }
 
       final url = Uri.parse('$_baseUrl/aadhaar/verify');
-      
+
       final requestBody = {
         'aadhaar_number': aadhaarNumber,
         'otp': otp,
@@ -114,11 +112,9 @@ class AadhaarVerificationService {
 
       debugPrint('Verifying OTP for transaction: $transactionId');
 
-      final response = await http.post(
-        url,
-        headers: _headers,
-        body: jsonEncode(requestBody),
-      ).timeout(_timeoutDuration);
+      final response = await http
+          .post(url, headers: _headers, body: jsonEncode(requestBody))
+          .timeout(_timeoutDuration);
 
       final responseData = jsonDecode(response.body);
 
@@ -158,14 +154,15 @@ class AadhaarVerificationService {
     required String userRole,
   }) async {
     try {
-      final url = Uri.parse('$_baseUrl/aadhaar/status/$userId?user_role=$userRole');
-      
+      final url = Uri.parse(
+        '$_baseUrl/aadhaar/status/$userId?user_role=$userRole',
+      );
+
       debugPrint('Checking Aadhaar status for user: $userId');
 
-      final response = await http.get(
-        url,
-        headers: _headers,
-      ).timeout(_timeoutDuration);
+      final response = await http
+          .get(url, headers: _headers)
+          .timeout(_timeoutDuration);
 
       final responseData = jsonDecode(response.body);
 

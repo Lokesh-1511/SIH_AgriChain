@@ -29,10 +29,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               'Last updated: ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.black54,
-              ),
+              style: const TextStyle(fontSize: 14, color: Colors.black54),
             ),
 
             const SizedBox(height: 24),
@@ -46,78 +43,78 @@ class PrivacyPolicyScreen extends StatelessWidget {
             _buildSection(
               'Information We Collect',
               'We collect information you provide directly to us, such as:\n\n'
-              '• Personal Information: Name, email address, phone number, Aadhaar number for verification\n'
-              '• Agricultural Data: Crop information, farm details, harvest data\n'
-              '• Transaction Information: Payment details, order history, financial transactions\n'
-              '• Location Data: GPS coordinates for delivery and logistics\n'
-              '• Device Information: Device identifiers, operating system, app usage statistics\n'
-              '• Communication Data: Messages, support tickets, feedback',
+                  '• Personal Information: Name, email address, phone number, Aadhaar number for verification\n'
+                  '• Agricultural Data: Crop information, farm details, harvest data\n'
+                  '• Transaction Information: Payment details, order history, financial transactions\n'
+                  '• Location Data: GPS coordinates for delivery and logistics\n'
+                  '• Device Information: Device identifiers, operating system, app usage statistics\n'
+                  '• Communication Data: Messages, support tickets, feedback',
             ),
 
             _buildSection(
               'How We Use Your Information',
               'We use the collected information for:\n\n'
-              '• Providing and maintaining our services\n'
-              '• Processing transactions and payments\n'
-              '• Verifying user identity and preventing fraud\n'
-              '• Improving our application and user experience\n'
-              '• Sending important notifications and updates\n'
-              '• Providing customer support\n'
-              '• Compliance with legal obligations\n'
-              '• Agricultural market analysis and insights',
+                  '• Providing and maintaining our services\n'
+                  '• Processing transactions and payments\n'
+                  '• Verifying user identity and preventing fraud\n'
+                  '• Improving our application and user experience\n'
+                  '• Sending important notifications and updates\n'
+                  '• Providing customer support\n'
+                  '• Compliance with legal obligations\n'
+                  '• Agricultural market analysis and insights',
             ),
 
             _buildSection(
               'Information Sharing and Disclosure',
               'We do not sell, trade, or otherwise transfer your personal information to third parties without your consent, except in the following circumstances:\n\n'
-              '• Service Providers: Trusted partners who assist in operating our application\n'
-              '• Business Transactions: In case of merger, acquisition, or asset sale\n'
-              '• Legal Requirements: When required by law or to protect our rights\n'
-              '• Safety and Security: To prevent fraud or protect user safety\n'
-              '• Anonymized Data: Aggregated, non-identifiable data for research and analytics',
+                  '• Service Providers: Trusted partners who assist in operating our application\n'
+                  '• Business Transactions: In case of merger, acquisition, or asset sale\n'
+                  '• Legal Requirements: When required by law or to protect our rights\n'
+                  '• Safety and Security: To prevent fraud or protect user safety\n'
+                  '• Anonymized Data: Aggregated, non-identifiable data for research and analytics',
             ),
 
             _buildSection(
               'Data Security',
               'We implement robust security measures to protect your information:\n\n'
-              '• End-to-end encryption for sensitive data transmission\n'
-              '• Secure servers with regular security audits\n'
-              '• Multi-factor authentication for account access\n'
-              '• Regular security updates and patches\n'
-              '• Limited access controls for our staff\n'
-              '• Blockchain technology for transaction integrity',
+                  '• End-to-end encryption for sensitive data transmission\n'
+                  '• Secure servers with regular security audits\n'
+                  '• Multi-factor authentication for account access\n'
+                  '• Regular security updates and patches\n'
+                  '• Limited access controls for our staff\n'
+                  '• Blockchain technology for transaction integrity',
             ),
 
             _buildSection(
               'Data Retention',
               'We retain your personal information for as long as necessary to:\n\n'
-              '• Provide our services to you\n'
-              '• Comply with legal obligations\n'
-              '• Resolve disputes and enforce agreements\n'
-              '• Maintain business records as required by law\n\n'
-              'You may request deletion of your account and data at any time, subject to legal retention requirements.',
+                  '• Provide our services to you\n'
+                  '• Comply with legal obligations\n'
+                  '• Resolve disputes and enforce agreements\n'
+                  '• Maintain business records as required by law\n\n'
+                  'You may request deletion of your account and data at any time, subject to legal retention requirements.',
             ),
 
             _buildSection(
               'Your Rights',
               'You have the following rights regarding your personal information:\n\n'
-              '• Access: Request access to your personal data\n'
-              '• Correction: Update or correct inaccurate information\n'
-              '• Deletion: Request deletion of your personal data\n'
-              '• Portability: Request a copy of your data in a portable format\n'
-              '• Objection: Object to certain processing of your data\n'
-              '• Withdrawal: Withdraw consent for data processing\n\n'
-              'To exercise these rights, contact us at privacy@agrichain.com',
+                  '• Access: Request access to your personal data\n'
+                  '• Correction: Update or correct inaccurate information\n'
+                  '• Deletion: Request deletion of your personal data\n'
+                  '• Portability: Request a copy of your data in a portable format\n'
+                  '• Objection: Object to certain processing of your data\n'
+                  '• Withdrawal: Withdraw consent for data processing\n\n'
+                  'To exercise these rights, contact us at privacy@agrichain.com',
             ),
 
             _buildSection(
               'Cookies and Tracking Technologies',
               'We use cookies and similar technologies to:\n\n'
-              '• Remember your preferences and settings\n'
-              '• Analyze app usage and performance\n'
-              '• Provide personalized content and recommendations\n'
-              '• Ensure security and prevent fraud\n\n'
-              'You can manage cookie preferences in your device settings.',
+                  '• Remember your preferences and settings\n'
+                  '• Analyze app usage and performance\n'
+                  '• Provide personalized content and recommendations\n'
+                  '• Ensure security and prevent fraud\n\n'
+                  'You can manage cookie preferences in your device settings.',
             ),
 
             _buildSection(
@@ -138,19 +135,19 @@ class PrivacyPolicyScreen extends StatelessWidget {
             _buildSection(
               'Changes to Privacy Policy',
               'We may update this Privacy Policy from time to time. We will notify you of any changes by:\n\n'
-              '• Posting the new Privacy Policy on this page\n'
-              '• Sending an email notification\n'
-              '• Displaying an in-app notification\n\n'
-              'Changes are effective when posted on this page.',
+                  '• Posting the new Privacy Policy on this page\n'
+                  '• Sending an email notification\n'
+                  '• Displaying an in-app notification\n\n'
+                  'Changes are effective when posted on this page.',
             ),
 
             _buildSection(
               'Contact Information',
               'If you have questions about this Privacy Policy or our privacy practices, please contact us:\n\n'
-              'Email: privacy@agrichain.com\n'
-              'Phone: +91 1800-XXX-XXXX\n'
-              'Address: Tech Hub, Bangalore, India\n\n'
-              'Data Protection Officer: dpo@agrichain.com',
+                  'Email: privacy@agrichain.com\n'
+                  'Phone: +91 1800-XXX-XXXX\n'
+                  'Address: Tech Hub, Bangalore, India\n\n'
+                  'Data Protection Officer: dpo@agrichain.com',
             ),
 
             const SizedBox(height: 32),
@@ -192,10 +189,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
                       const Expanded(
                         child: Text(
                           'You have read and understood this Privacy Policy',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.black87,
-                          ),
+                          style: TextStyle(fontSize: 14, color: Colors.black87),
                         ),
                       ),
                     ],
@@ -210,10 +204,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
             Center(
               child: Text(
                 '© 2025 AgriChain. All rights reserved.',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: Colors.grey[600], fontSize: 14),
               ),
             ),
           ],
