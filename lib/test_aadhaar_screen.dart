@@ -3,7 +3,7 @@ import '../core/widgets/simple_aadhaar_widget.dart';
 
 /// Test screen for the new local Aadhaar verification system
 class AadhaarTestScreen extends StatelessWidget {
-  const AadhaarTestScreen({Key? key}) : super(key: key);
+  const AadhaarTestScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,19 +19,13 @@ class AadhaarTestScreen extends StatelessWidget {
           children: [
             const Text(
               'New Local Aadhaar Verification System',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
             const Text(
               'How it works:',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 8),
             const Text(

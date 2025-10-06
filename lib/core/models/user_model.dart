@@ -1,5 +1,7 @@
+/// User model for AgriChain application with Firebase and MongoDB integration
 class User {
-  final String id;
+  final String? id; // MongoDB ObjectId
+  final String firebaseUid; // Firebase User UID
   final String name;
   final String email;
   final String phone;
@@ -7,10 +9,13 @@ class User {
   final String address;
   final bool isVerified;
   final DateTime createdAt;
+  final DateTime updatedAt;
+  final Map<String, dynamic> kycDetails; // Aadhaar verification data
   final Map<String, dynamic>? additionalInfo;
 
   User({
-    required this.id,
+    this.id,
+    required this.firebaseUid,
     required this.name,
     required this.email,
     required this.phone,
@@ -18,16 +23,19 @@ class User {
     required this.address,
     this.isVerified = false,
     required this.createdAt,
+    required this.updatedAt,
+    required this.kycDetails,
     this.additionalInfo,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'],
-      name: json['name'],
-      email: json['email'],
-      phone: json['phone'],
-      role: json['role'],
+      id: json['_id']?.toString(),
+      firebaseUid: json['firebaseUid'] ?? '',
+      name: json['name'] ?? '',
+      email: json['email'] ?? '',
+      phone: json['phone'] ?? '',
+      role: json['role'] ?? '',
       address: json['address'],
       isVerified: json['is_verified'] ?? false,
       createdAt: DateTime.parse(json['created_at']),
