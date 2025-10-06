@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'core/theme/app_theme.dart';
+import 'core/services/mongodb_service.dart';
 import 'features/auth/providers/auth_provider.dart';
 import 'features/common/providers/language_provider.dart';
 import 'features/onboarding/screens/splash_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Firebase
+  await Firebase.initializeApp();
+  
+  // Initialize MongoDB
+  await MongoDBService.connect();
+  
   runApp(const AgriChainApp());
 }
 
