@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
-import '../../../core/widgets/aadhaar_verification_widget.dart';
-import '../../../core/services/aadhaar_verification_service.dart';
-import '../../../core/services/aadhaar_state_service.dart';
+import '../../../core/widgets/simple_aadhaar_widget.dart';
 import '../providers/auth_provider.dart';
 import '../../farmer/screens/farmer_dashboard.dart';
 import 'dart:io';
@@ -39,32 +37,11 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
 
   // Aadhaar Verification
   bool _aadhaarVerified = false;
-  KYCDetails? _kycDetails;
+  Map<String, dynamic>? _kycDetails;
 
   @override
   void initState() {
     super.initState();
-    _loadSavedVerificationState();
-  }
-
-  /// Load saved Aadhaar verification state from local storage
-  Future<void> _loadSavedVerificationState() async {
-    try {
-      final savedState = await AadhaarStateService.loadVerificationState(
-        userId: _generatedFarmerId ?? 'temp_farmer',
-        userRole: 'farmer',
-      );
-
-      if (savedState != null && savedState.isVerified) {
-        setState(() {
-          _aadhaarVerified = true;
-          _kycDetails = savedState.kycDetails;
-        });
-        debugPrint('✅ Restored Aadhaar verification state from local storage');
-      }
-    } catch (e) {
-      debugPrint('❌ Failed to load saved verification state: $e');
-    }
   }
 
   // Land Information
@@ -298,51 +275,37 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
           ),
           const SizedBox(height: 24),
 
-          // Real Aadhaar Verification Widget
-          AadhaarVerificationWidget(
-            userId:
-                _generatedFarmerId ??
-                'temp_farmer_${DateTime.now().millisecondsSinceEpoch}',
-            userRole: 'farmer',
+          // Simple Aadhaar Verification Widget
+          SimpleAadhaarWidget(
             primaryColor: AppColors.farmerPrimary,
-            initialVerificationState: _aadhaarVerified,
-            initialKycDetails: _kycDetails,
             onVerificationComplete: (isVerified, kycDetails) {
-              debugPrint('📥 Received verification callback: isVerified=$isVerified, kycDetails=${kycDetails?.toJson()}');
-              
-              // Only update state if we don't already have valid verification
-              // This prevents the callback from overwriting existing preserved state
-              if (!_aadhaarVerified || _kycDetails == null) {
-                setState(() {
-                  _aadhaarVerified = isVerified;
-                  _kycDetails = kycDetails;
-                });
-                debugPrint('📊 Updated state from callback: _aadhaarVerified=$_aadhaarVerified, _kycDetails=${_kycDetails?.toJson()}');
-              } else {
-                debugPrint('� Preserved existing state: _aadhaarVerified=$_aadhaarVerified, _kycDetails=${_kycDetails?.toJson()}');
-              }
+              debugPrint(
+                '📥 Received verification callback: isVerified=$isVerified',
+              );
+
+              setState(() {
+                _aadhaarVerified = isVerified;
+                _kycDetails = kycDetails;
+              });
 
               if (isVerified && kycDetails != null) {
                 // Auto-fill name from KYC if available
                 if (_nameController.text.isEmpty &&
-                    kycDetails.name.isNotEmpty) {
-                  _nameController.text = kycDetails.name;
+                    kycDetails['name'] != null &&
+                    kycDetails['name'].toString().isNotEmpty) {
+                  _nameController.text = kycDetails['name'];
                 }
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
-                      'Aadhaar verified successfully! Welcome ${kycDetails.name}',
+                      'Aadhaar verified successfully! Welcome ${kycDetails['name'] ?? 'User'}',
                     ),
                     backgroundColor: AppColors.success,
                     behavior: SnackBarBehavior.floating,
                   ),
                 );
               }
-            },
-            onVerificationStart: () {
-              // Optional: Show loading or update UI when verification starts
-              debugPrint('Aadhaar verification started for farmer');
             },
           ),
         ],
@@ -1137,9 +1100,9 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
         'role': AppConstants.roleFarmer,
         'landSize': double.tryParse(_landSizeController.text) ?? 0.0,
         'landOwnership': _landOwnership,
-        'aadhaarNumber': _kycDetails?.maskedAadhaar ?? '',
+        'aadhaarNumber': _kycDetails?['aadhaarNumber'] ?? '',
         'aadhaarVerified': _aadhaarVerified,
-        'verifiedName': _kycDetails?.name ?? '',
+        'verifiedName': _kycDetails?['name'] ?? '',
       };
 
       // Add document info if lease

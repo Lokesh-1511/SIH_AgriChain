@@ -11,11 +11,11 @@ class AadhaarVerificationWidget extends StatefulWidget {
   final String userId;
   final String userRole;
   final Color primaryColor;
-  final Function(bool isVerified, KYCDetails? kycDetails)
+  final Function(bool isVerified, Map<String, dynamic>? kycDetails)
   onVerificationComplete;
   final VoidCallback? onVerificationStart;
   final bool? initialVerificationState;
-  final KYCDetails? initialKycDetails;
+  final Map<String, dynamic>? initialKycDetails;
 
   const AadhaarVerificationWidget({
     super.key,
@@ -45,7 +45,7 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
   bool _isVerified = false;
   String? _transactionId;
   String? _errorMessage;
-  KYCDetails? _kycDetails;
+  Map<String, dynamic>? _kycDetails;
 
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -72,9 +72,10 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
     );
 
     _animationController.forward();
-    
+
     // Use initial state if provided, otherwise check existing verification
-    if (widget.initialVerificationState == true && widget.initialKycDetails != null) {
+    if (widget.initialVerificationState == true &&
+        widget.initialKycDetails != null) {
       setState(() {
         _isVerified = true;
         _kycDetails = widget.initialKycDetails;
@@ -111,12 +112,12 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
           _kycDetails = savedState.kycDetails;
         });
         _successController.forward();
-        
+
         // Use a small delay to ensure parent widget has finished initializing
         Future.delayed(const Duration(milliseconds: 100), () {
           widget.onVerificationComplete(true, savedState.kycDetails);
         });
-        
+
         debugPrint('✅ Loaded Aadhaar verification from local storage');
         return;
       }
@@ -127,7 +128,7 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
         userRole: widget.userRole,
       );
 
-      if (status.aadhaarVerified) {
+      if (status.isVerified) {
         setState(() {
           _isVerified = true;
         });
@@ -210,7 +211,7 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
         errorMsg =
             'Network Error: ${e.message}\n\n'
             'Please ensure:\n'
-            '• Backend server is running on localhost:8000\n'
+            '• Backend server is running on localhost:3000\n'
             '• Your device can connect to the server';
       }
 
@@ -246,8 +247,8 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
 
       if (response.success) {
         debugPrint('🎉 OTP Verification successful!');
-        debugPrint('🔍 KYC Details: ${response.kycDetails?.toJson()}');
-        
+        debugPrint('🔍 KYC Details: ${response.kycDetails}');
+
         setState(() {
           _isVerified = true;
           _kycDetails = response.kycDetails;
@@ -263,7 +264,9 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
           kycDetails: response.kycDetails,
         );
 
-        debugPrint('✅ Calling onVerificationComplete with: isVerified=true, kycDetails=${response.kycDetails?.toJson()}');
+        debugPrint(
+          '✅ Calling onVerificationComplete with: isVerified=true, kycDetails=${response.kycDetails}',
+        );
         widget.onVerificationComplete(true, response.kycDetails);
       }
     } on AadhaarVerificationException catch (e) {
@@ -315,7 +318,7 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
   bool get isVerified => _isVerified;
 
   /// Get current KYC details
-  KYCDetails? get kycDetails => _kycDetails;
+  Map<String, dynamic>? get kycDetails => _kycDetails;
 
   @override
   Widget build(BuildContext context) {
@@ -731,8 +734,6 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
   Widget _buildSuccessView() {
     return Column(
       children: [
-        
-
         OutlinedButton(
           onPressed: _resetVerification,
           style: OutlinedButton.styleFrom(

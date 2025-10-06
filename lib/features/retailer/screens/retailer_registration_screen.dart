@@ -6,8 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
-import '../../../core/widgets/aadhaar_verification_widget.dart';
-import '../../../core/services/aadhaar_verification_service.dart';
+import '../../../core/widgets/simple_aadhaar_widget.dart';
+
 import '../../../core/services/aadhaar_state_service.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../screens/retailer_dashboard.dart';
@@ -40,7 +40,7 @@ class _RetailerRegistrationScreenState
 
   // Aadhaar Verification
   bool _aadhaarVerified = false;
-  KYCDetails? _kycDetails;
+  Map<String, dynamic>? _kycDetails;
 
   // Business Information
   final _businessNameController = TextEditingController();
@@ -307,45 +307,41 @@ class _RetailerRegistrationScreenState
           ),
           const SizedBox(height: 24),
 
-          // Real Aadhaar Verification Widget
-          AadhaarVerificationWidget(
-            userId:
-                _generatedRetailerId ??
-                'temp_retailer_${DateTime.now().millisecondsSinceEpoch}',
-            userRole: 'retailer',
+          // Simple Aadhaar Verification Widget
+          SimpleAadhaarWidget(
             primaryColor: AppColors.retailerPrimary,
-            initialVerificationState: _aadhaarVerified,
-            initialKycDetails: _kycDetails,
-            onVerificationComplete: (isVerified, kycDetails) {
-              debugPrint('📥 Retailer verification callback: isVerified=$isVerified, kycDetails=${kycDetails?.toJson()}');
-              
+            onVerificationComplete: (isVerified, kycData) {
+              debugPrint(
+                '📥 Retailer verification callback: isVerified=$isVerified',
+              );
+
               setState(() {
                 _aadhaarVerified = isVerified;
-                _kycDetails = kycDetails;
+                _kycDetails = kycData;
               });
 
-              debugPrint('📊 Retailer current state: _aadhaarVerified=$_aadhaarVerified, _kycDetails=${_kycDetails?.toJson()}');
+              debugPrint(
+                '📊 Retailer current state: _aadhaarVerified=$_aadhaarVerified',
+              );
 
-              if (isVerified && kycDetails != null) {
+              if (isVerified && kycData != null) {
                 // Auto-fill name from KYC if available
                 if (_nameController.text.isEmpty &&
-                    kycDetails.name.isNotEmpty) {
-                  _nameController.text = kycDetails.name;
+                    kycData['name'] != null &&
+                    kycData['name'].toString().isNotEmpty) {
+                  _nameController.text = kycData['name'];
                 }
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
-                      'Aadhaar verified successfully! Welcome ${kycDetails.name}',
+                      'Aadhaar verified successfully! Welcome ${kycData['name'] ?? 'User'}',
                     ),
                     backgroundColor: AppColors.success,
                     behavior: SnackBarBehavior.floating,
                   ),
                 );
               }
-            },
-            onVerificationStart: () {
-              debugPrint('Aadhaar verification started for retailer');
             },
           ),
         ],
@@ -1050,9 +1046,9 @@ class _RetailerRegistrationScreenState
         'businessHours': _businessHoursController.text.trim(),
         'gstNumber': _gstNumberController.text.trim(),
         'licenseNumber': _licenseNumberController.text.trim(),
-        'aadhaarNumber': _kycDetails?.maskedAadhaar ?? '',
+        'aadhaarNumber': _kycDetails?['aadhaarNumber'] ?? '',
         'aadhaarVerified': _aadhaarVerified,
-        'verifiedName': _kycDetails?.name ?? '',
+        'verifiedName': _kycDetails?['name'] ?? '',
         'licenseImagePath': _licenseImage?.path,
       };
 

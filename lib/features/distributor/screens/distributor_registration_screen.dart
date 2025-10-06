@@ -6,8 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
-import '../../../core/widgets/aadhaar_verification_widget.dart';
-import '../../../core/services/aadhaar_verification_service.dart';
+import '../../../core/widgets/simple_aadhaar_widget.dart';
+
 import '../../../core/services/aadhaar_state_service.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../screens/distributor_dashboard.dart';
@@ -40,7 +40,7 @@ class _DistributorRegistrationScreenState
 
   // Aadhaar Verification
   bool _aadhaarVerified = false;
-  KYCDetails? _kycDetails;
+  Map<String, dynamic>? _kycDetails;
 
   // Business Information
   final _businessNameController = TextEditingController();
@@ -307,41 +307,42 @@ class _DistributorRegistrationScreenState
             Icons.verified_user,
           ),
           const SizedBox(height: 24),
-          
-          // Real Aadhaar Verification Widget
-          AadhaarVerificationWidget(
-            userId: _generatedDistributorId ?? 'temp_distributor_${DateTime.now().millisecondsSinceEpoch}',
-            userRole: 'distributor',
+
+          // Simple Aadhaar Verification Widget
+          SimpleAadhaarWidget(
             primaryColor: AppColors.distributorPrimary,
-            initialVerificationState: _aadhaarVerified,
-            initialKycDetails: _kycDetails,
-            onVerificationComplete: (isVerified, kycDetails) {
-              debugPrint('📥 Distributor verification callback: isVerified=$isVerified, kycDetails=${kycDetails?.toJson()}');
-              
+            onVerificationComplete: (isVerified, kycData) {
+              debugPrint(
+                '📥 Distributor verification callback: isVerified=$isVerified',
+              );
+
               setState(() {
                 _aadhaarVerified = isVerified;
-                _kycDetails = kycDetails;
+                _kycDetails = kycData;
               });
-              
-              debugPrint('📊 Distributor current state: _aadhaarVerified=$_aadhaarVerified, _kycDetails=${_kycDetails?.toJson()}');
 
-              if (isVerified && kycDetails != null) {
+              debugPrint(
+                '📊 Distributor current state: _aadhaarVerified=$_aadhaarVerified',
+              );
+
+              if (isVerified && kycData != null) {
                 // Auto-fill name from KYC if available
-                if (_nameController.text.isEmpty && kycDetails.name.isNotEmpty) {
-                  _nameController.text = kycDetails.name;
+                if (_nameController.text.isEmpty &&
+                    kycData['name'] != null &&
+                    kycData['name'].toString().isNotEmpty) {
+                  _nameController.text = kycData['name'];
                 }
-                
+
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Aadhaar verified successfully! Welcome ${kycDetails.name}'),
+                    content: Text(
+                      'Aadhaar verified successfully! Welcome ${kycData['name'] ?? 'User'}',
+                    ),
                     backgroundColor: AppColors.success,
                     behavior: SnackBarBehavior.floating,
                   ),
                 );
               }
-            },
-            onVerificationStart: () {
-              debugPrint('Aadhaar verification started for distributor');
             },
           ),
         ],
@@ -1020,9 +1021,9 @@ class _DistributorRegistrationScreenState
         'warehouseCapacity': _warehouseCapacityController.text.trim(),
         'serviceAreas': _serviceAreasController.text.trim(),
         'licenseNumber': _licenseNumberController.text.trim(),
-        'aadhaarNumber': _kycDetails?.maskedAadhaar ?? '',
+        'aadhaarNumber': _kycDetails?['aadhaarNumber'] ?? '',
         'aadhaarVerified': _aadhaarVerified,
-        'verifiedName': _kycDetails?.name ?? '',
+        'verifiedName': _kycDetails?['name'] ?? '',
         'licenseImagePath': _licenseImage?.path,
       };
 

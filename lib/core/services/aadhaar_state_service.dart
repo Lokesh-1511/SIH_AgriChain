@@ -1,7 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
-import 'aadhaar_verification_service.dart';
 
 /// Service for persisting Aadhaar verification state across sessions
 class AadhaarStateService {
@@ -17,7 +16,7 @@ class AadhaarStateService {
     required String userId,
     required String userRole,
     required bool isVerified,
-    KYCDetails? kycDetails,
+    Map<String, dynamic>? kycDetails,
   }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -26,7 +25,7 @@ class AadhaarStateService {
       final stateData = {
         _verifiedKey: isVerified,
         _timestampKey: DateTime.now().millisecondsSinceEpoch,
-        if (kycDetails != null) _kycDetailsKey: kycDetails.toJson(),
+        if (kycDetails != null) _kycDetailsKey: kycDetails,
       };
 
       await prefs.setString(key, jsonEncode(stateData));
@@ -66,10 +65,10 @@ class AadhaarStateService {
       }
 
       final isVerified = stateData[_verifiedKey] as bool;
-      KYCDetails? kycDetails;
+      Map<String, dynamic>? kycDetails;
 
       if (stateData.containsKey(_kycDetailsKey)) {
-        kycDetails = KYCDetails.fromJson(stateData[_kycDetailsKey]);
+        kycDetails = stateData[_kycDetailsKey] as Map<String, dynamic>;
       }
 
       debugPrint(
@@ -124,7 +123,7 @@ class AadhaarStateService {
 /// Model for stored verification state
 class AadhaarVerificationState {
   final bool isVerified;
-  final KYCDetails? kycDetails;
+  final Map<String, dynamic>? kycDetails;
   final DateTime savedAt;
 
   const AadhaarVerificationState({

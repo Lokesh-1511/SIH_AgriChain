@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
-import '../../../core/widgets/aadhaar_verification_widget.dart';
-import '../../../core/services/aadhaar_verification_service.dart';
+import '../../../core/widgets/simple_aadhaar_widget.dart';
+
 import '../../../core/services/aadhaar_state_service.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../screens/consumer_dashboard.dart';
@@ -14,10 +14,12 @@ class ConsumerRegistrationScreen extends StatefulWidget {
   const ConsumerRegistrationScreen({super.key});
 
   @override
-  State<ConsumerRegistrationScreen> createState() => _ConsumerRegistrationScreenState();
+  State<ConsumerRegistrationScreen> createState() =>
+      _ConsumerRegistrationScreenState();
 }
 
-class _ConsumerRegistrationScreenState extends State<ConsumerRegistrationScreen> {
+class _ConsumerRegistrationScreenState
+    extends State<ConsumerRegistrationScreen> {
   final PageController _pageController = PageController();
   int _currentStep = 0;
   bool _isLoading = false;
@@ -36,7 +38,7 @@ class _ConsumerRegistrationScreenState extends State<ConsumerRegistrationScreen>
 
   // Aadhaar Verification
   bool _aadhaarVerified = false;
-  KYCDetails? _kycDetails;
+  Map<String, dynamic>? _kycDetails;
 
   // Preferences
   final _dietaryPreferencesController = TextEditingController();
@@ -149,11 +151,7 @@ class _ConsumerRegistrationScreenState extends State<ConsumerRegistrationScreen>
       children: [
         Row(
           children: [
-            Icon(
-              Icons.shopping_cart,
-              color: Colors.white,
-              size: 24,
-            ),
+            Icon(Icons.shopping_cart, color: Colors.white, size: 24),
             const SizedBox(width: 8),
             Text(
               'Join as a Consumer',
@@ -185,10 +183,7 @@ class _ConsumerRegistrationScreenState extends State<ConsumerRegistrationScreen>
         const SizedBox(height: 8),
         Text(
           _getStepTitle(),
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-          ),
+          style: TextStyle(color: Colors.white, fontSize: 14),
         ),
       ],
     );
@@ -249,7 +244,9 @@ class _ConsumerRegistrationScreenState extends State<ConsumerRegistrationScreen>
                 if (value == null || value.isEmpty) {
                   return 'Please enter your email';
                 }
-                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                if (!RegExp(
+                  r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                ).hasMatch(value)) {
                   return 'Please enter a valid email';
                 }
                 return null;
@@ -302,41 +299,42 @@ class _ConsumerRegistrationScreenState extends State<ConsumerRegistrationScreen>
             Icons.verified_user,
           ),
           const SizedBox(height: 24),
-          
-          // Real Aadhaar Verification Widget
-          AadhaarVerificationWidget(
-            userId: _generatedConsumerId ?? 'temp_consumer_${DateTime.now().millisecondsSinceEpoch}',
-            userRole: 'consumer',
+
+          // Simple Aadhaar Verification Widget
+          SimpleAadhaarWidget(
             primaryColor: AppColors.consumerPrimary,
-            initialVerificationState: _aadhaarVerified,
-            initialKycDetails: _kycDetails,
-            onVerificationComplete: (isVerified, kycDetails) {
-              debugPrint('📥 Consumer verification callback: isVerified=$isVerified, kycDetails=${kycDetails?.toJson()}');
-              
+            onVerificationComplete: (isVerified, kycData) {
+              debugPrint(
+                '📥 Consumer verification callback: isVerified=$isVerified',
+              );
+
               setState(() {
                 _aadhaarVerified = isVerified;
-                _kycDetails = kycDetails;
+                _kycDetails = kycData;
               });
-              
-              debugPrint('📊 Consumer current state: _aadhaarVerified=$_aadhaarVerified, _kycDetails=${_kycDetails?.toJson()}');
 
-              if (isVerified && kycDetails != null) {
+              debugPrint(
+                '📊 Consumer current state: _aadhaarVerified=$_aadhaarVerified',
+              );
+
+              if (isVerified && kycData != null) {
                 // Auto-fill name from KYC if available
-                if (_nameController.text.isEmpty && kycDetails.name.isNotEmpty) {
-                  _nameController.text = kycDetails.name;
+                if (_nameController.text.isEmpty &&
+                    kycData['name'] != null &&
+                    kycData['name'].toString().isNotEmpty) {
+                  _nameController.text = kycData['name'];
                 }
-                
+
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Aadhaar verified successfully! Welcome ${kycDetails.name}'),
+                    content: Text(
+                      'Aadhaar verified successfully! Welcome ${kycData['name'] ?? 'User'}',
+                    ),
                     backgroundColor: AppColors.success,
                     behavior: SnackBarBehavior.floating,
                   ),
                 );
               }
-            },
-            onVerificationStart: () {
-              debugPrint('Aadhaar verification started for consumer');
             },
           ),
         ],
@@ -358,7 +356,7 @@ class _ConsumerRegistrationScreenState extends State<ConsumerRegistrationScreen>
               Icons.favorite,
             ),
             const SizedBox(height: 24),
-            
+
             _buildTextField(
               controller: _dietaryPreferencesController,
               label: 'Dietary Preferences (Optional)',
@@ -366,7 +364,7 @@ class _ConsumerRegistrationScreenState extends State<ConsumerRegistrationScreen>
               maxLines: 2,
             ),
             const SizedBox(height: 16),
-            
+
             _buildTextField(
               controller: _allergyInfoController,
               label: 'Allergy Information (Optional)',
@@ -374,7 +372,7 @@ class _ConsumerRegistrationScreenState extends State<ConsumerRegistrationScreen>
               maxLines: 2,
             ),
             const SizedBox(height: 16),
-            
+
             // Preferred Delivery Time Dropdown
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -388,22 +386,53 @@ class _ConsumerRegistrationScreenState extends State<ConsumerRegistrationScreen>
                 decoration: InputDecoration(
                   labelText: 'Preferred Delivery Time',
                   labelStyle: TextStyle(color: AppColors.textSecondary),
-                  prefixIcon: Icon(Icons.schedule, color: AppColors.consumerPrimary),
+                  prefixIcon: Icon(
+                    Icons.schedule,
+                    color: AppColors.consumerPrimary,
+                  ),
                   border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                 ),
                 items: const [
-                  DropdownMenuItem(value: 'morning', child: Text('Morning (6AM - 12PM)', style: TextStyle(color: AppColors.textPrimary),)),
-                  DropdownMenuItem(value: 'afternoon', child: Text('Afternoon (12PM - 6PM)', style: TextStyle(color: AppColors.textPrimary),)),
-                  DropdownMenuItem(value: 'evening', child: Text('Evening (6PM - 10PM)', style: TextStyle(color: AppColors.textPrimary),)),
-                  DropdownMenuItem(value: 'any', child: Text('Any time', style: TextStyle(color: AppColors.textPrimary),)),
+                  DropdownMenuItem(
+                    value: 'morning',
+                    child: Text(
+                      'Morning (6AM - 12PM)',
+                      style: TextStyle(color: AppColors.textPrimary),
+                    ),
+                  ),
+                  DropdownMenuItem(
+                    value: 'afternoon',
+                    child: Text(
+                      'Afternoon (12PM - 6PM)',
+                      style: TextStyle(color: AppColors.textPrimary),
+                    ),
+                  ),
+                  DropdownMenuItem(
+                    value: 'evening',
+                    child: Text(
+                      'Evening (6PM - 10PM)',
+                      style: TextStyle(color: AppColors.textPrimary),
+                    ),
+                  ),
+                  DropdownMenuItem(
+                    value: 'any',
+                    child: Text(
+                      'Any time',
+                      style: TextStyle(color: AppColors.textPrimary),
+                    ),
+                  ),
                 ],
-                onChanged: (value) => setState(() => _preferredDeliveryTime = value!),
+                onChanged: (value) =>
+                    setState(() => _preferredDeliveryTime = value!),
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Preference Switches
             Container(
               decoration: BoxDecoration(
@@ -425,22 +454,36 @@ class _ConsumerRegistrationScreenState extends State<ConsumerRegistrationScreen>
                       ),
                     ),
                     const SizedBox(height: 16),
-                    
+
                     SwitchListTile(
-                      title: const Text('Prefer Organic Products', style: TextStyle(color: AppColors.textPrimary)),
-                      subtitle: const Text('Get recommendations for organic products', style: TextStyle(color: AppColors.textSecondary)),
+                      title: const Text(
+                        'Prefer Organic Products',
+                        style: TextStyle(color: AppColors.textPrimary),
+                      ),
+                      subtitle: const Text(
+                        'Get recommendations for organic products',
+                        style: TextStyle(color: AppColors.textSecondary),
+                      ),
                       value: _organicPreference,
-                      onChanged: (value) => setState(() => _organicPreference = value),
+                      onChanged: (value) =>
+                          setState(() => _organicPreference = value),
                       activeColor: AppColors.consumerPrimary,
                       inactiveTrackColor: AppColors.border,
                       contentPadding: EdgeInsets.zero,
                     ),
-                    
+
                     SwitchListTile(
-                      title: const Text('Prefer Local Products', style: TextStyle(color: AppColors.textPrimary)),
-                      subtitle: const Text('Support local farmers and reduce carbon footprint', style: TextStyle(color: AppColors.textSecondary)),
+                      title: const Text(
+                        'Prefer Local Products',
+                        style: TextStyle(color: AppColors.textPrimary),
+                      ),
+                      subtitle: const Text(
+                        'Support local farmers and reduce carbon footprint',
+                        style: TextStyle(color: AppColors.textSecondary),
+                      ),
                       value: _localProductsPreference,
-                      onChanged: (value) => setState(() => _localProductsPreference = value),
+                      onChanged: (value) =>
+                          setState(() => _localProductsPreference = value),
                       activeColor: AppColors.consumerPrimary,
                       inactiveTrackColor: AppColors.border,
                       contentPadding: EdgeInsets.zero,
@@ -469,16 +512,19 @@ class _ConsumerRegistrationScreenState extends State<ConsumerRegistrationScreen>
               Icons.lock,
             ),
             const SizedBox(height: 24),
-            
+
             _buildTextField(
               controller: _passwordController,
               label: 'Password',
               icon: Icons.lock,
               obscureText: !_isPasswordVisible,
               suffixIcon: IconButton(
-                icon: Icon(_isPasswordVisible ? Icons.visibility : Icons.visibility_off),
+                icon: Icon(
+                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                ),
                 color: AppColors.textSecondary,
-                onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
+                onPressed: () =>
+                    setState(() => _isPasswordVisible = !_isPasswordVisible),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -490,18 +536,24 @@ class _ConsumerRegistrationScreenState extends State<ConsumerRegistrationScreen>
                 return null;
               },
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             _buildTextField(
               controller: _confirmPasswordController,
               label: 'Confirm Password',
               icon: Icons.lock_outline,
               obscureText: !_isConfirmPasswordVisible,
               suffixIcon: IconButton(
-                icon: Icon(_isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off),
+                icon: Icon(
+                  _isConfirmPasswordVisible
+                      ? Icons.visibility
+                      : Icons.visibility_off,
+                ),
                 color: AppColors.textSecondary,
-                onPressed: () => setState(() => _isConfirmPasswordVisible = !_isConfirmPasswordVisible),
+                onPressed: () => setState(
+                  () => _isConfirmPasswordVisible = !_isConfirmPasswordVisible,
+                ),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -513,18 +565,23 @@ class _ConsumerRegistrationScreenState extends State<ConsumerRegistrationScreen>
                 return null;
               },
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             Row(
               children: [
                 Transform.scale(
                   scale: 1.5,
                   child: Checkbox(
                     value: _agreeToTerms,
-                    shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                    onChanged: (value) => setState(() => _agreeToTerms = value ?? false),
-                    fillColor: MaterialStateProperty.resolveWith<Color>((states) {
+                    shape: BeveledRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    onChanged: (value) =>
+                        setState(() => _agreeToTerms = value ?? false),
+                    fillColor: MaterialStateProperty.resolveWith<Color>((
+                      states,
+                    ) {
                       if (states.contains(MaterialState.selected)) {
                         return AppColors.consumerPrimary;
                       }
@@ -586,15 +643,11 @@ class _ConsumerRegistrationScreenState extends State<ConsumerRegistrationScreen>
               color: AppColors.success.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              Icons.check_circle,
-              size: 64,
-              color: AppColors.success,
-            ),
+            child: Icon(Icons.check_circle, size: 64, color: AppColors.success),
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           Text(
             'Registration Successful!',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -603,16 +656,18 @@ class _ConsumerRegistrationScreenState extends State<ConsumerRegistrationScreen>
             ),
             textAlign: TextAlign.center,
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           if (_generatedConsumerId != null) ...[
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: AppColors.consumerPrimary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.consumerPrimary.withOpacity(0.3)),
+                border: Border.all(
+                  color: AppColors.consumerPrimary.withOpacity(0.3),
+                ),
               ),
               child: Column(
                 children: [
@@ -637,18 +692,15 @@ class _ConsumerRegistrationScreenState extends State<ConsumerRegistrationScreen>
             ),
             const SizedBox(height: 24),
           ],
-          
+
           Text(
             'Welcome to AGRICHAIN! Your consumer account has been successfully created and verified.',
-            style: TextStyle(
-              fontSize: 16,
-              color: AppColors.textSecondary,
-            ),
+            style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
             textAlign: TextAlign.center,
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           ElevatedButton(
             onPressed: _navigateToDashboard,
             style: ElevatedButton.styleFrom(
@@ -661,10 +713,7 @@ class _ConsumerRegistrationScreenState extends State<ConsumerRegistrationScreen>
             ),
             child: const Text(
               'Go to Dashboard',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
           ),
         ],
@@ -694,11 +743,7 @@ class _ConsumerRegistrationScreenState extends State<ConsumerRegistrationScreen>
               color: AppColors.consumerPrimary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
-              icon,
-              color: AppColors.consumerPrimary,
-              size: 24,
-            ),
+            child: Icon(icon, color: AppColors.consumerPrimary, size: 24),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -753,9 +798,7 @@ class _ConsumerRegistrationScreenState extends State<ConsumerRegistrationScreen>
         labelStyle: TextStyle(color: AppColors.textSecondary),
         prefixIcon: Icon(icon, color: AppColors.consumerPrimary),
         suffixIcon: suffixIcon,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: AppColors.consumerPrimary, width: 1),
@@ -915,7 +958,7 @@ class _ConsumerRegistrationScreenState extends State<ConsumerRegistrationScreen>
 
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      
+
       // Prepare registration data
       Map<String, dynamic> userData = {
         'name': _nameController.text.trim(),
@@ -929,9 +972,9 @@ class _ConsumerRegistrationScreenState extends State<ConsumerRegistrationScreen>
         'preferredDeliveryTime': _preferredDeliveryTime,
         'organicPreference': _organicPreference,
         'localProductsPreference': _localProductsPreference,
-        'aadhaarNumber': _kycDetails?.maskedAadhaar ?? '',
+        'aadhaarNumber': _kycDetails?['aadhaarNumber'] ?? '',
         'aadhaarVerified': _aadhaarVerified,
-        'verifiedName': _kycDetails?.name ?? '',
+        'verifiedName': _kycDetails?['name'] ?? '',
       };
 
       final success = await authProvider.register(userData);
@@ -939,7 +982,7 @@ class _ConsumerRegistrationScreenState extends State<ConsumerRegistrationScreen>
       if (success) {
         // Generate unique consumer ID
         _generatedConsumerId = _generateConsumerId();
-        
+
         _pageController.nextPage(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
