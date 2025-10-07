@@ -1,6 +1,8 @@
+import 'package:agrichain/core/models/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/app_constants.dart';
-import '../models/agrichain_user.dart';
+import 'blockchain_aadhaar_service.dart';
+import 'smart_contract_service.dart';
 import 'dart:convert';
 
 class AuthService {
@@ -65,11 +67,45 @@ class AuthService {
     return _prefs!.getString(AppConstants.keyUserRole);
   }
 
+  Future<String?> getCurrentUserWallet() async {
+    await _initPrefs();
+    return _prefs!.getString(AppConstants.keyUserWallet);
+  }
+
+  Future<Map<String, dynamic>?> getCurrentUserBlockchainInfo() async {
+    await _initPrefs();
+    final user = await getCurrentUser();
+    final wallet = await getCurrentUserWallet();
+    
+    if (user != null && wallet != null) {
+      return {
+        'user_id': user.id,
+        'role': user.role,
+        'wallet_address': wallet,
+        'name': user.name,
+        'email': user.email,
+      };
+    }
+    return null;
+  }
+
   Future<void> _saveUserSession(User user) async {
+    // Assign blockchain wallet address based on user role
+    final walletAddress = BlockchainAadhaarService.assignWalletToUser(user.id!, user.role);
+    
+    // Initialize smart contracts if not already done
+    await SmartContractService.initializeContracts();
+    
     await _prefs!.setBool(AppConstants.keyIsLoggedIn, true);
     await _prefs!.setString(AppConstants.keyUserId, json.encode(user.toJson()));
     await _prefs!.setString(AppConstants.keyUserRole, user.role);
     await _prefs!.setString(AppConstants.keyUserToken, 'mock_token_${user.id}');
+    
+    // Save blockchain wallet address
+    await _prefs!.setString(AppConstants.keyUserWallet, walletAddress);
+    
+    print('✅ User session saved with wallet: $walletAddress');
+    print('📋 Role: ${user.role}');
   }
 
   User _createMockUser(String email, String role) {
@@ -80,11 +116,14 @@ class AuthService {
       case AppConstants.roleFarmer:
         return Farmer(
           id: id,
+          firebaseUid: 'firebase_$id',
           name: 'Mock Farmer',
           email: email,
           phone: '+91 9876543210',
           address: 'Village, District, State',
           createdAt: now,
+          updatedAt: now,
+          kycDetails: {},
           farmerId: 'FRM_$id',
           landOwnership: 'owned',
           landSize: 5.0,
@@ -94,11 +133,14 @@ class AuthService {
       case AppConstants.roleDistributor:
         return Distributor(
           id: id,
+          firebaseUid: 'firebase_$id',
           name: 'Mock Distributor',
           email: email,
           phone: '+91 9876543210',
           address: 'City, State',
           createdAt: now,
+          updatedAt: now,
+          kycDetails: {},
           distributorId: 'DST_$id',
           vehicleDetails: 'Truck - TN 01 AB 1234',
           licenseNumber: 'DL_123456789',
@@ -108,11 +150,14 @@ class AuthService {
       case AppConstants.roleRetailer:
         return Retailer(
           id: id,
+          firebaseUid: 'firebase_$id',
           name: 'Mock Retailer',
           email: email,
           phone: '+91 9876543210',
           address: 'Shop Address',
           createdAt: now,
+          updatedAt: now,
+          kycDetails: {},
           retailerId: 'RTL_$id',
           shopName: 'Green Grocery Store',
           location: 'Market Street, City',
@@ -122,11 +167,14 @@ class AuthService {
       case AppConstants.roleConsumer:
         return Consumer(
           id: id,
+          firebaseUid: 'firebase_$id',
           name: 'Mock Consumer',
           email: email,
           phone: '+91 9876543210',
           address: 'Home Address',
           createdAt: now,
+          updatedAt: now,
+          kycDetails: {},
           consumerId: 'CSM_$id',
           preferences: ['organic', 'local'],
         );
@@ -145,11 +193,14 @@ class AuthService {
       case AppConstants.roleFarmer:
         return Farmer(
           id: id,
+          firebaseUid: 'firebase_$id',
           name: data['name'],
           email: data['email'],
           phone: data['phone'],
           address: data['address'],
           createdAt: now,
+          updatedAt: now,
+          kycDetails: {},
           farmerId: 'FRM_$id',
           landOwnership: data['landOwnership'] ?? 'owned',
           landSize: data['landSize'] ?? 0.0,
@@ -159,11 +210,14 @@ class AuthService {
       case AppConstants.roleDistributor:
         return Distributor(
           id: id,
+          firebaseUid: 'firebase_$id',
           name: data['name'],
           email: data['email'],
           phone: data['phone'],
           address: data['address'],
           createdAt: now,
+          updatedAt: now,
+          kycDetails: {},
           distributorId: 'DST_$id',
           vehicleDetails: 'Vehicle Count: ${data['vehicleCount'] ?? 0}',
           licenseNumber: 'LIC_$id',
@@ -173,11 +227,14 @@ class AuthService {
       case AppConstants.roleRetailer:
         return Retailer(
           id: id,
+          firebaseUid: 'firebase_$id',
           name: data['name'],
           email: data['email'],
           phone: data['phone'],
           address: data['address'],
           createdAt: now,
+          updatedAt: now,
+          kycDetails: {},
           retailerId: 'RTL_$id',
           shopName: '${data['name']}\'s ${data['storeType'] ?? 'Store'}',
           location: data['address'],
@@ -187,11 +244,14 @@ class AuthService {
       case AppConstants.roleConsumer:
         return Consumer(
           id: id,
+          firebaseUid: 'firebase_$id',
           name: data['name'],
           email: data['email'],
           phone: data['phone'],
           address: data['address'],
           createdAt: now,
+          updatedAt: now,
+          kycDetails: {},
           consumerId: 'CSM_$id',
         );
 
