@@ -368,7 +368,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Color _getPrimaryColorForRole(UserRole? role) {
     if (role == null) return AppColors.consumerPrimary;
-    
+
     switch (role) {
       case UserRole.farmer:
         return AppColors.farmerPrimary;

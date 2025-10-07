@@ -35,7 +35,7 @@ class MongoDBService {
     } catch (e) {
       debugPrint('🍃 MongoDB Connection Error: $e');
       _isConnected = false;
-      
+
       // Try to reconnect after a delay
       await Future.delayed(const Duration(seconds: 2));
       try {
@@ -49,7 +49,7 @@ class MongoDBService {
       } catch (retryError) {
         debugPrint('🍃 MongoDB Retry failed: $retryError');
       }
-      
+
       return false;
     }
   }
@@ -133,14 +133,13 @@ class MongoDBService {
 
       // Insert user
       final result = await collection.insertOne(userDocument);
+      final userId = result.id.toString();
 
-      debugPrint(
-        '🍃 MongoDB: User created - Role: $role, ID: ${result.toString()}',
-      );
+      debugPrint('🍃 MongoDB: User created - Role: $role, ID: $userId');
 
       return {
         'success': true,
-        'userId': result.toString(),
+        'userId': userId,
         'message': 'User created successfully',
       };
     } catch (e) {
@@ -296,9 +295,7 @@ class MongoDBService {
 
       final regex = RegExp(searchTerm, caseSensitive: false);
       final users = await collection
-          .find(
-            where.match('name', regex.pattern).limit(limit),
-          )
+          .find(where.match('name', regex.pattern).limit(limit))
           .toList();
 
       debugPrint(

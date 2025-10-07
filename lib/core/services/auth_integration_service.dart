@@ -58,7 +58,7 @@ class AuthIntegrationService {
       if (!mongoResult['success']) {
         // Don't rollback Firebase user, use local storage fallback instead
         debugPrint('🔐 MongoDB insertion failed, using local storage fallback');
-        
+
         // Create AgriChainUser object for local storage
         final agriChainUser = AgriChainUser(
           firebaseUid: firebaseUser.uid,
@@ -78,9 +78,11 @@ class AuthIntegrationService {
         await LocalStorageService.saveUser(agriChainUser);
         // Add to pending sync for later
         await LocalStorageService.addToPendingSync(agriChainUser);
-        
-        debugPrint('🔐 User saved locally, will sync to MongoDB when connection is available');
-        
+
+        debugPrint(
+          '🔐 User saved locally, will sync to MongoDB when connection is available',
+        );
+
         return {
           'success': true,
           'message': 'Registration successful (saved locally)',
@@ -156,13 +158,13 @@ class AuthIntegrationService {
       );
 
       AgriChainUser agriChainUser;
-      
+
       if (userData == null) {
         debugPrint('🔐 MongoDB data not found, checking local storage...');
-        
+
         // Try to get user from local storage
         final localUser = await LocalStorageService.getUser();
-        
+
         if (localUser != null && localUser.firebaseUid == firebaseUser.uid) {
           debugPrint('🔐 User found in local storage');
           agriChainUser = localUser;
@@ -171,7 +173,10 @@ class AuthIntegrationService {
           // Create user from Firebase data if neither MongoDB nor local storage has the user
           agriChainUser = AgriChainUser(
             firebaseUid: firebaseUser.uid,
-            name: firebaseUser.displayName ?? firebaseUser.email?.split('@')[0] ?? 'User',
+            name:
+                firebaseUser.displayName ??
+                firebaseUser.email?.split('@')[0] ??
+                'User',
             email: firebaseUser.email ?? '',
             phone: firebaseUser.phoneNumber ?? '',
             role: role,
@@ -181,14 +186,14 @@ class AuthIntegrationService {
             kycDetails: {},
             isVerified: firebaseUser.emailVerified,
           );
-          
+
           // Save to local storage for future logins
           await LocalStorageService.saveUser(agriChainUser);
         }
       } else {
         debugPrint('🔐 User data retrieved from MongoDB successfully');
         agriChainUser = AgriChainUser.fromJson(userData);
-        
+
         // Update local storage with latest data from MongoDB
         await LocalStorageService.saveUser(agriChainUser);
       }
@@ -378,7 +383,7 @@ class AuthIntegrationService {
         role: role,
         firebaseUid: firebaseUid,
       );
-      
+
       if (userData != null) {
         return {
           'success': true,
@@ -386,10 +391,7 @@ class AuthIntegrationService {
           'message': 'User found successfully',
         };
       } else {
-        return {
-          'success': false,
-          'message': 'User not found in database',
-        };
+        return {'success': false, 'message': 'User not found in database'};
       }
     } catch (e) {
       debugPrint('🔍 Get user from MongoDB error: $e');

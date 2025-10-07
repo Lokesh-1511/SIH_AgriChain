@@ -1,0 +1,90 @@
+{
+  "app": {
+    "title": "AGRICHAIN",
+    "subtitle": "Bridging Farmers, Distributors, Retailers & Consumers"
+  },
+  "common": {
+    "welcome": "Welcome",
+    "login": "Login",
+    "register": "Register",
+    "continue": "Continue",
+    "next": "Next",
+    "previous": "Previous",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "done": "Done",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "logout": "Logout",
+    "profile": "Profile",
+    "settings": "Settings",
+    "language": "Language",
+    "select_language": "Select Language",
+    "email": "Email",
+    "password": "Password",
+    "name": "Full Name",
+    "phone": "Phone Number",
+    "address": "Address",
+    "submit": "Submit"
+  },
+  "roles": {
+    "farmer": "Farmer",
+    "distributor": "Distributor", 
+    "retailer": "Retailer",
+    "consumer": "Consumer",
+    "select_role": "Select Your Role",
+    "role_description": "Choose your role to get started with AGRICHAIN"
+  },
+  "landing": {
+    "title": "Welcome to AGRICHAIN",
+    "subtitle": "Revolutionizing Agriculture through Blockchain & AI",
+    "description": "Connect farmers, distributors, retailers and consumers in a transparent, secure and efficient agricultural ecosystem.",
+    "get_started": "Get Started",
+    "join_as": "Join as",
+    "farmer_desc": "Grow and sell your produce directly",
+    "distributor_desc": "Connect farms to markets efficiently",
+    "retailer_desc": "Source quality products for your store",
+    "consumer_desc": "Buy fresh produce directly"
+  },
+  "auth": {
+    "login_title": "Welcome Back",
+    "login_subtitle": "Sign in to your account",
+    "register_title": "Create Account",
+    "register_subtitle": "Join the AGRICHAIN community",
+    "forgot_password": "Forgot Password?",
+    "dont_have_account": "Don't have an account?",
+    "already_have_account": "Already have an account?",
+    "sign_in": "Sign In",
+    "sign_up": "Sign Up",
+    "enter_email": "Enter your email",
+    "enter_password": "Enter your password",
+    "confirm_password": "Confirm Password",
+    "terms_agree": "I agree to the Terms & Conditions and Privacy Policy"
+  },
+  "farmer": {
+    "title": "Farmer Dashboard",
+    "registration": "Farmer Registration",
+    "personal_info": "Personal Information",
+    "aadhar_verification": "Aadhaar Verification",
+    "land_verification": "Land Verification",
+    "security_setup": "Security Setup",
+    "registration_complete": "Registration Complete",
+    "farm_address": "Farm Address",
+    "land_size": "Land Size (in acres)",
+    "land_ownership": "Land Ownership Type",
+    "owned": "Owned",
+    "lease": "Lease/Rent",
+    "farming_details": "Farming Details",
+    "agri_score": "Agri Score",
+    "farmer_id": "Farmer ID"
+  },
+  "profile": {
+    "title": "Profile",
+    "edit_profile": "Edit Profile",
+    "personal_details": "Personal Details",
+    "contact_info": "Contact Information",
+    "role_specific_info": "Role Specific Information"
+  }
+}
