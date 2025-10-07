@@ -1090,6 +1090,21 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
+      // Prepare KYC details map
+      Map<String, dynamic> kycDetails = {
+        'aadhaarNumber': _kycDetails?['aadhaarNumber'] ?? '',
+        'aadhaarVerified': _aadhaarVerified,
+        'verifiedName': _kycDetails?['name'] ?? _nameController.text.trim(),
+        'landSize': double.tryParse(_landSizeController.text) ?? 0.0,
+        'landOwnership': _landOwnership,
+      };
+
+      // Add document info if lease
+      if (_landOwnership == 'lease') {
+        kycDetails['ownerRecordPath'] = _ownerRecordFile?.path ?? '';
+        kycDetails['leaseDocPath'] = _leaseDocFile?.path ?? '';
+      }
+
       // Prepare registration data
       Map<String, dynamic> userData = {
         'name': _nameController.text.trim(),
@@ -1098,18 +1113,12 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
         'address': _addressController.text.trim(),
         'password': _passwordController.text,
         'role': AppConstants.roleFarmer,
-        'landSize': double.tryParse(_landSizeController.text) ?? 0.0,
-        'landOwnership': _landOwnership,
-        'aadhaarNumber': _kycDetails?['aadhaarNumber'] ?? '',
-        'aadhaarVerified': _aadhaarVerified,
-        'verifiedName': _kycDetails?['name'] ?? '',
+        'kycDetails': kycDetails,
+        'additionalInfo': {
+          'farmerId': _generateFarmerId(),
+          'registrationDate': DateTime.now().toIso8601String(),
+        },
       };
-
-      // Add document info if lease
-      if (_landOwnership == 'lease') {
-        userData['ownerRecordPath'] = _ownerRecordFile?.path;
-        userData['leaseDocPath'] = _leaseDocFile?.path;
-      }
 
       final success = await authProvider.register(userData);
 

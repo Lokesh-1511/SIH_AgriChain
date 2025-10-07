@@ -7,16 +7,17 @@ import 'core/services/mongodb_service.dart';
 import 'features/auth/providers/auth_provider.dart';
 import 'features/common/providers/language_provider.dart';
 import 'features/onboarding/screens/splash_screen.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize Firebase
-  await Firebase.initializeApp();
-  
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   // Initialize MongoDB
   await MongoDBService.connect();
-  
+
   runApp(const AgriChainApp());
 }
 

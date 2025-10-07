@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../auth/providers/auth_provider.dart';
+import '../../../features/auth/providers/auth_provider.dart';
 import '../../common/screens/landing_screen.dart';
 import '../widgets/farmer_stats_card.dart';
 import '../widgets/batch_status_card.dart';
@@ -221,9 +221,8 @@ class FarmerHomeTab extends StatelessWidget {
                 const SizedBox(height: 8),
                 Consumer<AuthProvider>(
                   builder: (context, authProvider, child) {
-                    final user = authProvider.currentUser;
                     return Text(
-                      user?.name ?? 'Farmer',
+                      'Farmer', // Placeholder until user data is available
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,

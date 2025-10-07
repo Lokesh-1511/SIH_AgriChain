@@ -22,10 +22,8 @@ class FirebaseAuthService {
   }) async {
     try {
       // Create user with email and password
-      final UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      final UserCredential userCredential = await _auth
+          .createUserWithEmailAndPassword(email: email, password: password);
 
       // Update display name
       await userCredential.user?.updateDisplayName(displayName);
@@ -40,7 +38,7 @@ class FirebaseAuthService {
       };
     } on FirebaseAuthException catch (e) {
       debugPrint('🔥 Firebase Auth Error: ${e.code} - ${e.message}');
-      
+
       String errorMessage;
       switch (e.code) {
         case 'weak-password':
@@ -56,10 +54,7 @@ class FirebaseAuthService {
           errorMessage = e.message ?? 'Registration failed. Please try again.';
       }
 
-      return {
-        'success': false,
-        'message': errorMessage,
-      };
+      return {'success': false, 'message': errorMessage};
     } catch (e) {
       debugPrint('🔥 Firebase Auth Unexpected Error: $e');
       return {
@@ -75,10 +70,8 @@ class FirebaseAuthService {
     required String password,
   }) async {
     try {
-      final UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      final UserCredential userCredential = await _auth
+          .signInWithEmailAndPassword(email: email, password: password);
 
       debugPrint('🔥 Firebase Auth: User signed in successfully');
 
@@ -89,7 +82,7 @@ class FirebaseAuthService {
       };
     } on FirebaseAuthException catch (e) {
       debugPrint('🔥 Firebase Auth Error: ${e.code} - ${e.message}');
-      
+
       String errorMessage;
       switch (e.code) {
         case 'user-not-found':
@@ -111,10 +104,7 @@ class FirebaseAuthService {
           errorMessage = e.message ?? 'Sign in failed. Please try again.';
       }
 
-      return {
-        'success': false,
-        'message': errorMessage,
-      };
+      return {'success': false, 'message': errorMessage};
     } catch (e) {
       debugPrint('🔥 Firebase Auth Unexpected Error: $e');
       return {
@@ -130,7 +120,7 @@ class FirebaseAuthService {
   }) async {
     try {
       await _auth.sendPasswordResetEmail(email: email);
-      
+
       debugPrint('🔥 Firebase Auth: Password reset email sent');
 
       return {
@@ -139,7 +129,7 @@ class FirebaseAuthService {
       };
     } on FirebaseAuthException catch (e) {
       debugPrint('🔥 Firebase Auth Error: ${e.code} - ${e.message}');
-      
+
       String errorMessage;
       switch (e.code) {
         case 'user-not-found':
@@ -152,10 +142,7 @@ class FirebaseAuthService {
           errorMessage = e.message ?? 'Failed to send reset email.';
       }
 
-      return {
-        'success': false,
-        'message': errorMessage,
-      };
+      return {'success': false, 'message': errorMessage};
     } catch (e) {
       debugPrint('🔥 Firebase Auth Unexpected Error: $e');
       return {
@@ -182,13 +169,10 @@ class FirebaseAuthService {
       await _auth.currentUser?.delete();
       debugPrint('🔥 Firebase Auth: User account deleted');
 
-      return {
-        'success': true,
-        'message': 'Account deleted successfully',
-      };
+      return {'success': true, 'message': 'Account deleted successfully'};
     } on FirebaseAuthException catch (e) {
       debugPrint('🔥 Firebase Auth Delete Error: ${e.code} - ${e.message}');
-      
+
       String errorMessage;
       switch (e.code) {
         case 'requires-recent-login':
@@ -198,10 +182,7 @@ class FirebaseAuthService {
           errorMessage = e.message ?? 'Failed to delete account.';
       }
 
-      return {
-        'success': false,
-        'message': errorMessage,
-      };
+      return {'success': false, 'message': errorMessage};
     } catch (e) {
       debugPrint('🔥 Firebase Auth Unexpected Error: $e');
       return {
@@ -219,13 +200,12 @@ class FirebaseAuthService {
       await _auth.currentUser?.updateEmail(newEmail);
       debugPrint('🔥 Firebase Auth: Email updated successfully');
 
-      return {
-        'success': true,
-        'message': 'Email updated successfully',
-      };
+      return {'success': true, 'message': 'Email updated successfully'};
     } on FirebaseAuthException catch (e) {
-      debugPrint('🔥 Firebase Auth Update Email Error: ${e.code} - ${e.message}');
-      
+      debugPrint(
+        '🔥 Firebase Auth Update Email Error: ${e.code} - ${e.message}',
+      );
+
       String errorMessage;
       switch (e.code) {
         case 'invalid-email':
@@ -241,10 +221,7 @@ class FirebaseAuthService {
           errorMessage = e.message ?? 'Failed to update email.';
       }
 
-      return {
-        'success': false,
-        'message': errorMessage,
-      };
+      return {'success': false, 'message': errorMessage};
     } catch (e) {
       debugPrint('🔥 Firebase Auth Unexpected Error: $e');
       return {
@@ -262,13 +239,12 @@ class FirebaseAuthService {
       await _auth.currentUser?.updatePassword(newPassword);
       debugPrint('🔥 Firebase Auth: Password updated successfully');
 
-      return {
-        'success': true,
-        'message': 'Password updated successfully',
-      };
+      return {'success': true, 'message': 'Password updated successfully'};
     } on FirebaseAuthException catch (e) {
-      debugPrint('🔥 Firebase Auth Update Password Error: ${e.code} - ${e.message}');
-      
+      debugPrint(
+        '🔥 Firebase Auth Update Password Error: ${e.code} - ${e.message}',
+      );
+
       String errorMessage;
       switch (e.code) {
         case 'weak-password':
@@ -281,10 +257,7 @@ class FirebaseAuthService {
           errorMessage = e.message ?? 'Failed to update password.';
       }
 
-      return {
-        'success': false,
-        'message': errorMessage,
-      };
+      return {'success': false, 'message': errorMessage};
     } catch (e) {
       debugPrint('🔥 Firebase Auth Unexpected Error: $e');
       return {

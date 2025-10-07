@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../models/agrichain_user.dart';
 import 'firebase_auth_service.dart';
 import 'mongodb_service.dart';
+import 'local_storage_service.dart';
 
 /// Integration service that combines Firebase Auth with MongoDB user storage
 class AuthIntegrationService {
@@ -21,11 +22,12 @@ class AuthIntegrationService {
       debugPrint('🔐 Starting user registration process...');
 
       // Step 1: Register with Firebase Auth
-      final firebaseResult = await FirebaseAuthService.registerWithEmailPassword(
-        email: email,
-        password: password,
-        displayName: name,
-      );
+      final firebaseResult =
+          await FirebaseAuthService.registerWithEmailPassword(
+            email: email,
+            password: password,
+            displayName: name,
+          );
 
       if (!firebaseResult['success']) {
         return {
@@ -54,18 +56,36 @@ class AuthIntegrationService {
       );
 
       if (!mongoResult['success']) {
-        // Rollback: Delete Firebase user if MongoDB insertion fails
-        debugPrint('🔐 MongoDB insertion failed, rolling back Firebase user...');
-        try {
-          await firebaseUser.delete();
-        } catch (rollbackError) {
-          debugPrint('🔐 Rollback failed: $rollbackError');
-        }
+        // Don't rollback Firebase user, use local storage fallback instead
+        debugPrint('🔐 MongoDB insertion failed, using local storage fallback');
+        
+        // Create AgriChainUser object for local storage
+        final agriChainUser = AgriChainUser(
+          firebaseUid: firebaseUser.uid,
+          name: name,
+          email: email,
+          phone: phone,
+          role: role,
+          address: address,
+          isVerified: true,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+          kycDetails: kycDetails,
+          additionalInfo: additionalInfo,
+        );
 
+        // Save locally
+        await LocalStorageService.saveUser(agriChainUser);
+        // Add to pending sync for later
+        await LocalStorageService.addToPendingSync(agriChainUser);
+        
+        debugPrint('🔐 User saved locally, will sync to MongoDB when connection is available');
+        
         return {
-          'success': false,
-          'message': mongoResult['message'],
-          'step': 'mongodb_storage',
+          'success': true,
+          'message': 'Registration successful (saved locally)',
+          'userData': agriChainUser.toJson(),
+          'isOnline': false,
         };
       }
 
@@ -90,10 +110,9 @@ class AuthIntegrationService {
       return {
         'success': true,
         'message': 'Registration successful',
-        'user': agriChainUser,
-        'firebaseUser': firebaseUser,
+        'userData': agriChainUser.toJson(),
+        'isOnline': true,
       };
-
     } catch (e) {
       debugPrint('🔐 Registration error: $e');
       return {
@@ -136,26 +155,50 @@ class AuthIntegrationService {
         firebaseUid: firebaseUser.uid,
       );
 
+      AgriChainUser agriChainUser;
+      
       if (userData == null) {
-        return {
-          'success': false,
-          'message': 'User data not found in database. Please contact support.',
-          'step': 'mongodb_retrieval',
-        };
+        debugPrint('🔐 MongoDB data not found, checking local storage...');
+        
+        // Try to get user from local storage
+        final localUser = await LocalStorageService.getUser();
+        
+        if (localUser != null && localUser.firebaseUid == firebaseUser.uid) {
+          debugPrint('🔐 User found in local storage');
+          agriChainUser = localUser;
+        } else {
+          debugPrint('🔐 Creating user from Firebase data');
+          // Create user from Firebase data if neither MongoDB nor local storage has the user
+          agriChainUser = AgriChainUser(
+            firebaseUid: firebaseUser.uid,
+            name: firebaseUser.displayName ?? firebaseUser.email?.split('@')[0] ?? 'User',
+            email: firebaseUser.email ?? '',
+            phone: firebaseUser.phoneNumber ?? '',
+            role: role,
+            address: '',
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+            kycDetails: {},
+            isVerified: firebaseUser.emailVerified,
+          );
+          
+          // Save to local storage for future logins
+          await LocalStorageService.saveUser(agriChainUser);
+        }
+      } else {
+        debugPrint('🔐 User data retrieved from MongoDB successfully');
+        agriChainUser = AgriChainUser.fromJson(userData);
+        
+        // Update local storage with latest data from MongoDB
+        await LocalStorageService.saveUser(agriChainUser);
       }
-
-      debugPrint('🔐 User data retrieved successfully');
-
-      // Create AgriChainUser object
-      final agriChainUser = AgriChainUser.fromJson(userData);
 
       return {
         'success': true,
         'message': 'Sign in successful',
-        'user': agriChainUser,
+        'userData': agriChainUser.toJson(),
         'firebaseUser': firebaseUser,
       };
-
     } catch (e) {
       debugPrint('🔐 Sign in error: $e');
       return {
@@ -184,17 +227,10 @@ class AuthIntegrationService {
 
       if (success) {
         debugPrint('🔐 Profile updated successfully');
-        return {
-          'success': true,
-          'message': 'Profile updated successfully',
-        };
+        return {'success': true, 'message': 'Profile updated successfully'};
       } else {
-        return {
-          'success': false,
-          'message': 'Failed to update profile',
-        };
+        return {'success': false, 'message': 'Failed to update profile'};
       }
-
     } catch (e) {
       debugPrint('🔐 Update profile error: $e');
       return {
@@ -223,17 +259,13 @@ class AuthIntegrationService {
 
       if (mongoSuccess && firebaseResult['success']) {
         debugPrint('🔐 Account deleted successfully');
-        return {
-          'success': true,
-          'message': 'Account deleted successfully',
-        };
+        return {'success': true, 'message': 'Account deleted successfully'};
       } else {
         return {
           'success': false,
           'message': 'Failed to delete account completely',
         };
       }
-
     } catch (e) {
       debugPrint('🔐 Delete account error: $e');
       return {
@@ -276,7 +308,6 @@ class AuthIntegrationService {
       }
 
       return null;
-
     } catch (e) {
       debugPrint('🔐 Get current user error: $e');
       return null;
@@ -304,8 +335,10 @@ class AuthIntegrationService {
   }) async {
     try {
       // Update in Firebase Auth
-      final firebaseResult = await FirebaseAuthService.updateEmail(newEmail: newEmail);
-      
+      final firebaseResult = await FirebaseAuthService.updateEmail(
+        newEmail: newEmail,
+      );
+
       if (!firebaseResult['success']) {
         return firebaseResult;
       }
@@ -318,22 +351,51 @@ class AuthIntegrationService {
       );
 
       if (mongoSuccess) {
-        return {
-          'success': true,
-          'message': 'Email updated successfully',
-        };
+        return {'success': true, 'message': 'Email updated successfully'};
       } else {
         return {
           'success': false,
-          'message': 'Email updated in Firebase but failed to update in database',
+          'message':
+              'Email updated in Firebase but failed to update in database',
         };
       }
-
     } catch (e) {
       debugPrint('🔐 Update email error: $e');
       return {
         'success': false,
         'message': 'An unexpected error occurred during email update',
+      };
+    }
+  }
+
+  /// Get user from MongoDB by Firebase UID
+  static Future<Map<String, dynamic>> getUserFromMongoDB({
+    required String role,
+    required String firebaseUid,
+  }) async {
+    try {
+      final userData = await MongoDBService.getUserByFirebaseUid(
+        role: role,
+        firebaseUid: firebaseUid,
+      );
+      
+      if (userData != null) {
+        return {
+          'success': true,
+          'userData': userData,
+          'message': 'User found successfully',
+        };
+      } else {
+        return {
+          'success': false,
+          'message': 'User not found in database',
+        };
+      }
+    } catch (e) {
+      debugPrint('🔍 Get user from MongoDB error: $e');
+      return {
+        'success': false,
+        'message': 'Failed to retrieve user from database',
       };
     }
   }

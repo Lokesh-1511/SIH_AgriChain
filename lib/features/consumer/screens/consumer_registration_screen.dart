@@ -959,6 +959,18 @@ class _ConsumerRegistrationScreenState
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
+      // Prepare KYC details map
+      Map<String, dynamic> kycDetails = {
+        'aadhaarNumber': _kycDetails?['aadhaarNumber'] ?? '',
+        'aadhaarVerified': _aadhaarVerified,
+        'verifiedName': _kycDetails?['name'] ?? _nameController.text.trim(),
+        'dietaryPreferences': _dietaryPreferencesController.text.trim(),
+        'allergyInfo': _allergyInfoController.text.trim(),
+        'preferredDeliveryTime': _preferredDeliveryTime,
+        'organicPreference': _organicPreference,
+        'localProductsPreference': _localProductsPreference,
+      };
+
       // Prepare registration data
       Map<String, dynamic> userData = {
         'name': _nameController.text.trim(),
@@ -967,14 +979,11 @@ class _ConsumerRegistrationScreenState
         'address': _addressController.text.trim(),
         'password': _passwordController.text,
         'role': AppConstants.roleConsumer,
-        'dietaryPreferences': _dietaryPreferencesController.text.trim(),
-        'allergyInfo': _allergyInfoController.text.trim(),
-        'preferredDeliveryTime': _preferredDeliveryTime,
-        'organicPreference': _organicPreference,
-        'localProductsPreference': _localProductsPreference,
-        'aadhaarNumber': _kycDetails?['aadhaarNumber'] ?? '',
-        'aadhaarVerified': _aadhaarVerified,
-        'verifiedName': _kycDetails?['name'] ?? '',
+        'kycDetails': kycDetails,
+        'additionalInfo': {
+          'consumerId': _generateConsumerId(),
+          'registrationDate': DateTime.now().toIso8601String(),
+        },
       };
 
       final success = await authProvider.register(userData);
@@ -1010,16 +1019,6 @@ class _ConsumerRegistrationScreenState
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const ConsumerDashboard()),
       (route) => false,
-    );
-  }
-
-  void _showSuccessSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text(message),
-        backgroundColor: AppColors.success,
-      ),
     );
   }
 
