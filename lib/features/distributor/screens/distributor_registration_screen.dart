@@ -9,7 +9,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/widgets/simple_aadhaar_widget.dart';
 
 import '../../../core/services/aadhaar_state_service.dart';
-import '../../auth/providers/auth_provider.dart';
+import '../../../features/auth/providers/auth_provider.dart';
 import '../screens/distributor_dashboard.dart';
 
 class DistributorRegistrationScreen extends StatefulWidget {
@@ -1007,6 +1007,20 @@ class _DistributorRegistrationScreenState
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
+      // Prepare KYC details map
+      Map<String, dynamic> kycDetails = {
+        'aadhaarNumber': _kycDetails?['aadhaarNumber'] ?? '',
+        'aadhaarVerified': _aadhaarVerified,
+        'verifiedName': _kycDetails?['name'] ?? _nameController.text.trim(),
+        'businessName': _businessNameController.text.trim(),
+        'businessAddress': _businessAddressController.text.trim(),
+        'vehicleCount': int.tryParse(_vehicleCountController.text) ?? 0,
+        'warehouseCapacity': _warehouseCapacityController.text.trim(),
+        'serviceAreas': _serviceAreasController.text.trim(),
+        'licenseNumber': _licenseNumberController.text.trim(),
+        'licenseImagePath': _licenseImage?.path ?? '',
+      };
+
       // Prepare registration data
       Map<String, dynamic> userData = {
         'name': _nameController.text.trim(),
@@ -1015,16 +1029,11 @@ class _DistributorRegistrationScreenState
         'address': _addressController.text.trim(),
         'password': _passwordController.text,
         'role': AppConstants.roleDistributor,
-        'businessName': _businessNameController.text.trim(),
-        'businessAddress': _businessAddressController.text.trim(),
-        'vehicleCount': int.tryParse(_vehicleCountController.text) ?? 0,
-        'warehouseCapacity': _warehouseCapacityController.text.trim(),
-        'serviceAreas': _serviceAreasController.text.trim(),
-        'licenseNumber': _licenseNumberController.text.trim(),
-        'aadhaarNumber': _kycDetails?['aadhaarNumber'] ?? '',
-        'aadhaarVerified': _aadhaarVerified,
-        'verifiedName': _kycDetails?['name'] ?? '',
-        'licenseImagePath': _licenseImage?.path,
+        'kycDetails': kycDetails,
+        'additionalInfo': {
+          'distributorId': _generateDistributorId(),
+          'registrationDate': DateTime.now().toIso8601String(),
+        },
       };
 
       final success = await authProvider.register(userData);

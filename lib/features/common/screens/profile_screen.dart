@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/models/agrichain_user.dart';
 import '../../auth/providers/auth_provider.dart';
 import 'landing_screen.dart';
 
@@ -126,7 +127,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      user.role.toUpperCase(),
+                      user.role.displayName.toUpperCase(),
                       style: TextStyle(
                         color: primaryColor,
                         fontSize: 12,
@@ -222,11 +223,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 24),
 
             // Role-specific Information
-            if (user.role == 'farmer') _buildFarmerInfo(user, primaryColor),
-            if (user.role == 'distributor')
+            if (user.role == UserRole.farmer) _buildFarmerInfo(user, primaryColor),
+            if (user.role == UserRole.distributor)
               _buildDistributorInfo(user, primaryColor),
-            if (user.role == 'retailer') _buildRetailerInfo(user, primaryColor),
-            if (user.role == 'consumer') _buildConsumerInfo(user, primaryColor),
+            if (user.role == UserRole.retailer) _buildRetailerInfo(user, primaryColor),
+            if (user.role == UserRole.consumer) _buildConsumerInfo(user, primaryColor),
 
             const SizedBox(height: 24),
 
@@ -517,32 +518,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Color _getPrimaryColorForRole(String role) {
-    switch (role.toLowerCase()) {
-      case 'farmer':
+  Color _getPrimaryColorForRole(UserRole role) {
+    switch (role) {
+      case UserRole.farmer:
         return AppColors.farmerPrimary;
-      case 'distributor':
+      case UserRole.distributor:
         return AppColors.distributorPrimary;
-      case 'retailer':
+      case UserRole.retailer:
         return AppColors.retailerPrimary;
-      case 'consumer':
+      case UserRole.consumer:
         return AppColors.consumerPrimary;
-      default:
-        return AppColors.primary;
     }
   }
 
-  IconData _getIconForRole(String role) {
-    switch (role.toLowerCase()) {
-      case 'farmer':
+  IconData _getIconForRole(UserRole role) {
+    switch (role) {
+      case UserRole.farmer:
         return Icons.agriculture;
-      case 'distributor':
+      case UserRole.distributor:
         return Icons.local_shipping;
-      case 'retailer':
+      case UserRole.retailer:
         return Icons.store;
-      case 'consumer':
-        return Icons.person;
-      default:
+      case UserRole.consumer:
         return Icons.person;
     }
   }

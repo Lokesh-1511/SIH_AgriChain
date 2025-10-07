@@ -39,8 +39,12 @@ class AgriChainUser {
       role: UserRole.fromString(json['role'] ?? 'farmer'),
       address: json['address'] ?? '',
       isVerified: json['isVerified'] ?? false,
-      createdAt: DateTime.parse(json['createdAt'] ?? DateTime.now().toIso8601String()),
-      updatedAt: DateTime.parse(json['updatedAt'] ?? DateTime.now().toIso8601String()),
+      createdAt: DateTime.parse(
+        json['createdAt'] ?? DateTime.now().toIso8601String(),
+      ),
+      updatedAt: DateTime.parse(
+        json['updatedAt'] ?? DateTime.now().toIso8601String(),
+      ),
       kycDetails: Map<String, dynamic>.from(json['kycDetails'] ?? {}),
       additionalInfo: json['additionalInfo'] != null
           ? Map<String, dynamic>.from(json['additionalInfo'])

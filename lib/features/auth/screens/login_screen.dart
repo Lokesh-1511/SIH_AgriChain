@@ -90,12 +90,33 @@ class _LoginScreenState extends State<LoginScreen> {
       widget.role,
     );
 
+    if (!mounted) return; // Check if widget is still mounted
+    
     setState(() => _isLoading = false);
 
-    if (success) {
-      Navigator.of(
-        context,
-      ).pushReplacement(MaterialPageRoute(builder: (_) => _nextScreen));
+    if (success && authProvider.currentUser != null) {
+      // Navigate to appropriate dashboard based on user role
+      Widget destination;
+      switch (authProvider.currentUser!.role.name) {
+        case AppConstants.roleFarmer:
+          destination = const FarmerDashboard();
+          break;
+        case AppConstants.roleDistributor:
+          destination = const DistributorDashboard();
+          break;
+        case AppConstants.roleRetailer:
+          destination = const RetailerDashboard();
+          break;
+        case AppConstants.roleConsumer:
+          destination = const ConsumerDashboard();
+          break;
+        default:
+          destination = _nextScreen;
+      }
+      
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => destination)
+      );
     } else {
       _showErrorSnackBar(authProvider.error ?? 'Login failed');
     }

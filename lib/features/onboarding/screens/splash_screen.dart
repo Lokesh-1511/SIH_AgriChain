@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
-import '../../auth/providers/auth_provider.dart';
+import '../../../features/auth/providers/auth_provider.dart';
 import '../../common/screens/landing_screen.dart';
 import '../../farmer/screens/farmer_dashboard.dart';
 import '../../distributor/screens/distributor_dashboard.dart';
@@ -60,7 +60,8 @@ class _SplashScreenState extends State<SplashScreen>
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     if (authProvider.isLoggedIn && authProvider.currentUser != null) {
-      _navigateToRoleDashboard(authProvider.currentUser!.role);
+      // Navigate to the appropriate dashboard based on user role
+      _navigateToRoleDashboard(authProvider.currentUser!.role.name);
     } else {
       _navigateToLanding();
     }

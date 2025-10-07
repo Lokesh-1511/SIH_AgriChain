@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../auth/providers/auth_provider.dart';
+import '../../../features/auth/providers/auth_provider.dart';
 import '../../common/screens/landing_screen.dart';
 import '../../common/screens/profile_screen.dart';
 import '../../common/screens/settings_screen.dart';

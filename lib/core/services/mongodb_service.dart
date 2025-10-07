@@ -5,11 +5,11 @@ import 'package:flutter/foundation.dart';
 class MongoDBService {
   static Db? _database;
   static bool _isConnected = false;
-  
+
   // MongoDB connection string - replace with your actual MongoDB URI
-  static const String _connectionString = 'mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<database>?retryWrites=true&w=majority';
-  static const String _databaseName = 'agrichain_db';
-  
+  static const String _connectionString =
+      'mongodb+srv://karthikrajaanand12:aaaaaaaa@cluster-akr.pqejowl.mongodb.net/agrichain_db?retryWrites=true&w=majority&appName=Cluster-AKR';
+
   // Collection names
   static const String _farmersCollection = 'farmers';
   static const String _distributorsCollection = 'distributors';
@@ -24,17 +24,32 @@ class MongoDBService {
       }
 
       debugPrint('🍃 MongoDB: Connecting to database...');
-      
+
       _database = await Db.create(_connectionString);
       await _database!.open();
-      
+
       _isConnected = true;
       debugPrint('🍃 MongoDB: Connected successfully');
-      
+
       return true;
     } catch (e) {
       debugPrint('🍃 MongoDB Connection Error: $e');
       _isConnected = false;
+      
+      // Try to reconnect after a delay
+      await Future.delayed(const Duration(seconds: 2));
+      try {
+        if (_database == null) {
+          _database = await Db.create(_connectionString);
+          await _database!.open();
+          _isConnected = true;
+          debugPrint('🍃 MongoDB: Reconnected successfully');
+          return true;
+        }
+      } catch (retryError) {
+        debugPrint('🍃 MongoDB Retry failed: $retryError');
+      }
+      
       return false;
     }
   }
@@ -59,7 +74,7 @@ class MongoDBService {
   /// Get collection by role
   static DbCollection? _getCollectionByRole(String role) {
     if (!isConnected) return null;
-    
+
     switch (role.toLowerCase()) {
       case 'farmer':
         return _database!.collection(_farmersCollection);
@@ -86,27 +101,20 @@ class MongoDBService {
   }) async {
     try {
       if (!await connect()) {
-        return {
-          'success': false,
-          'message': 'Failed to connect to database',
-        };
+        return {'success': false, 'message': 'Failed to connect to database'};
       }
 
       final collection = _getCollectionByRole(role);
       if (collection == null) {
-        return {
-          'success': false,
-          'message': 'Invalid user role: $role',
-        };
+        return {'success': false, 'message': 'Invalid user role: $role'};
       }
 
       // Check if user already exists
-      final existingUser = await collection.findOne(where.eq('firebaseUid', firebaseUid));
+      final existingUser = await collection.findOne(
+        where.eq('firebaseUid', firebaseUid),
+      );
       if (existingUser != null) {
-        return {
-          'success': false,
-          'message': 'User already exists in database',
-        };
+        return {'success': false, 'message': 'User already exists in database'};
       }
 
       // Create user document
@@ -125,20 +133,19 @@ class MongoDBService {
 
       // Insert user
       final result = await collection.insertOne(userDocument);
-      
-      debugPrint('🍃 MongoDB: User created - Role: $role, ID: ${result.insertedId}');
+
+      debugPrint(
+        '🍃 MongoDB: User created - Role: $role, ID: ${result.toString()}',
+      );
 
       return {
         'success': true,
-        'userId': result.insertedId.toString(),
+        'userId': result.toString(),
         'message': 'User created successfully',
       };
     } catch (e) {
       debugPrint('🍃 MongoDB Create User Error: $e');
-      return {
-        'success': false,
-        'message': 'Failed to create user: $e',
-      };
+      return {'success': false, 'message': 'Failed to create user: $e'};
     }
   }
 
@@ -159,12 +166,16 @@ class MongoDBService {
         return null;
       }
 
-      final user = await collection.findOne(where.eq('firebaseUid', firebaseUid));
-      
+      final user = await collection.findOne(
+        where.eq('firebaseUid', firebaseUid),
+      );
+
       if (user != null) {
         debugPrint('🍃 MongoDB: User found - Role: $role');
       } else {
-        debugPrint('🍃 MongoDB: User not found - Role: $role, UID: $firebaseUid');
+        debugPrint(
+          '🍃 MongoDB: User not found - Role: $role, UID: $firebaseUid',
+        );
       }
 
       return user;
@@ -195,10 +206,12 @@ class MongoDBService {
 
       final result = await collection.updateOne(
         where.eq('firebaseUid', firebaseUid),
-        modify.set('updatedAt', updateData['updatedAt']).setAll(updateData),
+        modify.set('updatedAt', updateData['updatedAt']),
       );
 
-      debugPrint('🍃 MongoDB: User updated - Role: $role, Modified: ${result.nModified}');
+      debugPrint(
+        '🍃 MongoDB: User updated - Role: $role, Modified: ${result.nModified}',
+      );
       return result.nModified > 0;
     } catch (e) {
       debugPrint('🍃 MongoDB Update User Error: $e');
@@ -221,9 +234,13 @@ class MongoDBService {
         return false;
       }
 
-      final result = await collection.deleteOne(where.eq('firebaseUid', firebaseUid));
-      
-      debugPrint('🍃 MongoDB: User deleted - Role: $role, Deleted: ${result.nRemoved}');
+      final result = await collection.deleteOne(
+        where.eq('firebaseUid', firebaseUid),
+      );
+
+      debugPrint(
+        '🍃 MongoDB: User deleted - Role: $role, Deleted: ${result.nRemoved}',
+      );
       return result.nRemoved > 0;
     } catch (e) {
       debugPrint('🍃 MongoDB Delete User Error: $e');
@@ -248,7 +265,9 @@ class MongoDBService {
       }
 
       final users = await collection
-          .find(where.sortBy('createdAt', descending: true).limit(limit).skip(skip))
+          .find(
+            where.sortBy('createdAt', descending: true).limit(limit).skip(skip),
+          )
           .toList();
 
       debugPrint('🍃 MongoDB: Retrieved ${users.length} users for role: $role');
@@ -277,15 +296,14 @@ class MongoDBService {
 
       final regex = RegExp(searchTerm, caseSensitive: false);
       final users = await collection
-          .find(where
-              .or([
-                where.match('name', regex.pattern),
-                where.match('email', regex.pattern),
-              ])
-              .limit(limit))
+          .find(
+            where.match('name', regex.pattern).limit(limit),
+          )
           .toList();
 
-      debugPrint('🍃 MongoDB: Found ${users.length} users matching "$searchTerm"');
+      debugPrint(
+        '🍃 MongoDB: Found ${users.length} users matching "$searchTerm"',
+      );
       return users;
     } catch (e) {
       debugPrint('🍃 MongoDB Search Users Error: $e');
@@ -301,17 +319,26 @@ class MongoDBService {
       }
 
       final stats = <String, int>{};
-      
-      final farmerCount = await _database!.collection(_farmersCollection).count();
-      final distributorCount = await _database!.collection(_distributorsCollection).count();
-      final retailerCount = await _database!.collection(_retailersCollection).count();
-      final consumerCount = await _database!.collection(_consumersCollection).count();
+
+      final farmerCount = await _database!
+          .collection(_farmersCollection)
+          .count();
+      final distributorCount = await _database!
+          .collection(_distributorsCollection)
+          .count();
+      final retailerCount = await _database!
+          .collection(_retailersCollection)
+          .count();
+      final consumerCount = await _database!
+          .collection(_consumersCollection)
+          .count();
 
       stats['farmers'] = farmerCount;
       stats['distributors'] = distributorCount;
       stats['retailers'] = retailerCount;
       stats['consumers'] = consumerCount;
-      stats['total'] = farmerCount + distributorCount + retailerCount + consumerCount;
+      stats['total'] =
+          farmerCount + distributorCount + retailerCount + consumerCount;
 
       debugPrint('🍃 MongoDB: User statistics retrieved');
       return stats;
