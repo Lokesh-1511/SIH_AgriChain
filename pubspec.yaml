@@ -44,6 +44,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: ^0.20.2
+  easy_localization: ^3.0.7
   
   # QR Code
   qr_flutter: ^4.1.0
@@ -79,6 +80,7 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/animations/
+    - assets/translations/
 
 flutter_intl:
   enabled: true

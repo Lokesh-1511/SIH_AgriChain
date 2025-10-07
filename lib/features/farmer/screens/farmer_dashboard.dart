@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../features/auth/providers/auth_provider.dart';
 import '../../common/screens/landing_screen.dart';
+import '../../common/screens/profile_screen.dart';
 import '../widgets/farmer_stats_card.dart';
 import '../widgets/batch_status_card.dart';
 import '../widgets/ai_advisory_card.dart';
@@ -145,6 +146,10 @@ class _FarmerDashboardState extends State<FarmerDashboard> {
     switch (action) {
       case 'profile':
         // Navigate to profile
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfileScreen()),
+        );
         break;
       case 'settings':
         // Navigate to settings

@@ -9,7 +9,7 @@ class AuthProvider extends ChangeNotifier {
   bool _isLoading = false;
   String? _error;
   bool _isLoggedIn = false;
-  
+
   bool get isLoading => _isLoading;
   String? get error => _error;
   bool get isLoggedIn => _isLoggedIn;
@@ -28,17 +28,20 @@ class AuthProvider extends ChangeNotifier {
         final firebaseUser = FirebaseAuthService.currentUser;
         if (firebaseUser != null) {
           // First try to get user from local storage
-          final localUser = await LocalStorageService.getUserByFirebaseUid(firebaseUser.uid);
+          final localUser = await LocalStorageService.getUserByFirebaseUid(
+            firebaseUser.uid,
+          );
           if (localUser != null) {
             _currentUser = localUser;
           } else {
             // If not in local storage, try MongoDB for all roles
             for (final role in UserRole.values) {
               try {
-                final authResult = await AuthIntegrationService.getUserFromMongoDB(
-                  role: role.name,
-                  firebaseUid: firebaseUser.uid,
-                );
+                final authResult =
+                    await AuthIntegrationService.getUserFromMongoDB(
+                      role: role.name,
+                      firebaseUid: firebaseUser.uid,
+                    );
                 if (authResult['success'] == true) {
                   _currentUser = AgriChainUser.fromJson(authResult['userData']);
                   // Save to local storage for future use
@@ -68,11 +71,11 @@ class AuthProvider extends ChangeNotifier {
     _error = error;
     notifyListeners();
   }
-  
+
   Future<bool> login(String email, String password, String role) async {
     _setLoading(true);
     _setError(null);
-    
+
     try {
       // Convert string role to UserRole enum
       UserRole userRole;
@@ -92,13 +95,13 @@ class AuthProvider extends ChangeNotifier {
         default:
           throw Exception('Invalid role: $role');
       }
-      
+
       final result = await AuthIntegrationService.signInUser(
         email: email,
         password: password,
         role: userRole,
       );
-      
+
       if (result['success']) {
         // Convert the returned user data to AgriChainUser
         _currentUser = AgriChainUser.fromJson(result['userData']);
@@ -116,11 +119,11 @@ class AuthProvider extends ChangeNotifier {
       return false;
     }
   }
-  
+
   Future<bool> register(Map<String, dynamic> userData) async {
     _setLoading(true);
     _setError(null);
-    
+
     try {
       // Extract required fields from userData map
       final email = userData['email'] as String;
@@ -130,10 +133,10 @@ class AuthProvider extends ChangeNotifier {
       final address = userData['address'] as String;
       final roleString = userData['role'] as String;
       final kycDetails = userData['kycDetails'] as Map<String, dynamic>;
-      
+
       // Convert string role to UserRole enum
       final role = UserRole.fromString(roleString);
-      
+
       final result = await AuthIntegrationService.registerUser(
         email: email,
         password: password,
@@ -144,7 +147,7 @@ class AuthProvider extends ChangeNotifier {
         kycDetails: kycDetails,
         additionalInfo: userData['additionalInfo'],
       );
-      
+
       if (result['success']) {
         // Convert the returned user data to AgriChainUser
         _currentUser = AgriChainUser.fromJson(result['userData']);
@@ -162,7 +165,7 @@ class AuthProvider extends ChangeNotifier {
       return false;
     }
   }
-  
+
   Future<void> logout() async {
     _setLoading(true);
     try {
@@ -178,7 +181,7 @@ class AuthProvider extends ChangeNotifier {
   Future<bool> sendPasswordResetOTP(String email) async {
     _setLoading(true);
     _setError(null);
-    
+
     try {
       await FirebaseAuthService.sendPasswordResetEmail(email: email);
       _setLoading(false);

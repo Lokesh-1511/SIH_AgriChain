@@ -329,7 +329,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
 
   Color _getPrimaryColorForRole(UserRole? role) {
     if (role == null) return AppColors.consumerPrimary;
-    
+
     switch (role) {
       case UserRole.farmer:
         return AppColors.farmerPrimary;

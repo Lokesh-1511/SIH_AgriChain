@@ -71,12 +71,12 @@ class LocalStorageService {
       final prefs = await SharedPreferences.getInstance();
       final pendingJson = prefs.getString(_pendingSyncKey) ?? '[]';
       final List<dynamic> pendingList = jsonDecode(pendingJson);
-      
+
       // Check if user already exists in pending sync
       final existingIndex = pendingList.indexWhere(
         (item) => item['firebaseUid'] == user.firebaseUid,
       );
-      
+
       if (existingIndex != -1) {
         // Update existing entry
         pendingList[existingIndex] = user.toJson();
@@ -84,7 +84,7 @@ class LocalStorageService {
         // Add new entry
         pendingList.add(user.toJson());
       }
-      
+
       await prefs.setString(_pendingSyncKey, jsonEncode(pendingList));
       debugPrint('💾 User added to pending sync queue');
       return true;
@@ -100,10 +100,8 @@ class LocalStorageService {
       final prefs = await SharedPreferences.getInstance();
       final pendingJson = prefs.getString(_pendingSyncKey) ?? '[]';
       final List<dynamic> pendingList = jsonDecode(pendingJson);
-      
-      return pendingList
-          .map((item) => AgriChainUser.fromJson(item))
-          .toList();
+
+      return pendingList.map((item) => AgriChainUser.fromJson(item)).toList();
     } catch (e) {
       debugPrint('💾 Get pending sync error: $e');
       return [];
@@ -116,9 +114,9 @@ class LocalStorageService {
       final prefs = await SharedPreferences.getInstance();
       final pendingJson = prefs.getString(_pendingSyncKey) ?? '[]';
       final List<dynamic> pendingList = jsonDecode(pendingJson);
-      
+
       pendingList.removeWhere((item) => item['firebaseUid'] == firebaseUid);
-      
+
       await prefs.setString(_pendingSyncKey, jsonEncode(pendingList));
       debugPrint('💾 User removed from pending sync queue');
       return true;

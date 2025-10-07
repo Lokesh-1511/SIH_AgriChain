@@ -91,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (!mounted) return; // Check if widget is still mounted
-    
+
     setState(() => _isLoading = false);
 
     if (success && authProvider.currentUser != null) {
@@ -113,10 +113,10 @@ class _LoginScreenState extends State<LoginScreen> {
         default:
           destination = _nextScreen;
       }
-      
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => destination)
-      );
+
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (_) => destination));
     } else {
       _showErrorSnackBar(authProvider.error ?? 'Login failed');
     }
