@@ -7,6 +7,8 @@ import PieChart from '../components/charts/PieChart';
 import BarChart from '../components/charts/BarChart';
 import LineChart from '../components/charts/LineChart';
 import { BlockchainService } from '../services/mockData';
+import { dashboardApi } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import { 
   Dialog, 
   DialogTitle, 
@@ -28,11 +30,13 @@ import './Dashboard.css';
 
 const Dashboard = () => {
   const { colors } = useTheme();
+  const { user } = useAuth();
   const [dashboardData, setDashboardData] = useState({
     stats: {},
     transactions: [],
     analytics: {},
-    loading: true
+    loading: true,
+    backend: { attempted: false, used: false, error: null }
   });
   const [showAllTransactions, setShowAllTransactions] = useState(false);
   const [allTransactions, setAllTransactions] = useState([]);
@@ -40,12 +44,78 @@ const Dashboard = () => {
   useEffect(() => {
     const loadDashboardData = async () => {
       try {
-        // Simulate API calls
+        // Always attempt backend first
+        try {
+          const [overviewRes, activityRes] = await Promise.all([
+            dashboardApi.overview(),
+            dashboardApi.activity()
+          ]);
+
+          const overview = overviewRes?.data || {};
+          const activity = activityRes?.data || {};
+
+          // Backend returns { users, batches, transactions }
+          const batchStats = overview.batches || {};
+          const userStats = overview.users || {};
+          const txStats = overview.transactions || {};
+
+          // Derive frontend-facing stats
+            const byStatus = Array.isArray(batchStats.byStatus) ? batchStats.byStatus : [];
+          const findStatus = (name) => byStatus.find(s => s.status === name) || { count: 0 };
+          const delivered = findStatus('delivered').count;
+          const inTransit = findStatus('in_transit').count;
+          const totalBatches = batchStats.totalBatches || 0;
+          const totalValue = (batchStats.totals && (batchStats.totals.currentValue || batchStats.totals.baseValue)) || 0;
+
+          const stats = {
+            totalBatches,
+            activeBatches: inTransit,
+            completedBatches: delivered,
+            totalValue,
+            avgProcessingTime: '—', // Not yet implemented in backend
+            successRate: txStats.totalTransactions ? 100 : 0 // Placeholder
+          };
+
+          // Transactions from backend activity { transactions }
+          const backendTx = Array.isArray(activity.transactions) ? activity.transactions : [];
+          const mappedTx = backendTx.slice(0, 10).map(t => ({
+            id: t.id || t._id,
+            batchId: (t.batchId && (t.batchId.batchCode || t.batchId.productName)) || t.batch_id || '—',
+            type: t.transactionType || t.transaction_type || '—',
+            timestamp: t.occurredAt || t.timestamp || t.createdAt || new Date().toISOString(),
+            status: t.status || 'pending',
+            amount: t.amount
+          }));
+
+          // Basic analytics mapping using available batch status counts
+          const analytics = {
+            batchStatus: byStatus.map(s => ({
+              name: s.status,
+              value: s.count,
+              color: colors.primary
+            })),
+            monthlyTrends: [],
+            regionData: []
+          };
+
+          setDashboardData({
+            stats,
+            transactions: mappedTx,
+            analytics,
+            loading: false,
+            backend: { attempted: true, used: true, error: null }
+          });
+          return; // Skip fallback
+        } catch (be) {
+          console.warn('[Dashboard] Backend fetch failed, using mock fallback:', be.message);
+          setDashboardData(prev => ({ ...prev, backend: { attempted: true, used: false, error: be.message } }));
+        }
+
+        // Fallback to mock data only if backend failed
         const [transactions, batches] = await Promise.all([
           BlockchainService.getTransactions(),
           BlockchainService.getBatches()
         ]);
-
         const stats = {
           totalBatches: batches.length,
           activeBatches: batches.filter(b => b.status === 'In Transit').length,
@@ -54,7 +124,6 @@ const Dashboard = () => {
           avgProcessingTime: '24h',
           successRate: 98.5
         };
-
         const chartData = {
           batchStatus: [
             { name: 'Completed', value: stats.completedBatches, color: colors.success },
@@ -77,13 +146,13 @@ const Dashboard = () => {
             { name: 'West', batches: 145, value: 2900000 }
           ]
         };
-
-        setDashboardData({
+        setDashboardData(prev => ({
           stats,
           transactions: transactions.slice(0, 10),
           analytics: chartData,
-          loading: false
-        });
+          loading: false,
+          backend: { attempted: true, used: false, error: prev.backend.error }
+        }));
       } catch (error) {
         console.error('Failed to load dashboard data:', error);
         setDashboardData(prev => ({ ...prev, loading: false }));
@@ -91,11 +160,9 @@ const Dashboard = () => {
     };
 
     loadDashboardData();
-    
-    // Set up real-time updates
-    const interval = setInterval(loadDashboardData, 30000); // Update every 30 seconds
+    const interval = setInterval(loadDashboardData, 30000);
     return () => clearInterval(interval);
-  }, [colors]);
+  }, [colors, user]);
 
   const handleViewAllTransactions = async () => {
     try {
@@ -129,11 +196,15 @@ const Dashboard = () => {
   };
 
   const getStatusColor = (status) => {
-    switch (status) {
-      case 'Delivered': return colors.success;
-      case 'In Transit': return colors.primary;
-      case 'Processing': return colors.warning;
-      case 'Issue': return colors.error;
+    const s = (status || '').toLowerCase();
+    switch (s) {
+      case 'delivered': return colors.success;
+      case 'in transit':
+      case 'in_transit': return colors.primary;
+      case 'processing':
+      case 'pending': return colors.warning;
+      case 'issue':
+      case 'error': return colors.error;
       default: return colors.textSecondary;
     }
   };
@@ -222,6 +293,24 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
+      {dashboardData.backend.attempted && !dashboardData.backend.used && (
+        <div style={{
+          background: '#fff3cd',
+          color: '#664d03',
+          padding: '8px 12px',
+          border: '1px solid #ffecb5',
+          borderRadius: 6,
+          marginBottom: 16,
+          fontSize: 14
+        }}>
+          Using mock data (backend unreachable or disabled).
+          {dashboardData.backend.error && (
+            <span style={{ marginLeft: 8 }}>
+              Last error: {dashboardData.backend.error}
+            </span>
+          )}
+        </div>
+      )}
       <AllTransactionsModal />
       
       <div className="dashboard-header">
@@ -342,11 +431,15 @@ const Dashboard = () => {
             </div>
             
             <div className="card-body">
+              {dashboardData.backend.used && dashboardData.transactions.length === 0 && (
+                <div style={{ padding: '24px', textAlign: 'center', opacity: 0.8 }}>
+                  <p style={{ margin: 0, fontWeight: 500 }}>No transactions yet</p>
+                  <p style={{ marginTop: 4, fontSize: 14 }}>Seed data or perform actions in the system to see real-time activity.</p>
+                </div>
+              )}
               <div className="transaction-list">
-                {dashboardData.transactions.map((tx, index) => (
+                {dashboardData.transactions.map((tx) => (
                   <div key={tx.id} className="transaction-item">
-                    
-                    
                     <div className="transaction-details">
                       <div className="transaction-header">
                         <span className="batch-id">{tx.batchId}</span>
@@ -354,15 +447,14 @@ const Dashboard = () => {
                       </div>
                       <div className="transaction-meta">
                         <span className="timestamp">{new Date(tx.timestamp).toLocaleTimeString()}</span>
-                        <span 
-                          className="status-badge" 
+                        <span
+                          className="status-badge"
                           style={{ backgroundColor: getStatusColor(tx.status) }}
                         >
                           {tx.status}
                         </span>
                       </div>
                     </div>
-                    
                     <div className="transaction-amount">
                       {tx.amount && formatCurrency(tx.amount)}
                     </div>

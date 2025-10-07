@@ -5,10 +5,19 @@ A modern React-based admin dashboard for blockchain supply chain analytics, buil
 ## ✨ Features
 
 ### 🔐 Authentication
-- **Secure Login System** with floating label animations
-- **Dark/Light Theme Toggle** on login page  
-- **Remember Me** functionality with persistent sessions
-- **Password Reset** capabilities
+Single-admin, password-hash based authentication (no external identity provider).
+
+| Property | Value |
+|----------|-------|
+| Email    | `agriadmin@gmail.com` |
+| Password | Managed via bcrypt hash inside `AuthContext` (plaintext not stored) |
+
+Details:
+- Bcrypt hash embedded in `src/context/AuthContext.jsx`.
+- Credential check performed entirely client-side (sufficient for isolated admin deployment). 
+- Session persisted in `localStorage` (`single_admin_session`).
+- Password reset / demo fallback / Firebase features removed.
+- For stronger security in multi-user scenarios, integrate backend-issued JWT instead of this mode.
 
 ### 📊 Dashboard Analytics
 - **Real-time Transaction Feed** with live blockchain updates
@@ -72,9 +81,7 @@ A modern React-based admin dashboard for blockchain supply chain analytics, buil
 4. **Open in browser:**
    Visit `http://localhost:3000`
 
-5. **Login with demo credentials:**
-   - **Username:** `admin`
-   - **Password:** `admin123`
+5. **Login:** Use the single administrator credentials (see table above). No additional configuration required.
 
 ### Build for Production
 
@@ -116,14 +123,12 @@ admin_dashboard/
 - **Search and Filter** capabilities across all sections
 - **Professional Animations** and hover effects
 
-## 🔧 Demo Data
+## 🔧 Mock Data
 
-The dashboard includes comprehensive mock data for demonstration:
-- Transaction history with blockchain details
-- Supply chain batch tracking with full traceability
-- Role management with approval workflows
-- AI anomaly detection with various alert types
-- Pricing analysis with margin calculations
+The dashboard still uses mock blockchain / analytics data for visualization (see `src/services/mockData.js`). Replace those service calls with real API calls as backend endpoints become available.
+
+### Role-Based Guard
+`<ProtectedRoute roles={["administrator"]}>` enforces administrator-only access. In single-admin mode the role is fixed (`administrator`).
 
 ## 🚀 Ready for Production
 

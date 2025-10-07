@@ -31,6 +31,7 @@ import {
   Help
 } from '@mui/icons-material';
 import './Header.css';
+import HealthStatus from './HealthStatus';
 
 const Header = () => {
   const { isDarkMode, toggleTheme } = useTheme();
@@ -183,7 +184,10 @@ const Header = () => {
         </nav>
 
         {/* Enhanced Theme Toggle and Actions */}
-        <div className="agri-header-actions">
+        <div className="agri-header-actions" style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{ paddingRight: 8, borderRight: '1px solid rgba(255,255,255,0.1)' }}>
+            <HealthStatus intervalMs={20000} />
+          </div>
           {/* Modern Sun/Moon Theme Toggle Button */}
           <button 
             className="agri-modern-theme-toggle"
