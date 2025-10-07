@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriChain Project</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 600px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border: 1px solid #dee2e6;
+        }
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            background: #1e7e34;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+        .btn-secondary {
+            background: #007bff;
+        }
+        .btn-secondary:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌾 AgriChain Project</h1>
+        
+        <div class="card">
+            <h3>📊 Blockchain Explorer</h3>
+            <p>Monitor wallet assignments and user registrations in real-time</p>
+            <a href="enhanced_blockchain_explorer.html" class="btn">
+                🚀 Open Blockchain Explorer
+            </a>
+        </div>
+
+        <div class="card">
+            <h3>📱 Flutter Application</h3>
+            <p>Main AgriChain mobile/web application</p>
+            <p><strong>Status:</strong> Run with <code>flutter run</code></p>
+        </div>
+
+        <div class="card">
+            <h3>⛓️ Hardhat Blockchain</h3>
+            <p><strong>Network:</strong> localhost:8545</p>
+            <p><strong>Status:</strong> 
+                <span id="blockchain-status">Checking...</span>
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>📋 Quick Links</h3>
+            <a href="blockchain_explorer.html" class="btn btn-secondary">Original Explorer</a>
+            <a href="INTEGRATION_COMPLETE_GUIDE.md" class="btn btn-secondary">Setup Guide</a>
+        </div>
+    </div>
+
+    <script>
+        // Check blockchain status
+        fetch('http://127.0.0.1:8545', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                jsonrpc: '2.0',
+                method: 'eth_blockNumber',
+                params: [],
+                id: 1
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.result) {
+                const blockNumber = parseInt(data.result, 16);
+                document.getElementById('blockchain-status').innerHTML = 
+                    `<span style="color: #28a745;">✅ Running (Block: ${blockNumber})</span>`;
+            } else {
+                throw new Error('No result');
+            }
+        })
+        .catch(error => {
+            document.getElementById('blockchain-status').innerHTML = 
+                '<span style="color: #dc3545;">❌ Not Running</span>';
+        });
+    </script>
+</body>
+</html>

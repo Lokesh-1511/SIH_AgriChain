@@ -14,8 +14,8 @@ import '../screens/agri_score_screen.dart';
 import '../screens/insurance_screen.dart';
 import '../screens/loan_screen.dart';
 import '../screens/govt_schemes_screen.dart';
-import '../screens/wallet_screen.dart';
 import '../screens/crop_advisory_screen.dart';
+import '../screens/wallet_screen.dart';
 import '../../common/widgets/floating_chat_button.dart';
 
 class FarmerDashboard extends StatefulWidget {

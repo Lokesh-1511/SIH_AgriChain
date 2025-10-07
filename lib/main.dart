@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'core/theme/app_theme.dart';
 import 'core/services/mongodb_service.dart';
+import 'core/services/firebase_service.dart';
 import 'features/auth/providers/auth_provider.dart';
 import 'features/common/providers/language_provider.dart';
 import 'features/onboarding/screens/splash_screen.dart';
-import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize Easy Localization
   await EasyLocalization.ensureInitialized();
 
-  // Initialize Firebase
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // Initialize Firebase with SSL handling
+  await FirebaseService.initialize();
 
   // Initialize MongoDB
   await MongoDBService.connect();

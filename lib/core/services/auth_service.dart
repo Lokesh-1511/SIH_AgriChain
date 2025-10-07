@@ -1,8 +1,11 @@
 import 'package:agrichain/core/models/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/app_constants.dart';
-import 'blockchain_aadhaar_service.dart';
 import 'smart_contract_service.dart';
+import 'blockchain_explorer_service.dart';
+import 'wallet_assignment_service.dart';
+import 'mongo_simulator_service.dart';
+import 'mongodb_service.dart';
 import 'dart:convert';
 
 class AuthService {
@@ -69,14 +72,57 @@ class AuthService {
 
   Future<String?> getCurrentUserWallet() async {
     await _initPrefs();
-    return _prefs!.getString(AppConstants.keyUserWallet);
+    final wallet = _prefs!.getString(AppConstants.keyUserWallet);
+    print('🔍 Getting current user wallet: $wallet');
+
+    if (wallet == null) {
+      print('⚠️ Warning: No wallet found in preferences');
+      final user = await getCurrentUser();
+      if (user != null && user.id != null) {
+        print('👤 User found: ${user.id} (${user.role})');
+        print('🔄 Attempting to reassign wallet...');
+
+        try {
+          // Reassign wallet if missing (persistent)
+          final newWallet = await WalletAssignmentService.getOrAssignWallet(
+            user.id!,
+            user.role,
+          );
+          await _prefs!.setString(AppConstants.keyUserWallet, newWallet);
+          print('✅ Wallet reassigned: $newWallet');
+          return newWallet;
+        } catch (e) {
+          print('❌ Failed to reassign wallet: $e');
+        }
+      } else {
+        if (user == null) {
+          print('❌ No user found in session');
+        } else {
+          print('❌ User found but ID is null: ${user.name} (${user.role})');
+          print('🔄 Re-creating user session...');
+          // Force re-creation of user session with proper ID
+          final userData = {
+            'name': user.name,
+            'email': user.email,
+            'phone': user.phone,
+            'role': user.role,
+            'address': user.address,
+          };
+          final newUser = _createUserFromData(userData);
+          await _saveUserSession(newUser);
+          return await getCurrentUserWallet(); // Recursive call after fixing session
+        }
+      }
+    }
+
+    return wallet;
   }
 
   Future<Map<String, dynamic>?> getCurrentUserBlockchainInfo() async {
     await _initPrefs();
     final user = await getCurrentUser();
     final wallet = await getCurrentUserWallet();
-    
+
     if (user != null && wallet != null) {
       return {
         'user_id': user.id,
@@ -90,22 +136,101 @@ class AuthService {
   }
 
   Future<void> _saveUserSession(User user) async {
-    // Assign blockchain wallet address based on user role
-    final walletAddress = BlockchainAadhaarService.assignWalletToUser(user.id!, user.role);
-    
-    // Initialize smart contracts if not already done
-    await SmartContractService.initializeContracts();
-    
-    await _prefs!.setBool(AppConstants.keyIsLoggedIn, true);
-    await _prefs!.setString(AppConstants.keyUserId, json.encode(user.toJson()));
-    await _prefs!.setString(AppConstants.keyUserRole, user.role);
-    await _prefs!.setString(AppConstants.keyUserToken, 'mock_token_${user.id}');
-    
-    // Save blockchain wallet address
-    await _prefs!.setString(AppConstants.keyUserWallet, walletAddress);
-    
-    print('✅ User session saved with wallet: $walletAddress');
-    print('📋 Role: ${user.role}');
+    try {
+      print('🔄 Starting user session save process...');
+      print('👤 User ID: ${user.id}');
+      print('👤 User Role: ${user.role}');
+
+      // Assign blockchain wallet address based on user role (persistent)
+      final walletAddress = await WalletAssignmentService.getOrAssignWallet(
+        user.id!,
+        user.role,
+      );
+
+      // Update user object with wallet address
+      final userWithWallet = user.copyWith(walletAddress: walletAddress);
+
+      print('💰 Wallet assigned: $walletAddress');
+
+      // Initialize smart contracts if not already done
+      print('📋 Initializing smart contracts...');
+      await SmartContractService.initializeContracts();
+
+      await _prefs!.setBool(AppConstants.keyIsLoggedIn, true);
+      await _prefs!.setString(
+        AppConstants.keyUserId,
+        json.encode(userWithWallet.toJson()),
+      );
+      await _prefs!.setString(AppConstants.keyUserRole, userWithWallet.role);
+      await _prefs!.setString(
+        AppConstants.keyUserToken,
+        'mock_token_${userWithWallet.id}',
+      );
+
+      // Save blockchain wallet address
+      await _prefs!.setString(AppConstants.keyUserWallet, walletAddress);
+
+      // Save to MongoDB simulator for HTML explorer
+      await MongoSimulatorService.saveWalletAssignment(
+        userId: userWithWallet.id!,
+        walletAddress: walletAddress,
+        role: userWithWallet.role,
+        name: userWithWallet.name,
+        email: userWithWallet.email,
+      );
+
+      // Save user to MongoDB with wallet address
+      try {
+        final mongoResult = await MongoDBService.createUser(
+          role: userWithWallet.role,
+          firebaseUid: userWithWallet.firebaseUid,
+          email: userWithWallet.email,
+          name: userWithWallet.name,
+          phone: userWithWallet.phone,
+          kycDetails: userWithWallet.kycDetails,
+          additionalData: {
+            'walletAddress': walletAddress,
+            'address': userWithWallet.address,
+            'isVerified': userWithWallet.isVerified,
+          },
+        );
+
+        if (mongoResult['success']) {
+          print(
+            '💾 User saved to MongoDB with wallet address: ${mongoResult['userId']}',
+          );
+        } else {
+          print('⚠️ Failed to save user to MongoDB: ${mongoResult['message']}');
+        }
+      } catch (e) {
+        print(
+          '⚠️ MongoDB connection failed: $e (continuing with local storage)',
+        );
+      }
+
+      // Verify the wallet was saved correctly
+      final savedWallet = _prefs!.getString(AppConstants.keyUserWallet);
+      print('✅ User session saved successfully!');
+      print('💰 Saved wallet: $savedWallet');
+      print('📋 Role: ${userWithWallet.role}');
+
+      if (savedWallet != walletAddress) {
+        throw Exception('Wallet save verification failed');
+      }
+
+      // Sync with blockchain explorer for visualization
+      print('🔄 Syncing registration with blockchain explorer...');
+      await BlockchainExplorerService.notifyUserRegistration(
+        walletAddress: walletAddress,
+        name: userWithWallet.name,
+        email: userWithWallet.email,
+        role: userWithWallet.role,
+        userId: userWithWallet.id!,
+      );
+    } catch (e) {
+      print('❌ Error saving user session: $e');
+      rethrow;
+    }
   }
 
   User _createMockUser(String email, String role) {
