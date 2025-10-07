@@ -36,6 +36,7 @@ class AppConstants {
   static const String keyUserId = 'user_id';
   static const String keyUserRole = 'user_role';
   static const String keyUserToken = 'user_token';
+  static const String keyUserWallet = 'user_wallet';
   static const String keyLanguage = 'language';
   static const String keyIsLoggedIn = 'is_logged_in';
 

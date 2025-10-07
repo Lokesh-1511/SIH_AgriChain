@@ -38,17 +38,21 @@ class User {
       role: json['role'] ?? '',
       address: json['address'] ?? '',
       isVerified: json['is_verified'] ?? false,
-      createdAt: DateTime.parse(json['created_at'] ?? DateTime.now().toIso8601String()),
-      updatedAt: DateTime.parse(json['updated_at'] ?? DateTime.now().toIso8601String()),
+      createdAt: DateTime.parse(
+        json['created_at'] ?? DateTime.now().toIso8601String(),
+      ),
+      updatedAt: DateTime.parse(
+        json['updated_at'] ?? DateTime.now().toIso8601String(),
+      ),
       kycDetails: Map<String, dynamic>.from(json['kycDetails'] ?? {}),
       additionalInfo: json['additional_info'],
-    );
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'firebaseUid': firebaseUid,
       'name': name,
       'email': email,
       'phone': phone,
@@ -56,12 +60,15 @@ class User {
       'address': address,
       'is_verified': isVerified,
       'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
+      'kycDetails': kycDetails,
       'additional_info': additionalInfo,
     };
   }
 
   User copyWith({
     String? id,
+    String? firebaseUid,
     String? name,
     String? email,
     String? phone,
@@ -69,10 +76,13 @@ class User {
     String? address,
     bool? isVerified,
     DateTime? createdAt,
+    DateTime? updatedAt,
+    Map<String, dynamic>? kycDetails,
     Map<String, dynamic>? additionalInfo,
   }) {
     return User(
       id: id ?? this.id,
+      firebaseUid: firebaseUid ?? this.firebaseUid,
       name: name ?? this.name,
       email: email ?? this.email,
       phone: phone ?? this.phone,
@@ -80,6 +90,8 @@ class User {
       address: address ?? this.address,
       isVerified: isVerified ?? this.isVerified,
       createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      kycDetails: kycDetails ?? this.kycDetails,
       additionalInfo: additionalInfo ?? this.additionalInfo,
     );
   }
@@ -94,12 +106,15 @@ class Farmer extends User {
 
   Farmer({
     required super.id,
+    required super.firebaseUid,
     required super.name,
     required super.email,
     required super.phone,
     required super.address,
     super.isVerified,
     required super.createdAt,
+    required super.updatedAt,
+    required super.kycDetails,
     super.additionalInfo,
     required this.farmerId,
     required this.landOwnership,
@@ -110,16 +125,23 @@ class Farmer extends User {
 
   factory Farmer.fromJson(Map<String, dynamic> json) {
     return Farmer(
-      id: json['id'],
-      name: json['name'],
-      email: json['email'],
-      phone: json['phone'],
-      address: json['address'],
+      id: json['_id']?.toString(),
+      firebaseUid: json['firebaseUid'] ?? '',
+      name: json['name'] ?? '',
+      email: json['email'] ?? '',
+      phone: json['phone'] ?? '',
+      address: json['address'] ?? '',
       isVerified: json['is_verified'] ?? false,
-      createdAt: DateTime.parse(json['created_at']),
+      createdAt: DateTime.parse(
+        json['created_at'] ?? DateTime.now().toIso8601String(),
+      ),
+      updatedAt: DateTime.parse(
+        json['updated_at'] ?? DateTime.now().toIso8601String(),
+      ),
+      kycDetails: Map<String, dynamic>.from(json['kycDetails'] ?? {}),
       additionalInfo: json['additional_info'],
-      farmerId: json['farmer_id'],
-      landOwnership: json['land_ownership'],
+      farmerId: json['farmer_id'] ?? '',
+      landOwnership: json['land_ownership'] ?? '',
       landSize: json['land_size']?.toDouble() ?? 0.0,
       landDocuments: json['land_documents'],
       agriScore: json['agri_score']?.toDouble() ?? 0.0,
@@ -148,12 +170,15 @@ class Distributor extends User {
 
   Distributor({
     required super.id,
+    required super.firebaseUid,
     required super.name,
     required super.email,
     required super.phone,
     required super.address,
     super.isVerified,
     required super.createdAt,
+    required super.updatedAt,
+    required super.kycDetails,
     super.additionalInfo,
     required this.distributorId,
     required this.vehicleDetails,
@@ -163,17 +188,24 @@ class Distributor extends User {
 
   factory Distributor.fromJson(Map<String, dynamic> json) {
     return Distributor(
-      id: json['id'],
-      name: json['name'],
-      email: json['email'],
-      phone: json['phone'],
-      address: json['address'],
+      id: json['_id']?.toString(),
+      firebaseUid: json['firebaseUid'] ?? '',
+      name: json['name'] ?? '',
+      email: json['email'] ?? '',
+      phone: json['phone'] ?? '',
+      address: json['address'] ?? '',
       isVerified: json['is_verified'] ?? false,
-      createdAt: DateTime.parse(json['created_at']),
+      createdAt: DateTime.parse(
+        json['created_at'] ?? DateTime.now().toIso8601String(),
+      ),
+      updatedAt: DateTime.parse(
+        json['updated_at'] ?? DateTime.now().toIso8601String(),
+      ),
+      kycDetails: Map<String, dynamic>.from(json['kycDetails'] ?? {}),
       additionalInfo: json['additional_info'],
-      distributorId: json['distributor_id'],
-      vehicleDetails: json['vehicle_details'],
-      licenseNumber: json['license_number'],
+      distributorId: json['distributor_id'] ?? '',
+      vehicleDetails: json['vehicle_details'] ?? '',
+      licenseNumber: json['license_number'] ?? '',
       rating: json['rating']?.toDouble() ?? 0.0,
     );
   }
@@ -199,12 +231,15 @@ class Retailer extends User {
 
   Retailer({
     required super.id,
+    required super.firebaseUid,
     required super.name,
     required super.email,
     required super.phone,
     required super.address,
     super.isVerified,
     required super.createdAt,
+    required super.updatedAt,
+    required super.kycDetails,
     super.additionalInfo,
     required this.retailerId,
     required this.shopName,
@@ -214,17 +249,24 @@ class Retailer extends User {
 
   factory Retailer.fromJson(Map<String, dynamic> json) {
     return Retailer(
-      id: json['id'],
-      name: json['name'],
-      email: json['email'],
-      phone: json['phone'],
-      address: json['address'],
+      id: json['_id']?.toString(),
+      firebaseUid: json['firebaseUid'] ?? '',
+      name: json['name'] ?? '',
+      email: json['email'] ?? '',
+      phone: json['phone'] ?? '',
+      address: json['address'] ?? '',
       isVerified: json['is_verified'] ?? false,
-      createdAt: DateTime.parse(json['created_at']),
+      createdAt: DateTime.parse(
+        json['created_at'] ?? DateTime.now().toIso8601String(),
+      ),
+      updatedAt: DateTime.parse(
+        json['updated_at'] ?? DateTime.now().toIso8601String(),
+      ),
+      kycDetails: Map<String, dynamic>.from(json['kycDetails'] ?? {}),
       additionalInfo: json['additional_info'],
-      retailerId: json['retailer_id'],
-      shopName: json['shop_name'],
-      location: json['location'],
+      retailerId: json['retailer_id'] ?? '',
+      shopName: json['shop_name'] ?? '',
+      location: json['location'] ?? '',
       rating: json['rating']?.toDouble() ?? 0.0,
     );
   }
@@ -249,12 +291,15 @@ class Consumer extends User {
 
   Consumer({
     required super.id,
+    required super.firebaseUid,
     required super.name,
     required super.email,
     required super.phone,
     required super.address,
     super.isVerified,
     required super.createdAt,
+    required super.updatedAt,
+    required super.kycDetails,
     super.additionalInfo,
     required this.consumerId,
     this.preferences = const [],
@@ -263,15 +308,22 @@ class Consumer extends User {
 
   factory Consumer.fromJson(Map<String, dynamic> json) {
     return Consumer(
-      id: json['id'],
-      name: json['name'],
-      email: json['email'],
-      phone: json['phone'],
-      address: json['address'],
+      id: json['_id']?.toString(),
+      firebaseUid: json['firebaseUid'] ?? '',
+      name: json['name'] ?? '',
+      email: json['email'] ?? '',
+      phone: json['phone'] ?? '',
+      address: json['address'] ?? '',
       isVerified: json['is_verified'] ?? false,
-      createdAt: DateTime.parse(json['created_at']),
+      createdAt: DateTime.parse(
+        json['created_at'] ?? DateTime.now().toIso8601String(),
+      ),
+      updatedAt: DateTime.parse(
+        json['updated_at'] ?? DateTime.now().toIso8601String(),
+      ),
+      kycDetails: Map<String, dynamic>.from(json['kycDetails'] ?? {}),
       additionalInfo: json['additional_info'],
-      consumerId: json['consumer_id'],
+      consumerId: json['consumer_id'] ?? '',
       preferences: List<String>.from(json['preferences'] ?? []),
       hasActiveSubscriptions: json['has_active_subscriptions'] ?? false,
     );
