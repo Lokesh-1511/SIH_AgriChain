@@ -1,0 +1,13 @@
+{
+  "name": "agrichain-html-server",
+  "version": "1.0.0",
+  "description": "HTML server for AgriChain blockchain explorer",
+  "main": "html-server.js",
+  "scripts": {
+    "start": "node html-server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  }
+}

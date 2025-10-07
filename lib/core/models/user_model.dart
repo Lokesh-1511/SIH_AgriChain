@@ -7,6 +7,7 @@ class User {
   final String phone;
   final String role;
   final String address;
+  final String? walletAddress; // Blockchain wallet address
   final bool isVerified;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -21,6 +22,7 @@ class User {
     required this.phone,
     required this.role,
     required this.address,
+    this.walletAddress,
     this.isVerified = false,
     required this.createdAt,
     required this.updatedAt,
@@ -30,13 +32,14 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['_id']?.toString(),
+      id: json['id']?.toString() ?? json['_id']?.toString(),
       firebaseUid: json['firebaseUid'] ?? '',
       name: json['name'] ?? '',
       email: json['email'] ?? '',
       phone: json['phone'] ?? '',
       role: json['role'] ?? '',
       address: json['address'] ?? '',
+      walletAddress: json['walletAddress'] ?? json['wallet_address'],
       isVerified: json['is_verified'] ?? false,
       createdAt: DateTime.parse(
         json['created_at'] ?? DateTime.now().toIso8601String(),
@@ -58,6 +61,7 @@ class User {
       'phone': phone,
       'role': role,
       'address': address,
+      'walletAddress': walletAddress,
       'is_verified': isVerified,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
@@ -74,6 +78,7 @@ class User {
     String? phone,
     String? role,
     String? address,
+    String? walletAddress,
     bool? isVerified,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -88,6 +93,7 @@ class User {
       phone: phone ?? this.phone,
       role: role ?? this.role,
       address: address ?? this.address,
+      walletAddress: walletAddress ?? this.walletAddress,
       isVerified: isVerified ?? this.isVerified,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -111,6 +117,7 @@ class Farmer extends User {
     required super.email,
     required super.phone,
     required super.address,
+    super.walletAddress,
     super.isVerified,
     required super.createdAt,
     required super.updatedAt,
@@ -125,12 +132,13 @@ class Farmer extends User {
 
   factory Farmer.fromJson(Map<String, dynamic> json) {
     return Farmer(
-      id: json['_id']?.toString(),
+      id: json['id']?.toString() ?? json['_id']?.toString(),
       firebaseUid: json['firebaseUid'] ?? '',
       name: json['name'] ?? '',
       email: json['email'] ?? '',
       phone: json['phone'] ?? '',
       address: json['address'] ?? '',
+      walletAddress: json['walletAddress'] ?? json['wallet_address'],
       isVerified: json['is_verified'] ?? false,
       createdAt: DateTime.parse(
         json['created_at'] ?? DateTime.now().toIso8601String(),
@@ -175,6 +183,7 @@ class Distributor extends User {
     required super.email,
     required super.phone,
     required super.address,
+    super.walletAddress,
     super.isVerified,
     required super.createdAt,
     required super.updatedAt,
@@ -188,12 +197,13 @@ class Distributor extends User {
 
   factory Distributor.fromJson(Map<String, dynamic> json) {
     return Distributor(
-      id: json['_id']?.toString(),
+      id: json['id']?.toString() ?? json['_id']?.toString(),
       firebaseUid: json['firebaseUid'] ?? '',
       name: json['name'] ?? '',
       email: json['email'] ?? '',
       phone: json['phone'] ?? '',
       address: json['address'] ?? '',
+      walletAddress: json['walletAddress'] ?? json['wallet_address'],
       isVerified: json['is_verified'] ?? false,
       createdAt: DateTime.parse(
         json['created_at'] ?? DateTime.now().toIso8601String(),
@@ -236,6 +246,7 @@ class Retailer extends User {
     required super.email,
     required super.phone,
     required super.address,
+    super.walletAddress,
     super.isVerified,
     required super.createdAt,
     required super.updatedAt,
@@ -249,12 +260,13 @@ class Retailer extends User {
 
   factory Retailer.fromJson(Map<String, dynamic> json) {
     return Retailer(
-      id: json['_id']?.toString(),
+      id: json['id']?.toString() ?? json['_id']?.toString(),
       firebaseUid: json['firebaseUid'] ?? '',
       name: json['name'] ?? '',
       email: json['email'] ?? '',
       phone: json['phone'] ?? '',
       address: json['address'] ?? '',
+      walletAddress: json['walletAddress'] ?? json['wallet_address'],
       isVerified: json['is_verified'] ?? false,
       createdAt: DateTime.parse(
         json['created_at'] ?? DateTime.now().toIso8601String(),
@@ -296,6 +308,7 @@ class Consumer extends User {
     required super.email,
     required super.phone,
     required super.address,
+    super.walletAddress,
     super.isVerified,
     required super.createdAt,
     required super.updatedAt,
@@ -308,12 +321,13 @@ class Consumer extends User {
 
   factory Consumer.fromJson(Map<String, dynamic> json) {
     return Consumer(
-      id: json['_id']?.toString(),
+      id: json['id']?.toString() ?? json['_id']?.toString(),
       firebaseUid: json['firebaseUid'] ?? '',
       name: json['name'] ?? '',
       email: json['email'] ?? '',
       phone: json['phone'] ?? '',
       address: json['address'] ?? '',
+      walletAddress: json['walletAddress'] ?? json['wallet_address'],
       isVerified: json['is_verified'] ?? false,
       createdAt: DateTime.parse(
         json['created_at'] ?? DateTime.now().toIso8601String(),

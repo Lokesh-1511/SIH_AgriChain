@@ -10,11 +10,14 @@ class SmartContractService {
   static String? _productRegistryAddress;
   static String? _traceabilityAddress;
   static String? _escrowPaymentAddress;
-  
-  // Fallback addresses for development
-  static const String _defaultProductRegistryAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
-  static const String _defaultTraceabilityAddress = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
-  static const String _defaultEscrowPaymentAddress = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0';
+
+  // Current deployed addresses (updated from deployment)
+  static const String _defaultProductRegistryAddress =
+      '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+  static const String _defaultTraceabilityAddress =
+      '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
+  static const String _defaultEscrowPaymentAddress =
+      '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0';
 
   // Backend URL for blockchain interactions
   static String get _backendUrl {
@@ -41,13 +44,13 @@ class SmartContractService {
   };
 
   /// Get contract addresses with fallbacks
-  static String get productRegistryAddress => 
+  static String get productRegistryAddress =>
       _productRegistryAddress ?? _defaultProductRegistryAddress;
-  
-  static String get traceabilityAddress => 
+
+  static String get traceabilityAddress =>
       _traceabilityAddress ?? _defaultTraceabilityAddress;
-      
-  static String get escrowPaymentAddress => 
+
+  static String get escrowPaymentAddress =>
       _escrowPaymentAddress ?? _defaultEscrowPaymentAddress;
 
   /// Initialize contract addresses from backend or local deployment
@@ -60,7 +63,7 @@ class SmartContractService {
         _productRegistryAddress = _defaultProductRegistryAddress;
         _traceabilityAddress = _defaultTraceabilityAddress;
         _escrowPaymentAddress = _defaultEscrowPaymentAddress;
-        
+
         debugPrint('🎭 Mock mode: Using default contract addresses');
         debugPrint('📦 ProductRegistry: $_productRegistryAddress');
         debugPrint('🔍 Traceability: $_traceabilityAddress');
@@ -70,12 +73,13 @@ class SmartContractService {
 
       // Try to load from backend
       final url = Uri.parse('$_backendUrl/api/blockchain/contract-addresses');
-      final response = await http.get(url, headers: _headers)
+      final response = await http
+          .get(url, headers: _headers)
           .timeout(_timeoutDuration);
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        
+
         _productRegistryAddress = data['contracts']['ProductRegistry'];
         _traceabilityAddress = data['contracts']['Traceability'];
         _escrowPaymentAddress = data['contracts']['EscrowPayment'];
@@ -84,20 +88,22 @@ class SmartContractService {
         debugPrint('📦 ProductRegistry: $_productRegistryAddress');
         debugPrint('🔍 Traceability: $_traceabilityAddress');
         debugPrint('💳 EscrowPayment: $_escrowPaymentAddress');
-        
+
         return true;
       } else {
-        throw Exception('Failed to load contract addresses: ${response.statusCode}');
+        throw Exception(
+          'Failed to load contract addresses: ${response.statusCode}',
+        );
       }
     } catch (e) {
       debugPrint('⚠️ Failed to load contract addresses from backend: $e');
       debugPrint('🔄 Falling back to default addresses...');
-      
+
       // Fallback to defaults
       _productRegistryAddress = _defaultProductRegistryAddress;
       _traceabilityAddress = _defaultTraceabilityAddress;
       _escrowPaymentAddress = _defaultEscrowPaymentAddress;
-      
+
       return false;
     }
   }
@@ -106,7 +112,7 @@ class SmartContractService {
   static Future<bool> loadFromDeploymentFile() async {
     try {
       debugPrint('📄 Loading contract addresses from deployment file...');
-      
+
       // This would read from deployment/deployment-info.json
       // For now, we'll use a mock response
       final deploymentInfo = {
@@ -114,7 +120,7 @@ class SmartContractService {
           'ProductRegistry': '0x5FbDB2315678afecb367f032d93F642f64180aa3',
           'Traceability': '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
           'EscrowPayment': '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
-        }
+        },
       };
 
       _productRegistryAddress = deploymentInfo['contracts']!['ProductRegistry'];
@@ -148,7 +154,7 @@ class SmartContractService {
 
       // Generate QR code hash
       final qrCodeHash = _generateQRCodeHash(productId, farmerId);
-      
+
       final url = Uri.parse('$_backendUrl/api/blockchain/register-product');
       final requestBody = {
         'product_id': productId,
@@ -160,11 +166,9 @@ class SmartContractService {
         'contract_address': productRegistryAddress,
       };
 
-      final response = await http.post(
-        url,
-        headers: _headers,
-        body: jsonEncode(requestBody),
-      ).timeout(_timeoutDuration);
+      final response = await http
+          .post(url, headers: _headers, body: jsonEncode(requestBody))
+          .timeout(_timeoutDuration);
 
       final responseData = jsonDecode(response.body);
 
@@ -178,7 +182,9 @@ class SmartContractService {
           message: 'Product registered successfully on blockchain',
         );
       } else {
-        throw SmartContractException(responseData['error'] ?? 'Product registration failed');
+        throw SmartContractException(
+          responseData['error'] ?? 'Product registration failed',
+        );
       }
     } catch (e) {
       debugPrint('❌ Product registration failed: $e');
@@ -206,11 +212,16 @@ class SmartContractService {
       debugPrint('💰 Additional Cost: $additionalCost ETH');
 
       if (_useMockMode) {
-        return _mockTransferOwnership(productId, fromRole, toRole, additionalCost);
+        return _mockTransferOwnership(
+          productId,
+          fromRole,
+          toRole,
+          additionalCost,
+        );
       }
 
       final metaHash = _generateMetadataHash(metadata ?? {});
-      
+
       final url = Uri.parse('$_backendUrl/api/blockchain/transfer-ownership');
       final requestBody = {
         'product_id': productId,
@@ -225,11 +236,9 @@ class SmartContractService {
         'contract_address': productRegistryAddress,
       };
 
-      final response = await http.post(
-        url,
-        headers: _headers,
-        body: jsonEncode(requestBody),
-      ).timeout(_timeoutDuration);
+      final response = await http
+          .post(url, headers: _headers, body: jsonEncode(requestBody))
+          .timeout(_timeoutDuration);
 
       final responseData = jsonDecode(response.body);
 
@@ -245,7 +254,9 @@ class SmartContractService {
           message: 'Ownership transferred successfully',
         );
       } else {
-        throw SmartContractException(responseData['error'] ?? 'Ownership transfer failed');
+        throw SmartContractException(
+          responseData['error'] ?? 'Ownership transfer failed',
+        );
       }
     } catch (e) {
       debugPrint('❌ Ownership transfer failed: $e');
@@ -270,7 +281,7 @@ class SmartContractService {
       }
 
       final metaHash = _generateMetadataHash(metadata ?? {});
-      
+
       final url = Uri.parse('$_backendUrl/api/blockchain/record-scan');
       final requestBody = {
         'qr_code_hash': qrCodeHash,
@@ -280,11 +291,9 @@ class SmartContractService {
         'contract_address': traceabilityAddress,
       };
 
-      final response = await http.post(
-        url,
-        headers: _headers,
-        body: jsonEncode(requestBody),
-      ).timeout(_timeoutDuration);
+      final response = await http
+          .post(url, headers: _headers, body: jsonEncode(requestBody))
+          .timeout(_timeoutDuration);
 
       final responseData = jsonDecode(response.body);
 
@@ -298,7 +307,9 @@ class SmartContractService {
           message: 'QR scan recorded successfully',
         );
       } else {
-        throw SmartContractException(responseData['error'] ?? 'QR scan recording failed');
+        throw SmartContractException(
+          responseData['error'] ?? 'QR scan recording failed',
+        );
       }
     } catch (e) {
       debugPrint('❌ QR scan recording failed: $e');
@@ -337,11 +348,9 @@ class SmartContractService {
         'contract_address': escrowPaymentAddress,
       };
 
-      final response = await http.post(
-        url,
-        headers: _headers,
-        body: jsonEncode(requestBody),
-      ).timeout(_timeoutDuration);
+      final response = await http
+          .post(url, headers: _headers, body: jsonEncode(requestBody))
+          .timeout(_timeoutDuration);
 
       final responseData = jsonDecode(response.body);
 
@@ -357,7 +366,9 @@ class SmartContractService {
           message: 'Escrow order created successfully',
         );
       } else {
-        throw SmartContractException(responseData['error'] ?? 'Escrow order creation failed');
+        throw SmartContractException(
+          responseData['error'] ?? 'Escrow order creation failed',
+        );
       }
     } catch (e) {
       debugPrint('❌ Escrow order creation failed: $e');
@@ -380,7 +391,9 @@ class SmartContractService {
         return _mockReleasePayment(orderId, qrCodeHash);
       }
 
-      final url = Uri.parse('$_backendUrl/api/blockchain/release-escrow-payment');
+      final url = Uri.parse(
+        '$_backendUrl/api/blockchain/release-escrow-payment',
+      );
       final requestBody = {
         'order_id': orderId,
         'qr_code_hash': qrCodeHash,
@@ -388,17 +401,17 @@ class SmartContractService {
         'contract_address': escrowPaymentAddress,
       };
 
-      final response = await http.post(
-        url,
-        headers: _headers,
-        body: jsonEncode(requestBody),
-      ).timeout(_timeoutDuration);
+      final response = await http
+          .post(url, headers: _headers, body: jsonEncode(requestBody))
+          .timeout(_timeoutDuration);
 
       final responseData = jsonDecode(response.body);
 
       if (response.statusCode == 200 && responseData['success'] == true) {
-        final breakdown = Map<String, double>.from(responseData['payment_breakdown']);
-        
+        final breakdown = Map<String, double>.from(
+          responseData['payment_breakdown'],
+        );
+
         return PaymentReleaseResult(
           success: true,
           orderId: orderId,
@@ -409,7 +422,9 @@ class SmartContractService {
           message: 'Payment released successfully to all stakeholders',
         );
       } else {
-        throw SmartContractException(responseData['error'] ?? 'Payment release failed');
+        throw SmartContractException(
+          responseData['error'] ?? 'Payment release failed',
+        );
       }
     } catch (e) {
       debugPrint('❌ Payment release failed: $e');
@@ -431,25 +446,29 @@ class SmartContractService {
       }
 
       final url = Uri.parse('$_backendUrl/api/blockchain/get-traceability');
-      final response = await http.post(
-        url,
-        headers: _headers,
-        body: jsonEncode({
-          'product_id': productId,
-          'qr_code_hash': qrCodeHash,
-          'contract_addresses': {
-            'product_registry': productRegistryAddress,
-            'traceability': traceabilityAddress,
-          }
-        }),
-      ).timeout(_timeoutDuration);
+      final response = await http
+          .post(
+            url,
+            headers: _headers,
+            body: jsonEncode({
+              'product_id': productId,
+              'qr_code_hash': qrCodeHash,
+              'contract_addresses': {
+                'product_registry': productRegistryAddress,
+                'traceability': traceabilityAddress,
+              },
+            }),
+          )
+          .timeout(_timeoutDuration);
 
       final responseData = jsonDecode(response.body);
 
       if (response.statusCode == 200 && responseData['success'] == true) {
         return ProductTraceability.fromJson(responseData['traceability']);
       } else {
-        throw SmartContractException(responseData['error'] ?? 'Failed to get traceability');
+        throw SmartContractException(
+          responseData['error'] ?? 'Failed to get traceability',
+        );
       }
     } catch (e) {
       debugPrint('❌ Traceability fetch failed: $e');
@@ -472,24 +491,30 @@ class SmartContractService {
         return _mockVerifyConsumer(consumerWallet, productId);
       }
 
-      final url = Uri.parse('$_backendUrl/api/blockchain/verify-consumer-order');
-      final response = await http.post(
-        url,
-        headers: _headers,
-        body: jsonEncode({
-          'consumer_wallet': consumerWallet,
-          'product_id': productId,
-          'qr_code_hash': qrCodeHash,
-          'contract_address': escrowPaymentAddress,
-        }),
-      ).timeout(_timeoutDuration);
+      final url = Uri.parse(
+        '$_backendUrl/api/blockchain/verify-consumer-order',
+      );
+      final response = await http
+          .post(
+            url,
+            headers: _headers,
+            body: jsonEncode({
+              'consumer_wallet': consumerWallet,
+              'product_id': productId,
+              'qr_code_hash': qrCodeHash,
+              'contract_address': escrowPaymentAddress,
+            }),
+          )
+          .timeout(_timeoutDuration);
 
       final responseData = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
         return ConsumerVerificationResult.fromJson(responseData);
       } else {
-        throw SmartContractException(responseData['error'] ?? 'Consumer verification failed');
+        throw SmartContractException(
+          responseData['error'] ?? 'Consumer verification failed',
+        );
       }
     } catch (e) {
       debugPrint('❌ Consumer verification failed: $e');
@@ -499,63 +524,77 @@ class SmartContractService {
 
   // Mock implementations for development
   static Future<ProductRegistrationResult> _mockRegisterProduct(
-    String productId, String productName, double basePrice
+    String productId,
+    String productName,
+    double basePrice,
   ) async {
     await Future.delayed(const Duration(seconds: 2));
-    
+
     final qrHash = _generateQRCodeHash(productId, 'mock_farmer');
-    
+
     return ProductRegistrationResult(
       success: true,
       productId: productId,
       qrCodeHash: qrHash,
-      transactionHash: '0x${DateTime.now().millisecondsSinceEpoch.toRadixString(16)}',
+      transactionHash:
+          '0x${DateTime.now().millisecondsSinceEpoch.toRadixString(16)}',
       blockNumber: DateTime.now().millisecondsSinceEpoch ~/ 1000,
       message: 'Mock product registered successfully',
     );
   }
 
   static Future<OwnershipTransferResult> _mockTransferOwnership(
-    String productId, String fromRole, String toRole, double additionalCost
+    String productId,
+    String fromRole,
+    String toRole,
+    double additionalCost,
   ) async {
     await Future.delayed(const Duration(seconds: 2));
-    
+
     return OwnershipTransferResult(
       success: true,
       productId: productId,
       newOwner: 'mock_${toRole}_wallet',
       newRole: toRole,
-      transactionHash: '0x${DateTime.now().millisecondsSinceEpoch.toRadixString(16)}',
+      transactionHash:
+          '0x${DateTime.now().millisecondsSinceEpoch.toRadixString(16)}',
       blockNumber: DateTime.now().millisecondsSinceEpoch ~/ 1000,
       gasUsed: 150000,
       message: 'Mock ownership transfer completed',
     );
   }
 
-  static Future<ScanRecordResult> _mockRecordScan(String qrHash, String scanner) async {
+  static Future<ScanRecordResult> _mockRecordScan(
+    String qrHash,
+    String scanner,
+  ) async {
     await Future.delayed(const Duration(seconds: 1));
-    
+
     return ScanRecordResult(
       success: true,
       qrCodeHash: qrHash,
       scanner: scanner,
       timestamp: DateTime.now().millisecondsSinceEpoch,
-      transactionHash: '0x${DateTime.now().millisecondsSinceEpoch.toRadixString(16)}',
+      transactionHash:
+          '0x${DateTime.now().millisecondsSinceEpoch.toRadixString(16)}',
       message: 'Mock QR scan recorded',
     );
   }
 
   static Future<EscrowOrderResult> _mockCreateEscrowOrder(
-    String orderId, String productId, double totalAmount
+    String orderId,
+    String productId,
+    double totalAmount,
   ) async {
     await Future.delayed(const Duration(seconds: 2));
-    
+
     return EscrowOrderResult(
       success: true,
       orderId: orderId,
       productId: productId,
       totalAmount: totalAmount,
-      transactionHash: '0x${DateTime.now().millisecondsSinceEpoch.toRadixString(16)}',
+      transactionHash:
+          '0x${DateTime.now().millisecondsSinceEpoch.toRadixString(16)}',
       blockNumber: DateTime.now().millisecondsSinceEpoch ~/ 1000,
       escrowAddress: escrowPaymentAddress,
       message: 'Mock escrow order created',
@@ -563,28 +602,28 @@ class SmartContractService {
   }
 
   static Future<PaymentReleaseResult> _mockReleasePayment(
-    String orderId, String qrHash
+    String orderId,
+    String qrHash,
   ) async {
     await Future.delayed(const Duration(seconds: 2));
-    
+
     return PaymentReleaseResult(
       success: true,
       orderId: orderId,
       totalReleased: 1.25,
-      paymentBreakdown: {
-        'farmer': 0.75,
-        'distributor': 0.25,
-        'retailer': 0.25,
-      },
-      transactionHash: '0x${DateTime.now().millisecondsSinceEpoch.toRadixString(16)}',
+      paymentBreakdown: {'farmer': 0.75, 'distributor': 0.25, 'retailer': 0.25},
+      transactionHash:
+          '0x${DateTime.now().millisecondsSinceEpoch.toRadixString(16)}',
       blockNumber: DateTime.now().millisecondsSinceEpoch ~/ 1000,
       message: 'Mock payment released successfully',
     );
   }
 
-  static Future<ProductTraceability> _mockGetTraceability(String productId) async {
+  static Future<ProductTraceability> _mockGetTraceability(
+    String productId,
+  ) async {
     await Future.delayed(const Duration(seconds: 1));
-    
+
     return ProductTraceability(
       productId: productId,
       productName: 'Organic Tomatoes - 1kg',
@@ -617,10 +656,11 @@ class SmartContractService {
   }
 
   static Future<ConsumerVerificationResult> _mockVerifyConsumer(
-    String consumerWallet, String productId
+    String consumerWallet,
+    String productId,
   ) async {
     await Future.delayed(const Duration(seconds: 1));
-    
+
     return ConsumerVerificationResult(
       verified: true,
       hasActiveOrder: true,
@@ -633,7 +673,8 @@ class SmartContractService {
 
   // Utility functions
   static String _generateQRCodeHash(String productId, String farmerId) {
-    final input = '$productId:$farmerId:${DateTime.now().millisecondsSinceEpoch}';
+    final input =
+        '$productId:$farmerId:${DateTime.now().millisecondsSinceEpoch}';
     return sha256.convert(utf8.encode(input)).toString();
   }
 
@@ -782,9 +823,15 @@ class ProductTraceability {
       productName: json['product_name'],
       qrCodeHash: json['qr_code_hash'],
       farmer: TraceabilityStep.fromJson(json['farmer']),
-      distributor: json['distributor'] != null ? TraceabilityStep.fromJson(json['distributor']) : null,
-      retailer: json['retailer'] != null ? TraceabilityStep.fromJson(json['retailer']) : null,
-      consumer: json['consumer'] != null ? TraceabilityStep.fromJson(json['consumer']) : null,
+      distributor: json['distributor'] != null
+          ? TraceabilityStep.fromJson(json['distributor'])
+          : null,
+      retailer: json['retailer'] != null
+          ? TraceabilityStep.fromJson(json['retailer'])
+          : null,
+      consumer: json['consumer'] != null
+          ? TraceabilityStep.fromJson(json['consumer'])
+          : null,
       totalCost: json['total_cost'].toDouble(),
       isActive: json['is_active'],
     );
