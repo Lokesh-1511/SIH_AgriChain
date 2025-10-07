@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/widgets/simple_aadhaar_widget.dart';
@@ -129,7 +130,7 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
             Icon(Icons.agriculture, color: Colors.white, size: 24),
             const SizedBox(width: 8),
             Text(
-              'Join as a Farmer',
+              'farmer.registration'.tr(),
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
