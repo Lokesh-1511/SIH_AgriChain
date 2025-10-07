@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
 import '../providers/auth_provider.dart';
@@ -165,7 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
 
               Text(
-                'Welcome Back, $_roleTitle!',
+                'auth.login_title'.tr(),
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
@@ -176,7 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 8),
 
               Text(
-                'Sign in to continue to your dashboard',
+                'auth.login_subtitle'.tr(),
                 style: Theme.of(
                   context,
                 ).textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
@@ -191,7 +192,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 keyboardType: TextInputType.emailAddress,
                 style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(
-                  labelText: 'Email',
+                  labelText: 'common.email'.tr(),
                   labelStyle: TextStyle(color: AppColors.textSecondary),
                   prefixIcon: Icon(Icons.email_outlined, color: _roleColor),
 
@@ -230,7 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 obscureText: !_isPasswordVisible,
                 style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(
-                  labelText: 'Password',
+                  labelText: 'common.password'.tr(),
                   labelStyle: TextStyle(color: AppColors.textSecondary),
                   prefixIcon: Icon(Icons.lock_outline, color: _roleColor),
                   suffixIcon: IconButton(
@@ -292,7 +293,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         )
                       : Text(
-                          'Login',
+                          'common.login'.tr(),
                           style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(
                                 color: Colors.white,

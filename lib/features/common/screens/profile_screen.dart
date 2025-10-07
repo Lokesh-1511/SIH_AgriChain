@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/models/agrichain_user.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -67,7 +68,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         backgroundColor: primaryColor,
         foregroundColor: Colors.white,
-        title: const Text('Profile'),
+        title: Text('profile.title'.tr()),
         elevation: 0,
         actions: [
           IconButton(
@@ -189,7 +190,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   // Name Field
                   _buildProfileField(
-                    'Full Name',
+                    'common.name'.tr(),
                     _nameController,
                     Icons.person,
                     _isEditing,
@@ -199,7 +200,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   // Email Field
                   _buildProfileField(
-                    'Email',
+                    'common.email'.tr(),
                     _emailController,
                     Icons.email,
                     false, // Email should not be editable
@@ -209,7 +210,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   // Phone Field
                   _buildProfileField(
-                    'Phone',
+                    'common.phone'.tr(),
                     _phoneController,
                     Icons.phone,
                     _isEditing,
@@ -219,7 +220,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   // Address Field
                   _buildProfileField(
-                    'Address',
+                    'common.address'.tr(),
                     _addressController,
                     Icons.location_on,
                     _isEditing,
@@ -378,7 +379,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Farming Details',
+            'farmer.farming_details'.tr(),
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
@@ -389,14 +390,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               Expanded(
                 child: _buildInfoTile(
-                  'Land Size',
+                  'farmer.land_size'.tr(),
                   landSize == 'Not provided' ? landSize : '$landSize acres',
                   Icons.landscape,
                 ),
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: _buildInfoTile('Agri Score', agriScore, Icons.star),
+                child: _buildInfoTile('farmer.agri_score'.tr(), agriScore, Icons.star),
               ),
             ],
           ),

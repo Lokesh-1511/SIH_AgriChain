@@ -24,16 +24,16 @@ void main() async {
   runApp(
     EasyLocalization(
       supportedLocales: const [
-        Locale('en', 'US'),
-        Locale('hi', 'IN'),
-        Locale('ta', 'IN'),
-        Locale('or', 'IN'),
-        Locale('te', 'IN'),
-        Locale('kn', 'IN'),
-        Locale('ml', 'IN'),
+        Locale('en'),
+        Locale('hi'),
+        Locale('ta'),
+        Locale('or'),
+        Locale('te'),
+        Locale('kn'),
+        Locale('ml'),
       ],
       path: 'assets/translations',
-      fallbackLocale: const Locale('en', 'US'),
+      fallbackLocale: const Locale('en'),
       child: const AgriChainApp(),
     ),
   );
