@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/services/product_storage_service.dart';
+import '../../../core/models/delivery_tracking.dart';
 
 class DeliveryTrackingScreen extends StatefulWidget {
   const DeliveryTrackingScreen({super.key});
@@ -12,10 +14,13 @@ class DeliveryTrackingScreen extends StatefulWidget {
 class _DeliveryTrackingScreenState extends State<DeliveryTrackingScreen> {
   String _selectedFilter = 'All';
   Timer? _locationTimer;
+  List<DeliveryTracking> _deliveries = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    _loadDeliveries();
     _startLocationUpdates();
   }
 
@@ -25,12 +30,25 @@ class _DeliveryTrackingScreenState extends State<DeliveryTrackingScreen> {
     super.dispose();
   }
 
-  void _startLocationUpdates() {
-    _locationTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
-      // Simulate real-time location updates
+  Future<void> _loadDeliveries() async {
+    try {
+      final deliveries = await ProductStorageService.getDeliveryTrackings();
       setState(() {
-        // Update delivery locations (in real app, this would come from GPS/API)
+        _deliveries = deliveries;
+        _isLoading = false;
       });
+    } catch (e) {
+      print('Error loading deliveries: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _startLocationUpdates() {
+    _locationTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      // Simulate real-time location updates and refresh delivery data
+      _loadDeliveries();
     });
   }
 
@@ -76,7 +94,11 @@ class _DeliveryTrackingScreenState extends State<DeliveryTrackingScreen> {
             child: Row(
               children: [
                 Expanded(
-                  child: _buildStatusItem('Active', '8', Icons.local_shipping),
+                  child: _buildStatusItem(
+                    'In Transit', 
+                    _deliveries.where((d) => d.status == 'in_transit').length.toString(), 
+                    Icons.local_shipping
+                  ),
                 ),
                 Container(
                   width: 1,
@@ -86,7 +108,7 @@ class _DeliveryTrackingScreenState extends State<DeliveryTrackingScreen> {
                 Expanded(
                   child: _buildStatusItem(
                     'Delivered',
-                    '24',
+                    _deliveries.where((d) => d.status == 'delivered').length.toString(),
                     Icons.check_circle,
                   ),
                 ),
@@ -96,7 +118,11 @@ class _DeliveryTrackingScreenState extends State<DeliveryTrackingScreen> {
                   color: Colors.white.withOpacity(0.3),
                 ),
                 Expanded(
-                  child: _buildStatusItem('Pending', '3', Icons.schedule),
+                  child: _buildStatusItem(
+                    'Total', 
+                    _deliveries.length.toString(), 
+                    Icons.inventory
+                  ),
                 ),
               ],
             ),
@@ -104,17 +130,18 @@ class _DeliveryTrackingScreenState extends State<DeliveryTrackingScreen> {
 
           // Filter Tabs
           Container(
-            height: 40,
             margin: const EdgeInsets.symmetric(horizontal: 16),
-            child: ListView(
+            child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              children: [
-                _buildFilterChip('All'),
-                _buildFilterChip('In Transit'),
-                _buildFilterChip('Delivered'),
-                _buildFilterChip('Pending'),
-                _buildFilterChip('Delayed'),
-              ],
+              child: Row(
+                children: [
+                  _buildFilterTab('All'),
+                  const SizedBox(width: 8),
+                  _buildFilterTab('in_transit'),
+                  const SizedBox(width: 8),
+                  _buildFilterTab('delivered'),
+                ],
+              ),
             ),
           ),
 
@@ -122,76 +149,77 @@ class _DeliveryTrackingScreenState extends State<DeliveryTrackingScreen> {
 
           // Delivery List
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: _getFilteredDeliveries().length,
-              itemBuilder: (context, index) {
-                final delivery = _getFilteredDeliveries()[index];
-                return _buildDeliveryCard(context, delivery);
-              },
-            ),
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _deliveries.isEmpty
+                    ? _buildEmptyState()
+                    : RefreshIndicator(
+                        onRefresh: _loadDeliveries,
+                        child: ListView.builder(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          itemCount: _getFilteredDeliveries().length,
+                          itemBuilder: (context, index) {
+                            final delivery = _getFilteredDeliveries()[index];
+                            return _buildDeliveryCard(context, delivery);
+                          },
+                        ),
+                      ),
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _createNewDelivery(context),
-        backgroundColor: AppColors.distributorPrimary,
-        child: const Icon(Icons.add, color: Colors.white),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.local_shipping_outlined,
+              size: 80,
+              color: AppColors.textSecondary,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No Deliveries Found',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Accept products from farmers to start tracking deliveries.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildStatusItem(String label, String count, IconData icon) {
-    return Column(
-      children: [
-        Icon(icon, color: Colors.white, size: 24),
-        const SizedBox(height: 8),
-        Text(
-          count,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Text(
-          label,
-          style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 12),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFilterChip(String filter) {
-    bool isSelected = _selectedFilter == filter;
-    return Container(
-      margin: const EdgeInsets.only(right: 8),
-      child: FilterChip(
-        label: Text(filter),
-        selected: isSelected,
-        onSelected: (selected) {
-          setState(() {
-            _selectedFilter = filter;
-          });
-        },
-        selectedColor: AppColors.distributorPrimary.withOpacity(0.2),
-        checkmarkColor: AppColors.distributorPrimary,
-        labelStyle: TextStyle(
-          color: isSelected
-              ? AppColors.distributorPrimary
-              : AppColors.textSecondary,
-          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-        ),
-      ),
-    );
+  List<DeliveryTracking> _getFilteredDeliveries() {
+    if (_selectedFilter == 'All') {
+      return _deliveries;
+    }
+    return _deliveries
+        .where((delivery) => delivery.status == _selectedFilter)
+        .toList();
   }
 
   Widget _buildDeliveryCard(
     BuildContext context,
-    Map<String, dynamic> delivery,
+    DeliveryTracking delivery,
   ) {
-    Color statusColor = _getStatusColor(delivery['status']);
-    double progress = _getDeliveryProgress(delivery['status']);
+    Color statusColor = _getStatusColor(delivery.status);
+    double progress = _getDeliveryProgress(delivery.status);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -218,7 +246,7 @@ class _DeliveryTrackingScreenState extends State<DeliveryTrackingScreen> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
-                  _getStatusIcon(delivery['status']),
+                  _getStatusIcon(delivery.status),
                   color: statusColor,
                   size: 24,
                 ),
@@ -230,27 +258,28 @@ class _DeliveryTrackingScreenState extends State<DeliveryTrackingScreen> {
                   children: [
                     Row(
                       children: [
-                        Text(
-                          'Order #${delivery['orderId']}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                        Expanded(
+                          child: Text(
+                            'Product ID: ${delivery.productId.substring(0, 8)}...',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                            ),
                           ),
                         ),
-                        const SizedBox(width: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 8,
-                            vertical: 2,
+                            vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: statusColor.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(10),
+                            color: statusColor,
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            delivery['status'],
-                            style: TextStyle(
-                              color: statusColor,
+                            delivery.status.toUpperCase(),
+                            style: const TextStyle(
+                              color: Colors.white,
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
                             ),
@@ -260,153 +289,174 @@ class _DeliveryTrackingScreenState extends State<DeliveryTrackingScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      delivery['customerName'],
+                      'From: ${delivery.farmerName}',
                       style: TextStyle(
                         color: AppColors.textSecondary,
-                        fontSize: 12,
+                        fontSize: 14,
                       ),
                     ),
                     Text(
-                      '${delivery['vehicle']} • ${delivery['driver']}',
+                      'Driver: ${delivery.driverName} • ${delivery.vehicleNumber}',
                       style: TextStyle(
                         color: AppColors.textSecondary,
-                        fontSize: 11,
+                        fontSize: 14,
                       ),
                     ),
                   ],
                 ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    'ETA: ${delivery['eta']}',
-                    style: TextStyle(
-                      color: AppColors.distributorPrimary,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    '${delivery['distance']} km',
-                    style: TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: 11,
-                    ),
-                  ),
-                ],
-              ),
             ],
           ),
-
-          const SizedBox(height: 12),
-
+          const SizedBox(height: 16),
+          
           // Progress Bar
-          Column(
+          Row(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Progress',
-                    style: TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: 12,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Progress',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                        Text(
+                          delivery.estimatedDelivery != null
+                              ? 'ETA: ${_formatDateTime(delivery.estimatedDelivery!)}'
+                              : 'ETA: --',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  Text(
-                    '${(progress * 100).toInt()}%',
-                    style: TextStyle(
-                      color: statusColor,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+                    const SizedBox(height: 8),
+                    LinearProgressIndicator(
+                      value: progress,
+                      backgroundColor: Colors.grey[200],
+                      valueColor: AlwaysStoppedAnimation<Color>(statusColor),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              const SizedBox(height: 4),
-              LinearProgressIndicator(
-                value: progress,
-                backgroundColor: AppColors.textSecondary.withOpacity(0.1),
-                valueColor: AlwaysStoppedAnimation<Color>(statusColor),
+              const SizedBox(width: 16),
+              Text(
+                delivery.estimatedDistance != null
+                    ? '${delivery.estimatedDistance!.toStringAsFixed(1)} km'
+                    : '--',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textSecondary,
+                ),
               ),
             ],
           ),
-
-          const SizedBox(height: 12),
-
-          // Location & Route Info
+          
+          const SizedBox(height: 16),
+          
+          // Location Information
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.info.withOpacity(0.05),
+              color: AppColors.background,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Column(
               children: [
                 Row(
                   children: [
-                    Icon(Icons.location_on, color: AppColors.success, size: 16),
+                    Icon(
+                      Icons.location_on,
+                      color: AppColors.success,
+                      size: 16,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'From: ${delivery['origin']}',
+                        'From Farm: ${delivery.farmerName}',
                         style: TextStyle(
-                          color: AppColors.textPrimary,
-                          fontSize: 11,
+                          fontSize: 12,
+                          color: AppColors.textSecondary,
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 8),
                 Row(
                   children: [
-                    Icon(Icons.flag, color: AppColors.error, size: 16),
+                    Icon(
+                      Icons.business,
+                      color: AppColors.distributorPrimary,
+                      size: 16,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'To: ${delivery['destination']}',
+                        'To Distributor: ${delivery.distributorName}',
                         style: TextStyle(
-                          color: AppColors.textPrimary,
-                          fontSize: 11,
+                          fontSize: 12,
+                          color: AppColors.textSecondary,
                         ),
                       ),
                     ),
                   ],
                 ),
-                if (delivery['currentLocation'] != null) ...[
-                  const SizedBox(height: 4),
+                if (delivery.currentLocation != null) ...[
+                  const SizedBox(height: 8),
                   Row(
                     children: [
-                      Icon(Icons.my_location, color: AppColors.info, size: 16),
+                      Icon(
+                        Icons.my_location,
+                        color: AppColors.warning,
+                        size: 16,
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'Current: ${delivery['currentLocation']}',
+                          'Current: ${delivery.currentLocation}',
                           style: TextStyle(
-                            color: AppColors.info,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                            color: AppColors.textSecondary,
                           ),
-                        ),
-                      ),
-                      Text(
-                        'Updated: ${delivery['lastUpdate']}',
-                        style: TextStyle(
-                          color: AppColors.textSecondary,
-                          fontSize: 10,
                         ),
                       ),
                     ],
                   ),
                 ],
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.access_time,
+                      color: AppColors.textSecondary,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Pickup: ${_formatDateTime(delivery.pickupTime)}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
-
-          const SizedBox(height: 12),
-
+          
+          const SizedBox(height: 16),
+          
           // Action Buttons
           Row(
             children: [
@@ -416,23 +466,47 @@ class _DeliveryTrackingScreenState extends State<DeliveryTrackingScreen> {
                   icon: const Icon(Icons.info_outline, size: 16),
                   label: const Text('Details'),
                   style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    foregroundColor: AppColors.distributorPrimary,
                   ),
                 ),
               ),
               const SizedBox(width: 8),
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () => _trackLive(context, delivery),
-                  icon: const Icon(Icons.gps_fixed, size: 16),
-                  label: const Text('Track Live'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.distributorPrimary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 8),
+              if (delivery.status == 'in_transit') ...[
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _updateDeliveryLocation(context, delivery),
+                    icon: const Icon(Icons.gps_fixed, size: 16),
+                    label: const Text('Update'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.warning,
+                    ),
                   ),
                 ),
-              ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => _markAsDelivered(context, delivery),
+                    icon: const Icon(Icons.check_circle, size: 16),
+                    label: const Text('Delivered'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.success,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                ),
+              ] else ...[
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: null,
+                    icon: const Icon(Icons.check, size: 16),
+                    label: const Text('Completed'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.success,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ],
@@ -440,58 +514,292 @@ class _DeliveryTrackingScreenState extends State<DeliveryTrackingScreen> {
     );
   }
 
+  Widget _buildStatusItem(String label, String value, IconData icon) {
+    return Column(
+      children: [
+        Icon(icon, color: Colors.white, size: 24),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          label,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 12,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFilterTab(String filter) {
+    bool isSelected = _selectedFilter == filter;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedFilter = filter;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.distributorPrimary : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected
+                ? AppColors.distributorPrimary
+                : AppColors.textSecondary.withOpacity(0.3),
+          ),
+        ),
+        child: Text(
+          filter == 'in_transit' ? 'In Transit' : 
+          filter == 'delivered' ? 'Delivered' : filter,
+          style: TextStyle(
+            color: isSelected ? Colors.white : AppColors.textSecondary,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+            fontSize: 14,
+          ),
+        ),
+      ),
+    );
+  }
+
   Color _getStatusColor(String status) {
-    switch (status.toLowerCase()) {
+    switch (status) {
+      case 'in_transit':
+        return AppColors.warning;
       case 'delivered':
         return AppColors.success;
-      case 'in transit':
-        return AppColors.info;
-      case 'pending':
-        return AppColors.warning;
-      case 'delayed':
-        return AppColors.error;
       default:
         return AppColors.textSecondary;
     }
   }
 
   IconData _getStatusIcon(String status) {
-    switch (status.toLowerCase()) {
+    switch (status) {
+      case 'in_transit':
+        return Icons.local_shipping;
       case 'delivered':
         return Icons.check_circle;
-      case 'in transit':
-        return Icons.local_shipping;
-      case 'pending':
-        return Icons.schedule;
-      case 'delayed':
-        return Icons.warning;
       default:
-        return Icons.help;
+        return Icons.schedule;
     }
   }
 
   double _getDeliveryProgress(String status) {
-    switch (status.toLowerCase()) {
+    switch (status) {
+      case 'in_transit':
+        return 0.7;
       case 'delivered':
         return 1.0;
-      case 'in transit':
-        return 0.65;
-      case 'pending':
-        return 0.1;
-      case 'delayed':
-        return 0.3;
       default:
-        return 0.0;
+        return 0.3;
     }
   }
 
-  List<Map<String, dynamic>> _getFilteredDeliveries() {
-    if (_selectedFilter == 'All') {
-      return _deliveries;
-    }
-    return _deliveries
-        .where((delivery) => delivery['status'] == _selectedFilter)
-        .toList();
+  String _formatDateTime(DateTime dateTime) {
+    return '${dateTime.day}/${dateTime.month} ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
+  }
+
+  void _viewDeliveryDetails(BuildContext context, DeliveryTracking delivery) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delivery Details'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildDetailRow('Product ID', delivery.productId),
+              _buildDetailRow('Farmer', delivery.farmerName),
+              _buildDetailRow('Distributor', delivery.distributorName),
+              _buildDetailRow('Status', delivery.status),
+              _buildDetailRow('Vehicle', delivery.vehicleNumber ?? 'N/A'),
+              _buildDetailRow('Driver', delivery.driverName ?? 'N/A'),
+              _buildDetailRow('Pickup Time', _formatDateTime(delivery.pickupTime)),
+              if (delivery.deliveryTime != null)
+                _buildDetailRow('Delivery Time', _formatDateTime(delivery.deliveryTime!)),
+              if (delivery.trackingUpdates.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                const Text(
+                  'Tracking Updates:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                ...delivery.trackingUpdates.map((update) => Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _formatDateTime(update.timestamp),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                          Text(update.description),
+                          Text(
+                            update.location,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontStyle: FontStyle.italic,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),
+              ],
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 80,
+            child: Text(
+              '$label:',
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ),
+          Expanded(child: Text(value)),
+        ],
+      ),
+    );
+  }
+
+  void _markAsDelivered(BuildContext context, DeliveryTracking delivery) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Mark as Delivered'),
+        content: Text('Are you sure you want to mark this delivery as completed?\n\nProduct: ${delivery.productId}\nFarmer: ${delivery.farmerName}'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                await ProductStorageService.completeDelivery(delivery.deliveryId);
+                Navigator.pop(context);
+                _loadDeliveries(); // Refresh
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Delivery marked as completed!'),
+                    backgroundColor: AppColors.success,
+                  ),
+                );
+              } catch (e) {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Error completing delivery: $e'),
+                    backgroundColor: AppColors.error,
+                  ),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.success,
+            ),
+            child: const Text('Mark Delivered'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _updateDeliveryLocation(BuildContext context, DeliveryTracking delivery) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        String newLocation = delivery.currentLocation ?? '';
+        String description = '';
+        return AlertDialog(
+          title: const Text('Update Delivery Location'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                onChanged: (value) => newLocation = value,
+                decoration: const InputDecoration(
+                  labelText: 'Current Location',
+                  hintText: 'Enter current location',
+                ),
+                controller: TextEditingController(text: newLocation),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                onChanged: (value) => description = value,
+                decoration: const InputDecoration(
+                  labelText: 'Update Description',
+                  hintText: 'Optional description',
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                try {
+                  await ProductStorageService.updateDeliveryTracking(
+                    deliveryId: delivery.deliveryId,
+                    newLocation: newLocation.isEmpty ? null : newLocation,
+                    description: description.isEmpty ? 'Location updated' : description,
+                  );
+                  Navigator.pop(context);
+                  _loadDeliveries(); // Refresh
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Delivery location updated successfully!'),
+                    ),
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error updating location: $e'),
+                      backgroundColor: AppColors.error,
+                    ),
+                  );
+                }
+              },
+              child: const Text('Update'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _showMapView(BuildContext context) {
@@ -500,21 +808,24 @@ class _DeliveryTrackingScreenState extends State<DeliveryTrackingScreen> {
       builder: (context) => AlertDialog(
         title: const Text('Map View'),
         content: Container(
-          height: 300,
           width: 300,
+          height: 200,
           decoration: BoxDecoration(
-            color: AppColors.info.withOpacity(0.1),
+            color: AppColors.background,
             borderRadius: BorderRadius.circular(8),
           ),
           child: const Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.map, size: 64),
+                Icon(Icons.map_outlined, size: 48),
                 SizedBox(height: 16),
-                Text('Interactive map with real-time'),
-                Text('vehicle tracking will be'),
-                Text('available soon!'),
+                Text('Map integration coming soon!'),
+                Text(
+                  'Real-time GPS tracking will be available in the next update.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 12),
+                ),
               ],
             ),
           ),
@@ -528,189 +839,4 @@ class _DeliveryTrackingScreenState extends State<DeliveryTrackingScreen> {
       ),
     );
   }
-
-  void _viewDeliveryDetails(
-    BuildContext context,
-    Map<String, dynamic> delivery,
-  ) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Delivery #${delivery['orderId']}'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Customer: ${delivery['customerName']}'),
-              Text('Vehicle: ${delivery['vehicle']}'),
-              Text('Driver: ${delivery['driver']}'),
-              Text('Status: ${delivery['status']}'),
-              Text('Distance: ${delivery['distance']} km'),
-              Text('ETA: ${delivery['eta']}'),
-              const SizedBox(height: 8),
-              const Text(
-                'Route:',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              Text('From: ${delivery['origin']}'),
-              Text('To: ${delivery['destination']}'),
-              if (delivery['currentLocation'] != null)
-                Text('Current: ${delivery['currentLocation']}'),
-              const SizedBox(height: 8),
-              const Text(
-                'Items:',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              ...delivery['items']
-                  .map<Widget>((item) => Text('• $item'))
-                  .toList(),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _trackLive(BuildContext context, Map<String, dynamic> delivery) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Live Tracking - ${delivery['orderId']}'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              height: 200,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: AppColors.info.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.gps_fixed, size: 48),
-                    SizedBox(height: 16),
-                    Text('Real-time GPS tracking'),
-                    Text('with live location updates'),
-                    Text('coming soon!'),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Current Location: ${delivery['currentLocation'] ?? 'Unknown'}',
-            ),
-            Text('Last Update: ${delivery['lastUpdate']}'),
-            Text('Speed: 45 km/h'),
-            Text('Next Checkpoint: 2.5 km'),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _createNewDelivery(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Create New Delivery'),
-        content: const Text(
-          'New delivery creation feature will be available soon!',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  static final List<Map<String, dynamic>> _deliveries = [
-    {
-      'orderId': 'D001',
-      'customerName': 'Green Valley Mart',
-      'vehicle': 'MH-12-AB-1234',
-      'driver': 'Rajesh Kumar',
-      'status': 'In Transit',
-      'origin': 'Pune Distribution Center',
-      'destination': 'Green Valley Mart, Nashik',
-      'currentLocation': 'Alephata Toll Plaza',
-      'distance': 45,
-      'eta': '2:30 PM',
-      'lastUpdate': '5 mins ago',
-      'items': ['Alphonso Mango 50kg', 'Basmati Rice 100kg', 'Red Onion 25kg'],
-    },
-    {
-      'orderId': 'D002',
-      'customerName': 'Fresh Foods Store',
-      'vehicle': 'MH-14-CD-5678',
-      'driver': 'Suresh Patil',
-      'status': 'Delivered',
-      'origin': 'Pune Distribution Center',
-      'destination': 'Fresh Foods Store, Satara',
-      'distance': 0,
-      'eta': 'Delivered',
-      'lastUpdate': '1 hour ago',
-      'items': ['Fresh Milk 80L', 'Green Peas 30kg'],
-    },
-    {
-      'orderId': 'D003',
-      'customerName': 'Organic Bazaar',
-      'vehicle': 'MH-15-EF-9012',
-      'driver': 'Amit Sharma',
-      'status': 'Pending',
-      'origin': 'Pune Distribution Center',
-      'destination': 'Organic Bazaar, Kolhapur',
-      'distance': 120,
-      'eta': '5:00 PM',
-      'lastUpdate': 'Not started',
-      'items': ['Turmeric Powder 25kg', 'Organic Vegetables 40kg'],
-    },
-    {
-      'orderId': 'D004',
-      'customerName': 'City Fresh Market',
-      'vehicle': 'MH-16-GH-3456',
-      'driver': 'Mohan Singh',
-      'status': 'In Transit',
-      'origin': 'Pune Distribution Center',
-      'destination': 'City Fresh Market, Aurangabad',
-      'currentLocation': 'Ahmednagar',
-      'distance': 85,
-      'eta': '4:15 PM',
-      'lastUpdate': '10 mins ago',
-      'items': ['Mixed Vegetables 60kg', 'Dairy Products 40kg'],
-    },
-    {
-      'orderId': 'D005',
-      'customerName': 'Premium Grocers',
-      'vehicle': 'MH-17-IJ-7890',
-      'driver': 'Deepak Joshi',
-      'status': 'Delayed',
-      'origin': 'Pune Distribution Center',
-      'destination': 'Premium Grocers, Solapur',
-      'currentLocation': 'Baramati (Vehicle Issue)',
-      'distance': 95,
-      'eta': '6:30 PM (Delayed)',
-      'lastUpdate': '20 mins ago',
-      'items': ['Premium Rice 80kg', 'Spices 15kg'],
-    },
-  ];
 }
