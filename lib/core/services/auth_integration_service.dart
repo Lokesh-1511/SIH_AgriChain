@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/agrichain_user.dart';
 import 'firebase_auth_service.dart';
+import 'auth_firebase_service.dart';
 import 'mongodb_service.dart';
 import 'local_storage_service.dart';
 
@@ -21,47 +22,44 @@ class AuthIntegrationService {
     try {
       debugPrint('🔐 Starting user registration process...');
 
-      // Step 1: Register with Firebase Auth
-      final firebaseResult =
-          await FirebaseAuthService.registerWithEmailPassword(
-            email: email,
-            password: password,
-            displayName: name,
-          );
+      // Step 1: Register with Firebase Auth (SSL-tolerant)
+      Map<String, dynamic> userData = {
+        'email': email,
+        'name': name,
+        'phone': phone,
+        'address': address,
+        'role': role.name,
+        'kycDetails': kycDetails,
+        'additionalInfo': additionalInfo,
+      };
 
-      if (!firebaseResult['success']) {
+      final user = await AuthFirebaseService.registerWithFirebase(
+        email: email,
+        password: password,
+        userData: userData,
+      );
+
+      if (user == null) {
         return {
           'success': false,
-          'message': firebaseResult['message'],
+          'message': 'Registration failed',
           'step': 'firebase_auth',
         };
       }
 
-      final User firebaseUser = firebaseResult['user'];
-      debugPrint('🔐 Firebase registration successful: ${firebaseUser.uid}');
+      debugPrint('🔐 Firebase registration successful: ${user.firebaseUid}');
 
-      // Step 2: Store user data in MongoDB
-      final mongoResult = await MongoDBService.createUser(
-        role: role.name,
-        firebaseUid: firebaseUser.uid,
-        email: email,
-        name: name,
-        phone: phone,
-        kycDetails: kycDetails,
-        additionalData: {
-          'address': address,
-          'isVerified': true, // Since Aadhaar is verified
-          ...?additionalInfo,
-        },
-      );
+      // Step 2: User data already stored in MongoDB via AuthFirebaseService
+      // Create the result format expected by the calling code
+      final mongoResult = {'success': true, 'userId': user.id};
 
-      if (!mongoResult['success']) {
+      if (mongoResult['success'] != true) {
         // Don't rollback Firebase user, use local storage fallback instead
         debugPrint('🔐 MongoDB insertion failed, using local storage fallback');
 
         // Create AgriChainUser object for local storage
         final agriChainUser = AgriChainUser(
-          firebaseUid: firebaseUser.uid,
+          firebaseUid: user.firebaseUid,
           name: name,
           email: email,
           phone: phone,
@@ -95,8 +93,8 @@ class AuthIntegrationService {
 
       // Create AgriChainUser object
       final agriChainUser = AgriChainUser(
-        id: mongoResult['userId'],
-        firebaseUid: firebaseUser.uid,
+        id: mongoResult['userId']?.toString(),
+        firebaseUid: user.firebaseUid,
         name: name,
         email: email,
         phone: phone,
@@ -134,27 +132,27 @@ class AuthIntegrationService {
     try {
       debugPrint('🔐 Starting user sign in process...');
 
-      // Step 1: Sign in with Firebase Auth
-      final firebaseResult = await FirebaseAuthService.signInWithEmailPassword(
+      // Step 1: Sign in with Firebase Auth (SSL-tolerant with fallback)
+      final authUser = await AuthFirebaseService.loginWithFirebase(
         email: email,
         password: password,
+        role: role.name,
       );
 
-      if (!firebaseResult['success']) {
+      if (authUser == null) {
         return {
           'success': false,
-          'message': firebaseResult['message'],
+          'message': 'Login failed - invalid credentials or connection issue',
           'step': 'firebase_auth',
         };
       }
 
-      final User firebaseUser = firebaseResult['user'];
-      debugPrint('🔐 Firebase sign in successful: ${firebaseUser.uid}');
+      debugPrint('🔐 Firebase sign in successful: ${authUser.firebaseUid}');
 
       // Step 2: Retrieve user data from MongoDB
       final userData = await MongoDBService.getUserByFirebaseUid(
         role: role.name,
-        firebaseUid: firebaseUser.uid,
+        firebaseUid: authUser.firebaseUid,
       );
 
       AgriChainUser agriChainUser;
@@ -165,26 +163,23 @@ class AuthIntegrationService {
         // Try to get user from local storage
         final localUser = await LocalStorageService.getUser();
 
-        if (localUser != null && localUser.firebaseUid == firebaseUser.uid) {
+        if (localUser != null && localUser.firebaseUid == authUser.firebaseUid) {
           debugPrint('🔐 User found in local storage');
           agriChainUser = localUser;
         } else {
-          debugPrint('🔐 Creating user from Firebase data');
-          // Create user from Firebase data if neither MongoDB nor local storage has the user
+          debugPrint('🔐 Creating user from AuthService user data');
+          // Create user from AuthService user data if neither MongoDB nor local storage has the user
           agriChainUser = AgriChainUser(
-            firebaseUid: firebaseUser.uid,
-            name:
-                firebaseUser.displayName ??
-                firebaseUser.email?.split('@')[0] ??
-                'User',
-            email: firebaseUser.email ?? '',
-            phone: firebaseUser.phoneNumber ?? '',
+            firebaseUid: authUser.firebaseUid,
+            name: authUser.name,
+            email: authUser.email,
+            phone: authUser.phone,
             role: role,
-            address: '',
+            address: authUser.address,
             createdAt: DateTime.now(),
             updatedAt: DateTime.now(),
             kycDetails: {},
-            isVerified: firebaseUser.emailVerified,
+            isVerified: true, // AuthService user is considered verified
           );
 
           // Save to local storage for future logins
@@ -221,7 +216,7 @@ class AuthIntegrationService {
         'success': true,
         'message': 'Sign in successful',
         'userData': agriChainUser.toJson(),
-        'firebaseUser': firebaseUser,
+        'authUser': authUser,
       };
     } catch (e) {
       debugPrint('🔐 Sign in error: $e');

@@ -76,16 +76,17 @@ class BlockchainAadhaarService {
   /// Test blockchain and backend connectivity
   static Future<BlockchainConnectivityStatus> testConnectivity() async {
     debugPrint('🔍 Testing blockchain and backend connectivity...');
-    
+
     bool backendConnected = false;
     bool blockchainConnected = false;
-    
+
     // Test backend connection
     try {
       final url = Uri.parse('$_backendUrl/api/health');
-      final response = await http.get(url, headers: _headers)
+      final response = await http
+          .get(url, headers: _headers)
           .timeout(_timeoutDuration);
-      
+
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         backendConnected = data['status'] == 'OK';
@@ -103,13 +104,11 @@ class BlockchainAadhaarService {
         'params': [],
         'id': 1,
       };
-      
-      final response = await http.post(
-        url,
-        headers: _headers,
-        body: jsonEncode(rpcCall),
-      ).timeout(_timeoutDuration);
-      
+
+      final response = await http
+          .post(url, headers: _headers, body: jsonEncode(rpcCall))
+          .timeout(_timeoutDuration);
+
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         blockchainConnected = data['result'] != null;
@@ -128,18 +127,34 @@ class BlockchainAadhaarService {
   /// Assign wallet address to user based on role
   static String assignWalletToUser(String userId, String userRole) {
     debugPrint('🏦 Assigning wallet to user: $userId, role: $userRole');
-    
-    final roleWallets = _mockWallets[userRole.toLowerCase()];
+
+    // Normalize role to lowercase
+    final normalizedRole = userRole.toLowerCase().trim();
+    debugPrint('🔄 Normalized role: $normalizedRole');
+
+    final roleWallets = _mockWallets[normalizedRole];
+    debugPrint(
+      '💼 Available wallets for $normalizedRole: ${roleWallets?.length ?? 0}',
+    );
+
     if (roleWallets == null || roleWallets.isEmpty) {
+      debugPrint('❌ No wallets found for role: $normalizedRole');
+      debugPrint('📋 Available roles: ${_mockWallets.keys.toList()}');
       throw BlockchainException('No wallets available for role: $userRole');
     }
 
     // Use user ID hash to deterministically assign wallet
     final userIdHash = sha256.convert(utf8.encode(userId)).toString();
-    final walletIndex = int.parse(userIdHash.substring(0, 8), radix: 16) % roleWallets.length;
+    final walletIndex =
+        int.parse(userIdHash.substring(0, 8), radix: 16) % roleWallets.length;
     final assignedWallet = roleWallets[walletIndex];
-    
+
+    debugPrint('🔑 User ID Hash: ${userIdHash.substring(0, 16)}...');
+    debugPrint(
+      '📊 Wallet Index: $walletIndex (of ${roleWallets.length} wallets)',
+    );
     debugPrint('💰 Assigned wallet: $assignedWallet');
+
     return assignedWallet;
   }
 
@@ -158,7 +173,7 @@ class BlockchainAadhaarService {
       if (productQrId != null) debugPrint('📱 QR: $productQrId');
 
       final connectivity = await testConnectivity();
-      
+
       if (connectivity.mockMode) {
         debugPrint('🎭 Using mock mode for verification');
         return _performMockVerification(
@@ -178,7 +193,6 @@ class BlockchainAadhaarService {
         orderId: orderId,
         productQrId: productQrId,
       );
-      
     } catch (e) {
       debugPrint('❌ Blockchain Aadhaar verification failed: $e');
       throw BlockchainException('Verification failed: $e');
@@ -197,7 +211,7 @@ class BlockchainAadhaarService {
       debugPrint('📱 QR: $productQrId');
 
       final connectivity = await testConnectivity();
-      
+
       if (connectivity.mockMode) {
         return _performMockOrderVerification(
           consumerId: consumerId,
@@ -215,11 +229,13 @@ class BlockchainAadhaarService {
         'verification_type': 'payment_release',
       };
 
-      final response = await http.post(
-        verificationUrl,
-        headers: _headers,
-        body: jsonEncode(requestBody),
-      ).timeout(_timeoutDuration);
+      final response = await http
+          .post(
+            verificationUrl,
+            headers: _headers,
+            body: jsonEncode(requestBody),
+          )
+          .timeout(_timeoutDuration);
 
       final responseData = jsonDecode(response.body);
 
@@ -235,7 +251,9 @@ class BlockchainAadhaarService {
           verified: true,
           orderId: responseData['order_id'],
           totalAmount: responseData['total_amount']?.toDouble() ?? 0.0,
-          paymentBreakdown: Map<String, double>.from(responseData['payment_breakdown'] ?? {}),
+          paymentBreakdown: Map<String, double>.from(
+            responseData['payment_breakdown'] ?? {},
+          ),
           transactionHash: paymentResult.transactionHash,
           blockNumber: paymentResult.blockNumber,
           message: 'Order verified and payment released successfully',
@@ -246,7 +264,6 @@ class BlockchainAadhaarService {
           message: responseData['error'] ?? 'Order verification failed',
         );
       }
-
     } catch (e) {
       debugPrint('❌ Consumer order verification failed: $e');
       return ConsumerOrderVerificationResult(
@@ -264,14 +281,15 @@ class BlockchainAadhaarService {
   }) async {
     try {
       debugPrint('⛓️ Triggering smart contract payment release...');
-      
+
       if (_useMockMode) {
         // Mock smart contract interaction
         await Future.delayed(const Duration(seconds: 2));
-        
+
         return SmartContractPaymentResult(
           success: true,
-          transactionHash: '0x${DateTime.now().millisecondsSinceEpoch.toRadixString(16)}',
+          transactionHash:
+              '0x${DateTime.now().millisecondsSinceEpoch.toRadixString(16)}',
           blockNumber: DateTime.now().millisecondsSinceEpoch ~/ 1000,
           gasUsed: 250000,
           message: 'Mock payment released successfully',
@@ -279,7 +297,9 @@ class BlockchainAadhaarService {
       }
 
       // Real smart contract interaction
-      final contractUrl = Uri.parse('$_backendUrl/api/blockchain/release-payment');
+      final contractUrl = Uri.parse(
+        '$_backendUrl/api/blockchain/release-payment',
+      );
       final requestBody = {
         'product_qr_id': productQrId,
         'consumer_wallet': consumerWallet,
@@ -287,11 +307,9 @@ class BlockchainAadhaarService {
         'contract_function': 'releasePayment',
       };
 
-      final response = await http.post(
-        contractUrl,
-        headers: _headers,
-        body: jsonEncode(requestBody),
-      ).timeout(_timeoutDuration);
+      final response = await http
+          .post(contractUrl, headers: _headers, body: jsonEncode(requestBody))
+          .timeout(_timeoutDuration);
 
       final responseData = jsonDecode(response.body);
 
@@ -304,9 +322,10 @@ class BlockchainAadhaarService {
           message: responseData['message'] ?? 'Payment released successfully',
         );
       } else {
-        throw BlockchainException(responseData['error'] ?? 'Smart contract execution failed');
+        throw BlockchainException(
+          responseData['error'] ?? 'Smart contract execution failed',
+        );
       }
-
     } catch (e) {
       debugPrint('❌ Smart contract payment failed: $e');
       throw BlockchainException('Payment release failed: $e');
@@ -328,12 +347,13 @@ class BlockchainAadhaarService {
     }
 
     final walletAddress = assignWalletToUser(userId, userRole);
-    
+
     return BlockchainAadhaarResponse(
       success: true,
       userId: userId,
       walletAddress: walletAddress,
-      verificationHash: '0x${DateTime.now().millisecondsSinceEpoch.toRadixString(16)}',
+      verificationHash:
+          '0x${DateTime.now().millisecondsSinceEpoch.toRadixString(16)}',
       kycDetails: {
         'name': 'Mock User',
         'aadhaar_hash': sha256.convert(utf8.encode(aadhaarNumber)).toString(),
@@ -364,9 +384,9 @@ class BlockchainAadhaarService {
       'product_qr_id': productQrId,
       'total_amount': 1250.0,
       'payment_breakdown': {
-        'farmer': 750.0,    // Base price
+        'farmer': 750.0, // Base price
         'distributor': 250.0, // Transport cost
-        'retailer': 250.0,   // Retail margin
+        'retailer': 250.0, // Retail margin
       },
     };
 
@@ -374,8 +394,11 @@ class BlockchainAadhaarService {
       verified: true,
       orderId: mockOrder['order_id'] as String,
       totalAmount: mockOrder['total_amount'] as double,
-      paymentBreakdown: Map<String, double>.from(mockOrder['payment_breakdown'] as Map),
-      transactionHash: '0x${DateTime.now().millisecondsSinceEpoch.toRadixString(16)}',
+      paymentBreakdown: Map<String, double>.from(
+        mockOrder['payment_breakdown'] as Map,
+      ),
+      transactionHash:
+          '0x${DateTime.now().millisecondsSinceEpoch.toRadixString(16)}',
       blockNumber: DateTime.now().millisecondsSinceEpoch ~/ 1000,
       message: 'Mock order verified and payment released',
     );
@@ -399,11 +422,9 @@ class BlockchainAadhaarService {
       'product_qr_id': productQrId,
     };
 
-    final response = await http.post(
-      url,
-      headers: _headers,
-      body: jsonEncode(requestBody),
-    ).timeout(_timeoutDuration);
+    final response = await http
+        .post(url, headers: _headers, body: jsonEncode(requestBody))
+        .timeout(_timeoutDuration);
 
     final responseData = jsonDecode(response.body);
 
@@ -420,9 +441,12 @@ class BlockchainAadhaarService {
   }
 
   /// Get user's blockchain wallet info
-  static Future<WalletInfo> getUserWalletInfo(String userId, String userRole) async {
+  static Future<WalletInfo> getUserWalletInfo(
+    String userId,
+    String userRole,
+  ) async {
     final walletAddress = assignWalletToUser(userId, userRole);
-    
+
     if (_useMockMode) {
       return WalletInfo(
         address: walletAddress,
@@ -435,11 +459,13 @@ class BlockchainAadhaarService {
     // Real wallet info retrieval
     try {
       final url = Uri.parse('$_backendUrl/api/blockchain/wallet-info');
-      final response = await http.post(
-        url,
-        headers: _headers,
-        body: jsonEncode({'wallet_address': walletAddress}),
-      ).timeout(_timeoutDuration);
+      final response = await http
+          .post(
+            url,
+            headers: _headers,
+            body: jsonEncode({'wallet_address': walletAddress}),
+          )
+          .timeout(_timeoutDuration);
 
       final data = jsonDecode(response.body);
       return WalletInfo.fromJson(data);
@@ -491,7 +517,9 @@ class BlockchainAadhaarResponse {
       walletAddress: json['wallet_address'] ?? '',
       verificationHash: json['verification_hash'] ?? '',
       kycDetails: Map<String, dynamic>.from(json['kyc_details'] ?? {}),
-      blockchainStatus: BlockchainStatus.fromJson(json['blockchain_status'] ?? {}),
+      blockchainStatus: BlockchainStatus.fromJson(
+        json['blockchain_status'] ?? {},
+      ),
       message: json['message'] ?? '',
     );
   }
