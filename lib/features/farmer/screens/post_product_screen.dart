@@ -4,6 +4,8 @@ import 'dart:io';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/services/smart_contract_service.dart';
 import '../../../core/services/auth_service.dart';
+import '../../../core/services/product_storage_service.dart';
+import '../../../core/models/blockchain_product.dart';
 
 class PostProductScreen extends StatefulWidget {
   const PostProductScreen({super.key});
@@ -712,6 +714,56 @@ class _PostProductScreenState extends State<PostProductScreen> {
         Navigator.pop(context); // Close loading
 
         if (result.success) {
+          // Save product to local storage
+          try {
+            final blockchainProduct = BlockchainProduct(
+              productId: productId,
+              name: _nameController.text,
+              category: _selectedCategory,
+              quantity: double.parse(_quantityController.text),
+              unit: _selectedUnit,
+              pricePerUnit: double.parse(_priceController.text),
+              description:
+                  '${_nameController.text} - Fresh ${_selectedCategory} posted by farmer',
+              farmerName: userInfo['name'] ?? 'Unknown Farmer',
+              farmerWallet: userWallet,
+              txHash: result.transactionHash,
+              postedAt: DateTime.now(),
+              status: 'active',
+              qualityCertifications: _getSelectedQualityMetrics,
+            );
+
+            await ProductStorageService.savePostedProduct(blockchainProduct);
+            print('✅ Product saved locally: $productId');
+
+            // Save product posting transaction
+            final postTransaction = BlockchainTransaction(
+              txHash: result.transactionHash,
+              type: 'product_post',
+              productId: productId,
+              fromWallet: userWallet,
+              toWallet: null,
+              amount: 0.0, // No money involved in posting
+              timestamp: DateTime.now(),
+              status: 'confirmed',
+              transactionData: {
+                'productName': blockchainProduct.name,
+                'description':
+                    'Product posted to blockchain: ${blockchainProduct.name}',
+                'category': blockchainProduct.category,
+                'quantity': blockchainProduct.quantity,
+                'unit': blockchainProduct.unit,
+                'pricePerUnit': blockchainProduct.pricePerUnit,
+              },
+            );
+
+            await ProductStorageService.saveTransaction(postTransaction);
+            print('✅ Transaction saved: Product posted');
+          } catch (e) {
+            print('⚠️ Failed to save product locally: $e');
+            // Continue with success dialog even if local storage fails
+          }
+
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
