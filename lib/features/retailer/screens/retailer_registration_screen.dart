@@ -3,6 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
+<<<<<<< HEAD
+=======
+import 'package:easy_localization/easy_localization.dart';
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
 import 'dart:io';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
@@ -112,7 +116,11 @@ class _RetailerRegistrationScreenState
       appBar: AppBar(
         backgroundColor: AppColors.retailerPrimary,
         foregroundColor: Colors.white,
+<<<<<<< HEAD
         title: const Text('Retailer Registration'),
+=======
+        title: Text('retailer.registration'.tr()),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
         elevation: 0,
       ),
       body: Column(

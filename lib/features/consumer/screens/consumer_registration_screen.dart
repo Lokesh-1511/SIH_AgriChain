@@ -2,6 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+<<<<<<< HEAD
+=======
+import 'package:easy_localization/easy_localization.dart';
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
 import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/widgets/simple_aadhaar_widget.dart';
@@ -105,7 +109,11 @@ class _ConsumerRegistrationScreenState
       appBar: AppBar(
         backgroundColor: AppColors.consumerPrimary,
         foregroundColor: Colors.white,
+<<<<<<< HEAD
         title: const Text('Consumer Registration'),
+=======
+        title: Text('consumer.registration'.tr()),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
         elevation: 0,
       ),
       body: Column(

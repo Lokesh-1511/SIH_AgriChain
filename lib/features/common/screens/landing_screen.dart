@@ -277,7 +277,11 @@ class _LandingScreenState extends State<LandingScreen>
     // Calculate font sizes based on text length
     double titleFontSize = _calculateTitleFontSize(title);
     double subtitleFontSize = _calculateSubtitleFontSize(subtitle);
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
     return GestureDetector(
       onTap: onTap,
       child: Card(
@@ -335,16 +339,28 @@ class _LandingScreenState extends State<LandingScreen>
 
   // Calculate dynamic font size for title based on text length
   double _calculateTitleFontSize(String text) {
+<<<<<<< HEAD
     if (text.length > 15) return 12.0;  // Very long text
     if (text.length > 10) return 14.0;  // Long text
     return 16.0;                        // Normal text
+=======
+    if (text.length > 15) return 12.0; // Very long text
+    if (text.length > 10) return 14.0; // Long text
+    return 16.0; // Normal text
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
   }
 
   // Calculate dynamic font size for subtitle based on text length
   double _calculateSubtitleFontSize(String text) {
+<<<<<<< HEAD
     if (text.length > 30) return 10.0;  // Very long text
     if (text.length > 20) return 11.0;  // Long text
     return 12.0;                        // Normal text
+=======
+    if (text.length > 30) return 10.0; // Very long text
+    if (text.length > 20) return 11.0; // Long text
+    return 12.0; // Normal text
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
   }
 
   Widget _buildFooter() {
@@ -353,6 +369,7 @@ class _LandingScreenState extends State<LandingScreen>
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+<<<<<<< HEAD
             TextButton(
               onPressed: () {
                 Navigator.push(
@@ -385,6 +402,48 @@ class _LandingScreenState extends State<LandingScreen>
                 );
               },
               child: const Text('Privacy Policy'),
+=======
+            Flexible(
+              child: TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AboutScreen(),
+                    ),
+                  );
+                },
+                child: Text('common.about'.tr()),
+              ),
+            ),
+            const Text(' • '),
+            Flexible(
+              child: TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ContactScreen(),
+                    ),
+                  );
+                },
+                child: Text('common.contact'.tr()),
+              ),
+            ),
+            const Text(' • '),
+            Flexible(
+              child: TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PrivacyPolicyScreen(),
+                    ),
+                  );
+                },
+                child: Text('common.privacy_policy'.tr()),
+              ),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
             ),
           ],
         ),
@@ -392,7 +451,11 @@ class _LandingScreenState extends State<LandingScreen>
         const SizedBox(height: 16),
 
         Text(
+<<<<<<< HEAD
           '© 2025 AGRICHAIN. All rights reserved.',
+=======
+          'common.copyright'.tr(),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
           style: Theme.of(
             context,
           ).textTheme.bodySmall?.copyWith(color: AppColors.textHint),

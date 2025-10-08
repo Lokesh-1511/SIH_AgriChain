@@ -3,7 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'core/theme/app_theme.dart';
 import 'core/services/mongodb_service.dart';
+<<<<<<< HEAD
 import 'core/services/firebase_service.dart';
+=======
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
 import 'features/auth/providers/auth_provider.dart';
 import 'features/common/providers/language_provider.dart';
 import 'features/onboarding/screens/splash_screen.dart';
@@ -51,6 +54,10 @@ class AgriChainApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => LanguageProvider()),
+<<<<<<< HEAD
+=======
+        ChangeNotifierProvider(create: (_) => BatchProvider()),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
       ],
       child: MaterialApp(
         title: 'AGRICHAIN',

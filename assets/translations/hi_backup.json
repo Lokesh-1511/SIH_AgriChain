@@ -28,11 +28,7 @@
     "phone": "फोन नंबर",
     "address": "पता",
     "submit": "जमा करें",
-<<<<<<< HEAD
-    "delete": "हटाएं",
-=======
     "delete": "मिटाएं",
->>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
     "confirm": "पुष्टि करें",
     "yes": "हां",
     "no": "नहीं",
@@ -40,18 +36,11 @@
     "close": "बंद करें",
     "back": "वापस",
     "search": "खोजें",
-<<<<<<< HEAD
-    "filter": "फ़िल्टर",
-=======
     "filter": "फिल्टर",
->>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
     "sort": "क्रमबद्ध करें",
     "refresh": "ताज़ा करें",
     "share": "साझा करें",
     "copy": "कॉपी करें",
-<<<<<<< HEAD
-    "copied": "क्लिपबोर्ड में कॉपी किया गया"
-=======
     "copied": "क्लिपबोर्ड में कॉपी किया गया",
     "about": "के बारे में",
     "contact": "संपर्क",
@@ -69,7 +58,6 @@
     "new_product_upload": "नया उत्पाद अपलोड सूचना",
     "order_received": "ऑर्डर प्राप्त सूचना",
     "payment_completed": "भुगतान पूर्ण सूचना"
->>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
   },
   "roles": {
     "farmer": "किसान",
@@ -104,13 +92,8 @@
     "enter_password": "अपना पासवर्ड दर्ज करें",
     "confirm_password": "पासवर्ड की पुष्टि करें",
     "terms_agree": "मैं नियम और शर्तों और गोपनीयता नीति से सहमत हूं",
-<<<<<<< HEAD
-    "invalid_email": "कृपया वैध ईमेल दर्ज करें",
-    "password_too_short": "पासवर्ड कम से कम 6 वर्ण का होना चाहिए",
-=======
     "invalid_email": "कृपया एक वैध ईमेल दर्ज करें",
     "password_too_short": "पासवर्ड कम से कम 6 अक्षर का होना चाहिए",
->>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
     "passwords_dont_match": "पासवर्ड मेल नहीं खाते",
     "login_failed": "लॉगिन असफल",
     "registration_failed": "पंजीकरण असफल",
@@ -118,14 +101,10 @@
     "password_required": "पासवर्ड आवश्यक है",
     "name_required": "नाम आवश्यक है",
     "phone_required": "फोन नंबर आवश्यक है",
-<<<<<<< HEAD
-    "address_required": "पता आवश्यक है"
-=======
     "address_required": "पता आवश्यक है",
     "demo_login": "डेमो लॉगिन",
     "demo_email": "ईमेल",
     "demo_password": "पासवर्ड"
->>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
   },
   "farmer": {
     "title": "किसान डैशबोर्ड",
@@ -140,11 +119,7 @@
     "land_ownership": "भूमि स्वामित्व प्रकार",
     "owned": "स्वामित्व",
     "lease": "पट्टा/किराया",
-<<<<<<< HEAD
-    "farming_details": "खेती विवरण",
-=======
     "farming_details": "खेती का विवरण",
->>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
     "agri_score": "कृषि स्कोर",
     "farmer_id": "किसान आईडी",
     "my_products": "मेरे उत्पाद",
@@ -162,146 +137,6 @@
     "pending_orders": "लंबित ऑर्डर",
     "completed_orders": "पूर्ण ऑर्डर",
     "cancelled_orders": "रद्द ऑर्डर",
-<<<<<<< HEAD
-    "earnings": "कमाई",
-    "total_earnings": "कुल कमाई",
-    "this_month": "इस महीने",
-    "today": "आज"
-  },
-  "distributor": {
-    "title": "वितरक डैशबोर्ड",
-    "registration": "वितरक पंजीकरण",
-    "company_name": "कंपनी का नाम",
-    "license_number": "लाइसेंस नंबर",
-    "vehicle_info": "वाहन की जानकारी",
-    "vehicle_type": "वाहन का प्रकार",
-    "vehicle_number": "वाहन नंबर",
-    "capacity": "क्षमता",
-    "distributor_id": "वितरक आईडी",
-    "available_products": "उपलब्ध उत्पाद",
-    "my_deliveries": "मेरी डिलीवरी",
-    "pending_deliveries": "लंबित डिलीवरी",
-    "in_transit": "रास्ते में",
-    "delivered": "डिलीवर किया गया",
-    "route_optimization": "मार्ग अनुकूलन",
-    "delivery_history": "डिलीवरी इतिहास",
-    "revenue": "राजस्व",
-    "delivery_fee": "डिलीवरी शुल्क",
-    "distance": "दूरी",
-    "estimated_time": "अनुमानित समय"
-  },
-  "retailer": {
-    "title": "खुदरा विक्रेता डैशबोर्ड",
-    "registration": "खुदरा विक्रेता पंजीकरण",
-    "store_name": "स्टोर का नाम",
-    "store_type": "स्टोर का प्रकार",
-    "gst_number": "जीएसटी नंबर",
-    "retailer_id": "खुदरा विक्रेता आईडी",
-    "inventory": "इन्वेंटरी",
-    "manage_inventory": "इन्वेंटरी प्रबंधित करें",
-    "stock_level": "स्टॉक स्तर",
-    "reorder_level": "पुनः ऑर्डर स्तर",
-    "supplier": "आपूर्तिकर्ता",
-    "purchase_orders": "खरीद ऑर्डर",
-    "sales": "बिक्री",
-    "daily_sales": "दैनिक बिक्री",
-    "monthly_sales": "मासिक बिक्री",
-    "best_selling": "सबसे अधिक बिकने वाले उत्पाद",
-    "low_stock": "कम स्टॉक अलर्ट",
-    "out_of_stock": "स्टॉक खत्म",
-    "customers": "ग्राहक",
-    "loyalty_program": "लॉयल्टी प्रोग्राम"
-  },
-  "consumer": {
-    "title": "उपभोक्ता डैशबोर्ड",
-    "registration": "उपभोक्ता पंजीकरण",
-    "consumer_id": "उपभोक्ता आईडी",
-    "browse_products": "उत्पाद ब्राउज़ करें",
-    "fresh_produce": "ताजी उपज",
-    "vegetables": "सब्जियां",
-    "fruits": "फल",
-    "grains": "अनाज",
-    "dairy": "डेयरी",
-    "organic": "जैविक",
-    "local_farmers": "स्थानीय किसान",
-    "my_cart": "मेरी कार्ट",
-    "add_to_cart": "कार्ट में जोड़ें",
-    "remove_from_cart": "कार्ट से हटाएं",
-    "checkout": "चेकआउट",
-    "my_orders": "मेरे ऑर्डर",
-    "order_history": "ऑर्डर इतिहास",
-    "track_order": "ऑर्डर ट्रैक करें",
-    "delivery_address": "डिलीवरी का पता",
-    "payment_method": "भुगतान विधि",
-    "cash_on_delivery": "डिलीवरी पर भुगतान",
-    "online_payment": "ऑनलाइन भुगतान",
-    "order_total": "ऑर्डर कुल",
-    "delivery_charges": "डिलीवरी शुल्क",
-    "savings": "बचत",
-    "wishlist": "इच्छा सूची",
-    "reviews": "समीक्षाएं",
-    "rate_product": "उत्पाद को रेट करें"
-  },
-  "profile": {
-    "title": "प्रोफ़ाइल",
-    "edit_profile": "प्रोफ़ाइल संपादित करें",
-    "personal_details": "व्यक्तिगत विवरण",
-    "contact_info": "संपर्क जानकारी",
-    "role_specific_info": "भूमिका विशिष्ट जानकारी",
-    "change_password": "पासवर्ड बदलें",
-    "current_password": "वर्तमान पासवर्ड",
-    "new_password": "नया पासवर्ड",
-    "confirm_new_password": "नए पासवर्ड की पुष्टि करें",
-    "update_profile": "प्रोफ़ाइल अपडेट करें",
-    "profile_updated": "प्रोफ़ाइल सफलतापूर्वक अपडेट किया गया",
-    "password_changed": "पासवर्ड सफलतापूर्वक बदला गया"
-  },
-  "aadhaar": {
-    "verification": "आधार सत्यापन",
-    "enter_aadhaar": "आधार नंबर दर्ज करें",
-    "aadhaar_number": "आधार नंबर",
-    "generate_otp": "ओटीपी जनरेट करें",
-    "enter_otp": "ओटीपी दर्ज करें",
-    "verify_otp": "ओटीपी सत्यापित करें",
-    "otp_sent": "ओटीपी सफलतापूर्वक भेजा गया",
-    "otp_verified": "आधार सफलतापूर्वक सत्यापित",
-    "invalid_aadhaar": "अमान्य आधार नंबर",
-    "invalid_otp": "अमान्य ओटीपी",
-    "otp_expired": "ओटीपी की समय सीमा समाप्त, कृपया नया जनरेट करें",
-    "verification_successful": "सत्यापन सफल",
-    "verification_failed": "सत्यापन असफल"
-  },
-  "notifications": {
-    "title": "सूचनाएं",
-    "no_notifications": "कोई सूचना नहीं",
-    "mark_read": "पढ़ा हुआ मार्क करें",
-    "mark_unread": "अपठित मार्क करें",
-    "delete_notification": "सूचना हटाएं",
-    "new_order": "नया ऑर्डर प्राप्त",
-    "order_confirmed": "ऑर्डर पुष्ट",
-    "order_shipped": "ऑर्डर भेजा गया",
-    "order_delivered": "ऑर्डर डिलीवर किया गया",
-    "payment_received": "भुगतान प्राप्त",
-    "low_stock": "कम स्टॉक अलर्ट",
-    "price_update": "मूल्य अपडेट"
-  },
-  "errors": {
-    "network_error": "नेटवर्क त्रुटि। कृपया अपना कनेक्शन जांचें।",
-    "server_error": "सर्वर त्रुटि। कृपया बाद में पुनः प्रयास करें।",
-    "invalid_input": "अमान्य इनपुट",
-    "field_required": "यह फ़ील्ड आवश्यक है",
-    "something_went_wrong": "कुछ गलत हुआ",
-    "try_again": "पुनः प्रयास करें",
-    "contact_support": "सहायता से संपर्क करें"
-  },
-  "success": {
-    "operation_successful": "ऑपरेशन सफलतापूर्वक पूर्ण",
-    "data_saved": "डेटा सफलतापूर्वक सहेजा गया",
-    "order_placed": "ऑर्डर सफलतापूर्वक दिया गया",
-    "payment_successful": "भुगतान सफल",
-    "registration_successful": "पंजीकरण सफल",
-    "login_successful": "लॉगिन सफल"
-=======
     "earnings": "आय",
     "total_earnings": "कुल आय",
     "this_month": "इस महीने",
@@ -330,6 +165,5 @@
     "valid_email": "कृपया एक वैध ईमेल दर्ज करें",
     "enter_phone": "कृपया अपना फोन नंबर दर्ज करें",
     "valid_phone": "कृपया एक वैध फोन नंबर दर्ज करें"
->>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
   }
 }

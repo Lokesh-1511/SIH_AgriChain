@@ -262,6 +262,10 @@ class _ChatScreenState extends State<ChatScreen> {
           Expanded(
             child: TextField(
               controller: _messageController,
+<<<<<<< HEAD
+=======
+              style: const TextStyle(color: Colors.black),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
               decoration: InputDecoration(
                 hintText: 'Ask me anything about farming...',
                 hintStyle: TextStyle(color: AppColors.textSecondary),

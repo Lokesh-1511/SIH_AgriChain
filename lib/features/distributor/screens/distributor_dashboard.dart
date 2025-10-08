@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+<<<<<<< HEAD
 import '../../../core/theme/app_colors.dart';
+=======
+import 'package:easy_localization/easy_localization.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/services/user_service.dart';
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
 import '../../../features/auth/providers/auth_provider.dart';
 import '../../common/screens/landing_screen.dart';
 import '../../common/screens/profile_screen.dart';
@@ -8,7 +14,10 @@ import '../../common/screens/settings_screen.dart';
 import '../../common/screens/notifications_screen.dart';
 import '../widgets/distributor_stats_card.dart';
 import '../widgets/batch_request_card.dart';
+<<<<<<< HEAD
 import '../../common/widgets/floating_chat_button.dart';
+=======
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
 import 'available_batches_screen.dart';
 import 'cost_prediction_screen.dart';
 import 'inventory_management_screen.dart';
@@ -30,6 +39,7 @@ class _DistributorDashboardState extends State<DistributorDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
+<<<<<<< HEAD
       body: Stack(
         children: [
           IndexedStack(
@@ -42,6 +52,15 @@ class _DistributorDashboardState extends State<DistributorDashboard> {
             ],
           ),
           const FloatingChatButton(),
+=======
+      body: IndexedStack(
+        index: _currentIndex,
+        children: [
+          DistributorHomeTab(),
+          DeliveryTrackingScreen(),
+          InventoryManagementScreen(),
+          DistributorAnalyticsScreen(),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -52,6 +71,7 @@ class _DistributorDashboardState extends State<DistributorDashboard> {
         unselectedItemColor: AppColors.textSecondary,
         backgroundColor: Colors.white,
         elevation: 8,
+<<<<<<< HEAD
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(
@@ -65,6 +85,24 @@ class _DistributorDashboardState extends State<DistributorDashboard> {
           BottomNavigationBarItem(
             icon: Icon(Icons.analytics),
             label: 'Analytics',
+=======
+        items: [
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.home),
+            label: 'common.home'.tr(),
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.local_shipping),
+            label: 'distributor.delivery'.tr(),
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.inventory),
+            label: 'common.inventory'.tr(),
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.analytics),
+            label: 'distributor.analytics'.tr(),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
           ),
         ],
       ),
@@ -81,13 +119,18 @@ class _DistributorDashboardState extends State<DistributorDashboard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
+<<<<<<< HEAD
             'Welcome back!',
+=======
+            'common.welcome_back'.tr(),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
             style: TextStyle(
               fontSize: 14,
               color: Colors.white.withOpacity(0.9),
               fontWeight: FontWeight.normal,
             ),
           ),
+<<<<<<< HEAD
           const Text(
             'GreenLogistics Co.',
             style: TextStyle(
@@ -95,6 +138,37 @@ class _DistributorDashboardState extends State<DistributorDashboard> {
               color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
+=======
+          Consumer<AuthProvider>(
+            builder: (context, authProvider, child) {
+              return FutureBuilder<Map<String, dynamic>?>(
+                future: authProvider.currentUser?.email != null
+                    ? UserService.getUserByEmail(
+                        authProvider.currentUser!.email,
+                      )
+                    : null,
+                builder: (context, snapshot) {
+                  String companyName = 'AgriChain User';
+
+                  if (snapshot.hasData && snapshot.data != null) {
+                    companyName =
+                        snapshot.data!['companyName'] ??
+                        snapshot.data!['name'] ??
+                        'AgriChain User';
+                  }
+
+                  return Text(
+                    companyName,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  );
+                },
+              );
+            },
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
           ),
         ],
       ),
@@ -109,6 +183,7 @@ class _DistributorDashboardState extends State<DistributorDashboard> {
         PopupMenuButton(
           icon: const Icon(Icons.more_vert),
           itemBuilder: (context) => [
+<<<<<<< HEAD
             const PopupMenuItem(
               value: 'profile',
               child: Row(
@@ -136,6 +211,35 @@ class _DistributorDashboardState extends State<DistributorDashboard> {
                   Icon(Icons.logout, size: 20),
                   SizedBox(width: 8),
                   Text('Logout'),
+=======
+            PopupMenuItem(
+              value: 'profile',
+              child: Row(
+                children: [
+                  const Icon(Icons.person, size: 20),
+                  const SizedBox(width: 8),
+                  Text('common.profile'.tr()),
+                ],
+              ),
+            ),
+            PopupMenuItem(
+              value: 'settings',
+              child: Row(
+                children: [
+                  const Icon(Icons.settings, size: 20),
+                  const SizedBox(width: 8),
+                  Text('common.settings'.tr()),
+                ],
+              ),
+            ),
+            PopupMenuItem(
+              value: 'logout',
+              child: Row(
+                children: [
+                  const Icon(Icons.logout, size: 20),
+                  const SizedBox(width: 8),
+                  Text('common.logout'.tr()),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
                 ],
               ),
             ),
@@ -195,7 +299,11 @@ class DistributorHomeTab extends StatelessWidget {
             crossAxisCount: 2,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
+<<<<<<< HEAD
             childAspectRatio: 1.3,
+=======
+            childAspectRatio: 1.1,
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
             children: [
               DistributorStatsCard(
                 title: 'Active Orders',
@@ -240,6 +348,7 @@ class DistributorHomeTab extends StatelessWidget {
 
           const SizedBox(height: 16),
 
+<<<<<<< HEAD
           GridView.count(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -296,6 +405,72 @@ class DistributorHomeTab extends StatelessWidget {
                 ),
               ),
             ],
+=======
+          LayoutBuilder(
+            builder: (context, constraints) {
+              // Calculate dynamic crossAxisCount based on screen width
+              int crossAxisCount = constraints.maxWidth > 600 ? 4 : 2;
+              double childAspectRatio = constraints.maxWidth > 600 ? 1.2 : 1.1;
+
+              return GridView.count(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount: crossAxisCount,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: childAspectRatio,
+                children: [
+                  _buildQuickActionCard(
+                    context,
+                    'Available Batches',
+                    Icons.agriculture,
+                    AppColors.distributorPrimary,
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const AvailableBatchesScreen(),
+                      ),
+                    ),
+                  ),
+                  _buildQuickActionCard(
+                    context,
+                    'Cost Prediction',
+                    Icons.analytics,
+                    AppColors.info,
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const CostPredictionScreen(),
+                      ),
+                    ),
+                  ),
+                  _buildQuickActionCard(
+                    context,
+                    'Vehicle Management',
+                    Icons.local_shipping,
+                    AppColors.warning,
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const VehicleManagementScreen(),
+                      ),
+                    ),
+                  ),
+                  _buildQuickActionCard(
+                    context,
+                    'Route Optimizer',
+                    Icons.route,
+                    AppColors.success,
+                    () => ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Route Optimizer screen coming soon!'),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
           ),
 
           const SizedBox(height: 24),
@@ -359,6 +534,7 @@ class DistributorHomeTab extends StatelessWidget {
               child: Icon(icon, color: color, size: 28),
             ),
             const SizedBox(height: 12),
+<<<<<<< HEAD
             Text(
               title,
               style: TextStyle(
@@ -369,6 +545,20 @@ class DistributorHomeTab extends StatelessWidget {
               textAlign: TextAlign.center,
               maxLines: 2, // Allow 2 lines for longer titles
               overflow: TextOverflow.ellipsis,
+=======
+            Flexible(
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                  fontSize: 13,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
             ),
           ],
         ),
