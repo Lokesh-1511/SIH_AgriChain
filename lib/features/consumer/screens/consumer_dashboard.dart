@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../common/screens/landing_screen.dart';
@@ -8,7 +9,6 @@ import '../../common/screens/settings_screen.dart';
 import '../../common/screens/notifications_screen.dart';
 import '../widgets/product_card.dart';
 import '../widgets/category_chip.dart';
-import '../../common/widgets/floating_chat_button.dart';
 import 'product_details_screen.dart';
 import 'shopping_cart_screen.dart';
 import 'order_tracking_screen.dart';
@@ -32,22 +32,17 @@ class _ConsumerDashboardState extends State<ConsumerDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: Stack(
+      body: IndexedStack(
+        index: _currentIndex,
         children: [
-          IndexedStack(
-            index: _currentIndex,
-            children: [
-              ConsumerHomeTab(
-                selectedCategory: _selectedCategory,
-                onCategoryChanged: (category) =>
-                    setState(() => _selectedCategory = category),
-              ),
-              SearchScreen(),
-              ShoppingCartScreen(),
-              OrderTrackingScreen(),
-            ],
+          ConsumerHomeTab(
+            selectedCategory: _selectedCategory,
+            onCategoryChanged: (category) =>
+                setState(() => _selectedCategory = category),
           ),
-          const FloatingChatButton(),
+          SearchScreen(),
+          ShoppingCartScreen(),
+          OrderTrackingScreen(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -59,10 +54,13 @@ class _ConsumerDashboardState extends State<ConsumerDashboard> {
         backgroundColor: Colors.white,
         elevation: 8,
         items: [
-          const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.home),
+            label: 'common.home'.tr(),
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.search),
+            label: 'common.search'.tr(),
           ),
           BottomNavigationBarItem(
             icon: Stack(
@@ -93,11 +91,11 @@ class _ConsumerDashboardState extends State<ConsumerDashboard> {
                   ),
               ],
             ),
-            label: 'Cart',
+            label: 'consumer.my_cart'.tr(),
           ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.local_shipping),
-            label: 'Orders',
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.local_shipping),
+            label: 'consumer.my_orders'.tr(),
           ),
         ],
       ),

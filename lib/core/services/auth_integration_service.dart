@@ -198,6 +198,25 @@ class AuthIntegrationService {
         await LocalStorageService.saveUser(agriChainUser);
       }
 
+      // Step 3: Validate if user's role matches the selected role
+      if (agriChainUser.role != role) {
+        debugPrint(
+          '🔐 Role mismatch: User role is ${agriChainUser.role.name}, but trying to login as ${role.name}',
+        );
+
+        // Sign out from Firebase since role doesn't match
+        await FirebaseAuthService.signOut();
+
+        return {
+          'success': false,
+          'message':
+              'This account is registered as ${agriChainUser.role.name.toUpperCase()}. Please use the ${agriChainUser.role.name.toUpperCase()} login instead.',
+          'step': 'role_validation',
+          'userActualRole': agriChainUser.role.name,
+          'attemptedRole': role.name,
+        };
+      }
+
       return {
         'success': true,
         'message': 'Sign in successful',

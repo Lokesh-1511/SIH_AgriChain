@@ -96,14 +96,17 @@ class BatchRequestCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          Row(
-            children: [
-              _buildInfoChip('Qty', batch['quantity']),
-              const SizedBox(width: 8),
-              _buildInfoChip('Price', '₹${batch['price']}/kg'),
-              const SizedBox(width: 8),
-              _buildInfoChip('Total', '₹${batch['totalValue']}'),
-            ],
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildInfoChip('Qty', batch['quantity']),
+                const SizedBox(width: 8),
+                _buildInfoChip('Price', '₹${batch['price']}/kg'),
+                const SizedBox(width: 8),
+                _buildInfoChip('Total', '₹${batch['totalValue']}'),
+              ],
+            ),
           ),
           const SizedBox(height: 12),
           Row(
@@ -140,18 +143,23 @@ class BatchRequestCard extends StatelessWidget {
                 children: [
                   Icon(Icons.star, color: AppColors.info, size: 16),
                   const SizedBox(width: 8),
-                  Text(
-                    'Quality Score: ${batch['qualityScore']}/100',
-                    style: TextStyle(
-                      color: AppColors.info,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12,
+                  Expanded(
+                    child: Text(
+                      'Quality Score: ${batch['qualityScore']}/100',
+                      style: TextStyle(
+                        color: AppColors.info,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
-                  const Spacer(),
-                  Text(
-                    'AI Predicted Shelf Life: ${batch['shelfLife']} days',
-                    style: TextStyle(color: AppColors.info, fontSize: 11),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      'AI Predicted Shelf Life: ${batch['shelfLife']} days',
+                      style: TextStyle(color: AppColors.info, fontSize: 11),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ],
               ),

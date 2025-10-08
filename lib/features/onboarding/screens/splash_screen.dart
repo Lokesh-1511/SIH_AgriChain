@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/utils/database_seeder.dart';
 import '../../../features/auth/providers/auth_provider.dart';
 import '../../common/screens/landing_screen.dart';
 import '../../farmer/screens/farmer_dashboard.dart';
@@ -53,6 +54,9 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _navigateToNextScreen() async {
+    // Seed the database with mock data for testing
+    await DatabaseSeeder.seedDatabase();
+
     await Future.delayed(const Duration(seconds: 3));
 
     if (!mounted) return;

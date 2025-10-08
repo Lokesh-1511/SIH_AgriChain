@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'core/theme/app_theme.dart';
 import 'core/services/mongodb_service.dart';
+import 'core/providers/batch_provider.dart';
 import 'features/auth/providers/auth_provider.dart';
 import 'features/common/providers/language_provider.dart';
 import 'features/onboarding/screens/splash_screen.dart';
@@ -11,7 +12,7 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize Easy Localization
   await EasyLocalization.ensureInitialized();
 
@@ -52,6 +53,7 @@ class AgriChainApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => LanguageProvider()),
+        ChangeNotifierProvider(create: (_) => BatchProvider()),
       ],
       child: MaterialApp(
         title: 'AGRICHAIN',

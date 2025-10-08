@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'dart:io';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
@@ -112,7 +113,7 @@ class _RetailerRegistrationScreenState
       appBar: AppBar(
         backgroundColor: AppColors.retailerPrimary,
         foregroundColor: Colors.white,
-        title: const Text('Retailer Registration'),
+        title: Text('retailer.registration'.tr()),
         elevation: 0,
       ),
       body: Column(

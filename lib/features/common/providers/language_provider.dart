@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/constants/app_constants.dart';
 
 class LanguageProvider extends ChangeNotifier {
@@ -19,16 +20,19 @@ class LanguageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> changeLanguage(String languageCode, [BuildContext? context]) async {
+  Future<void> changeLanguage(
+    String languageCode, [
+    BuildContext? context,
+  ]) async {
     _prefs ??= await SharedPreferences.getInstance();
     await _prefs!.setString(AppConstants.keyLanguage, languageCode);
     _currentLocale = _getLocaleFromCode(languageCode);
-    
+
     // Update easy_localization locale if context is provided
     if (context != null) {
       await context.setLocale(_currentLocale);
     }
-    
+
     notifyListeners();
   }
 

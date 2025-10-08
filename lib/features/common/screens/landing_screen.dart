@@ -277,7 +277,7 @@ class _LandingScreenState extends State<LandingScreen>
     // Calculate font sizes based on text length
     double titleFontSize = _calculateTitleFontSize(title);
     double subtitleFontSize = _calculateSubtitleFontSize(subtitle);
-    
+
     return GestureDetector(
       onTap: onTap,
       child: Card(
@@ -335,16 +335,16 @@ class _LandingScreenState extends State<LandingScreen>
 
   // Calculate dynamic font size for title based on text length
   double _calculateTitleFontSize(String text) {
-    if (text.length > 15) return 12.0;  // Very long text
-    if (text.length > 10) return 14.0;  // Long text
-    return 16.0;                        // Normal text
+    if (text.length > 15) return 12.0; // Very long text
+    if (text.length > 10) return 14.0; // Long text
+    return 16.0; // Normal text
   }
 
   // Calculate dynamic font size for subtitle based on text length
   double _calculateSubtitleFontSize(String text) {
-    if (text.length > 30) return 10.0;  // Very long text
-    if (text.length > 20) return 11.0;  // Long text
-    return 12.0;                        // Normal text
+    if (text.length > 30) return 10.0; // Very long text
+    if (text.length > 20) return 11.0; // Long text
+    return 12.0; // Normal text
   }
 
   Widget _buildFooter() {
@@ -353,38 +353,46 @@ class _LandingScreenState extends State<LandingScreen>
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AboutScreen()),
-                );
-              },
-              child: const Text('About'),
+            Flexible(
+              child: TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AboutScreen(),
+                    ),
+                  );
+                },
+                child: Text('common.about'.tr()),
+              ),
             ),
             const Text(' • '),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ContactScreen(),
-                  ),
-                );
-              },
-              child: const Text('Contact'),
+            Flexible(
+              child: TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ContactScreen(),
+                    ),
+                  );
+                },
+                child: Text('common.contact'.tr()),
+              ),
             ),
             const Text(' • '),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const PrivacyPolicyScreen(),
-                  ),
-                );
-              },
-              child: const Text('Privacy Policy'),
+            Flexible(
+              child: TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PrivacyPolicyScreen(),
+                    ),
+                  );
+                },
+                child: Text('common.privacy_policy'.tr()),
+              ),
             ),
           ],
         ),
@@ -392,7 +400,7 @@ class _LandingScreenState extends State<LandingScreen>
         const SizedBox(height: 16),
 
         Text(
-          '© 2025 AGRICHAIN. All rights reserved.',
+          'common.copyright'.tr(),
           style: Theme.of(
             context,
           ).textTheme.bodySmall?.copyWith(color: AppColors.textHint),

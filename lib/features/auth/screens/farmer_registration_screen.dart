@@ -81,7 +81,7 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.farmerPrimary,
         foregroundColor: Colors.white,
-        title: const Text('Farmer Registration'),
+        title: Text('farmer.registration'.tr()),
         elevation: 0,
       ),
       body: Column(
@@ -168,15 +168,15 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
   String _getStepTitle() {
     switch (_currentStep) {
       case 0:
-        return 'Personal Information';
+        return 'farmer.personal_info'.tr();
       case 1:
-        return 'Aadhaar Verification';
+        return 'farmer.aadhar_verification'.tr();
       case 2:
-        return 'Land Verification';
+        return 'farmer.land_verification'.tr();
       case 3:
-        return 'Security Setup';
+        return 'farmer.security_setup'.tr();
       case 4:
-        return 'Registration Complete';
+        return 'farmer.registration_complete'.tr();
       default:
         return '';
     }
@@ -191,21 +191,21 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _buildStepHeader(
-              'Personal Information',
-              'Enter your basic details to get started',
+              'farmer.personal_info'.tr(),
+              'farmer.enter_basic_details'.tr(),
               Icons.person,
             ),
             const SizedBox(height: 24),
             _buildTextField(
               controller: _nameController,
-              label: 'Full Name',
+              label: 'common.name'.tr(),
               icon: Icons.person,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter your full name';
+                  return 'farmer.enter_full_name'.tr();
                 }
                 if (value.length < 2) {
-                  return 'Name must be at least 2 characters';
+                  return 'farmer.name_min_length'.tr();
                 }
                 return null;
               },
@@ -213,17 +213,17 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
             const SizedBox(height: 16),
             _buildTextField(
               controller: _emailController,
-              label: 'Email Address',
+              label: 'common.email'.tr(),
               icon: Icons.email,
               keyboardType: TextInputType.emailAddress,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter your email';
+                  return 'farmer.enter_email'.tr();
                 }
                 if (!RegExp(
                   r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                 ).hasMatch(value)) {
-                  return 'Please enter a valid email';
+                  return 'farmer.valid_email'.tr();
                 }
                 return null;
               },
@@ -231,15 +231,15 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
             const SizedBox(height: 16),
             _buildTextField(
               controller: _phoneController,
-              label: 'Phone Number',
+              label: 'common.phone'.tr(),
               icon: Icons.phone,
               keyboardType: TextInputType.phone,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter your phone number';
+                  return 'farmer.enter_phone'.tr();
                 }
                 if (value.length < 10) {
-                  return 'Please enter a valid phone number';
+                  return 'farmer.valid_phone'.tr();
                 }
                 return null;
               },
@@ -247,7 +247,7 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
             const SizedBox(height: 16),
             _buildTextField(
               controller: _addressController,
-              label: 'Farm Address',
+              label: 'farmer.farm_address'.tr(),
               icon: Icons.location_on,
               maxLines: 3,
               validator: (value) {
@@ -662,7 +662,7 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
           const SizedBox(height: 32),
 
           Text(
-            'Registration Successful!',
+            'farmer.registration_successful'.tr(),
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
@@ -685,7 +685,7 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
               child: Column(
                 children: [
                   Text(
-                    'Your Unique Farmer ID',
+                    'farmer.unique_farmer_id'.tr(),
                     style: TextStyle(
                       fontSize: 14,
                       color: AppColors.textSecondary,
@@ -707,7 +707,7 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
           ],
 
           Text(
-            'Welcome to AGRICHAIN! Your farmer account has been successfully created and verified.',
+            'farmer.welcome_message'.tr(),
             style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
             textAlign: TextAlign.center,
           ),
@@ -724,9 +724,9 @@ class _FarmerRegistrationScreenState extends State<FarmerRegistrationScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: const Text(
-              'Go to Dashboard',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            child: Text(
+              'farmer.go_to_dashboard'.tr(),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
           ),
         ],

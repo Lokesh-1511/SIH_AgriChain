@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/models/agrichain_user.dart';
+import '../../../core/services/user_service.dart';
 import '../../auth/providers/auth_provider.dart';
 import 'landing_screen.dart';
 
@@ -397,7 +398,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: _buildInfoTile('farmer.agri_score'.tr(), agriScore, Icons.star),
+                child: _buildInfoTile(
+                  'farmer.agri_score'.tr(),
+                  agriScore,
+                  Icons.star,
+                ),
               ),
             ],
           ),
@@ -433,10 +438,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Row(
             children: [
               Expanded(
-                child: _buildInfoTile('Vehicles', '12', Icons.local_shipping),
+                child: FutureBuilder<int>(
+                  future: UserService.getUserVehicleCount(user.id),
+                  builder: (context, snapshot) {
+                    String vehicleCount = 'Loading...';
+                    if (snapshot.hasData) {
+                      vehicleCount = snapshot.data.toString();
+                    } else if (snapshot.hasError) {
+                      vehicleCount = '0';
+                    }
+                    return _buildInfoTile(
+                      'Vehicles',
+                      vehicleCount,
+                      Icons.local_shipping,
+                    );
+                  },
+                ),
               ),
               const SizedBox(width: 16),
-              Expanded(child: _buildInfoTile('Rating', '4.8/5', Icons.star)),
+              Expanded(
+                child: _buildInfoTile(
+                  'Rating',
+                  'Yet to be calculated',
+                  Icons.star,
+                ),
+              ),
             ],
           ),
         ],

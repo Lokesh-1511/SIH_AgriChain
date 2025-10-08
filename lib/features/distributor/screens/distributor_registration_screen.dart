@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'dart:io';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
@@ -113,7 +114,7 @@ class _DistributorRegistrationScreenState
       appBar: AppBar(
         backgroundColor: AppColors.distributorPrimary,
         foregroundColor: Colors.white,
-        title: const Text('Distributor Registration'),
+        title: Text('distributor.registration'.tr()),
         elevation: 0,
       ),
       body: Column(
@@ -200,15 +201,15 @@ class _DistributorRegistrationScreenState
   String _getStepTitle() {
     switch (_currentStep) {
       case 0:
-        return 'Personal Information';
+        return 'distributor.personal_info'.tr();
       case 1:
-        return 'Aadhaar Verification';
+        return 'distributor.aadhar_verification'.tr();
       case 2:
-        return 'Business Verification';
+        return 'distributor.business_verification'.tr();
       case 3:
-        return 'Security Setup';
+        return 'distributor.security_setup'.tr();
       case 4:
-        return 'Registration Complete';
+        return 'distributor.registration_complete'.tr();
       default:
         return '';
     }

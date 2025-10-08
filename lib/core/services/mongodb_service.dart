@@ -19,11 +19,20 @@ class MongoDBService {
   /// Initialize MongoDB connection
   static Future<bool> connect() async {
     try {
-      if (_isConnected && _database != null) {
+      if (_isConnected && _database != null && _database!.state == State.open) {
         return true;
       }
 
       debugPrint('🍃 MongoDB: Connecting to database...');
+
+      // Close existing connection if any
+      if (_database != null) {
+        try {
+          await _database!.close();
+        } catch (e) {
+          debugPrint('🍃 MongoDB: Error closing existing connection: $e');
+        }
+      }
 
       _database = await Db.create(_connectionString);
       await _database!.open();
@@ -35,20 +44,6 @@ class MongoDBService {
     } catch (e) {
       debugPrint('🍃 MongoDB Connection Error: $e');
       _isConnected = false;
-
-      // Try to reconnect after a delay
-      await Future.delayed(const Duration(seconds: 2));
-      try {
-        if (_database == null) {
-          _database = await Db.create(_connectionString);
-          await _database!.open();
-          _isConnected = true;
-          debugPrint('🍃 MongoDB: Reconnected successfully');
-          return true;
-        }
-      } catch (retryError) {
-        debugPrint('🍃 MongoDB Retry failed: $retryError');
-      }
 
       return false;
     }
@@ -69,7 +64,8 @@ class MongoDBService {
   }
 
   /// Check if connected
-  static bool get isConnected => _isConnected && _database != null;
+  static bool get isConnected =>
+      _isConnected && _database != null && _database!.state == State.open;
 
   /// Get collection by role
   static DbCollection? _getCollectionByRole(String role) {
@@ -342,6 +338,209 @@ class MongoDBService {
     } catch (e) {
       debugPrint('🍃 MongoDB Statistics Error: $e');
       return {};
+    }
+  }
+
+  /// Generic method to find documents in any collection
+  static Future<Map<String, dynamic>> findDocuments({
+    required String collectionName,
+    Map<String, dynamic>? filter,
+    Map<String, dynamic>? sortBy,
+    int? limit,
+  }) async {
+    try {
+      // Ensure connection
+      if (!isConnected) {
+        bool connected = await connect();
+        if (!connected) {
+          return {
+            'success': false,
+            'message': 'Failed to connect to database',
+            'data': [],
+          };
+        }
+      }
+
+      final collection = _database!.collection(collectionName);
+
+      // Build the aggregation pipeline or use simple find
+      List<Map<String, dynamic>> documents;
+
+      if (sortBy != null || limit != null) {
+        // Use aggregation pipeline for sorting and limiting
+        final pipeline = <Map<String, Object>>[];
+
+        // Add match stage if filter exists
+        if (filter != null && filter.isNotEmpty) {
+          pipeline.add({'\$match': filter});
+        }
+
+        // Add sort stage if sortBy exists
+        if (sortBy != null) {
+          pipeline.add({'\$sort': sortBy});
+        }
+
+        // Add limit stage if limit exists
+        if (limit != null) {
+          pipeline.add({'\$limit': limit});
+        }
+
+        final aggregationResult = collection.aggregateToStream(pipeline);
+        documents = await aggregationResult.toList();
+      } else {
+        // Use simple find for basic queries
+        final cursor = collection.find(filter ?? {});
+        documents = await cursor.toList();
+      }
+
+      return {
+        'success': true,
+        'message': 'Documents found successfully',
+        'data': documents,
+      };
+    } catch (e) {
+      debugPrint('🍃 MongoDB Find Error: $e');
+
+      // Try to reconnect and retry once
+      if (e.toString().contains('connection') ||
+          e.toString().contains('master')) {
+        debugPrint('🍃 MongoDB: Connection lost, attempting to reconnect...');
+        _isConnected = false;
+        bool reconnected = await connect();
+        if (reconnected) {
+          try {
+            final collection = _database!.collection(collectionName);
+            final cursor = collection.find(filter ?? {});
+            final documents = await cursor.toList();
+            return {
+              'success': true,
+              'message': 'Documents found successfully after reconnection',
+              'data': documents,
+            };
+          } catch (retryError) {
+            debugPrint('🍃 MongoDB: Retry failed: $retryError');
+          }
+        }
+      }
+
+      return {
+        'success': false,
+        'message': 'Error finding documents: $e',
+        'data': [],
+      };
+    }
+  }
+
+  /// Generic method to insert a document into any collection
+  static Future<Map<String, dynamic>> insertDocument({
+    required String collectionName,
+    required Map<String, dynamic> data,
+  }) async {
+    try {
+      // Ensure connection
+      if (!isConnected) {
+        bool connected = await connect();
+        if (!connected) {
+          return {'success': false, 'message': 'Failed to connect to database'};
+        }
+      }
+
+      final collection = _database!.collection(collectionName);
+      final result = await collection.insertOne(data);
+
+      return {
+        'success': true,
+        'message': 'Document inserted successfully',
+        'insertedId': result.id,
+      };
+    } catch (e) {
+      debugPrint('🍃 MongoDB Insert Error: $e');
+
+      // Try to reconnect and retry once
+      if (e.toString().contains('connection') ||
+          e.toString().contains('master')) {
+        debugPrint(
+          '🍃 MongoDB: Connection lost during insert, attempting to reconnect...',
+        );
+        _isConnected = false;
+        bool reconnected = await connect();
+        if (reconnected) {
+          try {
+            final collection = _database!.collection(collectionName);
+            final result = await collection.insertOne(data);
+            return {
+              'success': true,
+              'message': 'Document inserted successfully after reconnection',
+              'insertedId': result.id,
+            };
+          } catch (retryError) {
+            debugPrint('🍃 MongoDB: Insert retry failed: $retryError');
+          }
+        }
+      }
+
+      return {'success': false, 'message': 'Error inserting document: $e'};
+    }
+  }
+
+  /// Generic method to update a document in any collection
+  static Future<Map<String, dynamic>> updateDocument({
+    required String collectionName,
+    required Map<String, dynamic> filter,
+    required Map<String, dynamic> updateData,
+  }) async {
+    try {
+      if (!_isConnected || _database == null) {
+        await connect();
+      }
+
+      if (!_isConnected || _database == null) {
+        return {'success': false, 'message': 'Database not connected'};
+      }
+
+      final collection = _database!.collection(collectionName);
+      final result = await collection.updateOne(filter, {'\$set': updateData});
+
+      return {
+        'success': result.isSuccess,
+        'message': result.isSuccess
+            ? 'Document updated successfully'
+            : 'Failed to update document',
+        'modifiedCount': result.nModified,
+      };
+    } catch (e) {
+      debugPrint('🍃 MongoDB Update Error: $e');
+      return {'success': false, 'message': 'Error updating document: $e'};
+    }
+  }
+
+  /// Generic method to delete a document from any collection
+  static Future<Map<String, dynamic>> deleteDocument({
+    required String collectionName,
+    required Map<String, dynamic> filter,
+  }) async {
+    try {
+      if (!_isConnected || _database == null) {
+        await connect();
+      }
+
+      if (!_isConnected || _database == null) {
+        return {'success': false, 'message': 'Database not connected'};
+      }
+
+      final collection = _database!.collection(collectionName);
+      final result = await collection.deleteOne(filter);
+
+      return {
+        'success': result.isSuccess,
+        'message': result.isSuccess
+            ? 'Document deleted successfully'
+            : 'Failed to delete document',
+        'deletedCount': result.nRemoved,
+      };
+    } catch (e) {
+      debugPrint('🍃 MongoDB Delete Error: $e');
+      return {'success': false, 'message': 'Error deleting document: $e'};
     }
   }
 }

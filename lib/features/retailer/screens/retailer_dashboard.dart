@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../features/auth/providers/auth_provider.dart';
 import '../../common/screens/landing_screen.dart';
@@ -8,7 +9,6 @@ import '../../common/screens/settings_screen.dart';
 import '../../common/screens/notifications_screen.dart';
 import '../widgets/retailer_stats_card.dart';
 import '../widgets/product_inventory_card.dart';
-import '../../common/widgets/floating_chat_button.dart';
 import 'inventory_screen.dart';
 import 'price_calculator_screen.dart';
 import 'qr_generator_screen.dart';
@@ -30,18 +30,13 @@ class _RetailerDashboardState extends State<RetailerDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: Stack(
+      body: IndexedStack(
+        index: _currentIndex,
         children: [
-          IndexedStack(
-            index: _currentIndex,
-            children: [
-              RetailerHomeTab(),
-              InventoryScreen(),
-              PriceCalculatorScreen(),
-              CustomerAnalyticsScreen(),
-            ],
-          ),
-          const FloatingChatButton(),
+          RetailerHomeTab(),
+          InventoryScreen(),
+          PriceCalculatorScreen(),
+          CustomerAnalyticsScreen(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -52,19 +47,22 @@ class _RetailerDashboardState extends State<RetailerDashboard> {
         unselectedItemColor: AppColors.textSecondary,
         backgroundColor: Colors.white,
         elevation: 8,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.inventory),
-            label: 'Inventory',
+            icon: const Icon(Icons.home),
+            label: 'common.home'.tr(),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calculate),
-            label: 'Pricing',
+            icon: const Icon(Icons.inventory),
+            label: 'common.inventory'.tr(),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.analytics),
-            label: 'Analytics',
+            icon: const Icon(Icons.calculate),
+            label: 'retailer.pricing'.tr(),
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.analytics),
+            label: 'retailer.analytics'.tr(),
           ),
         ],
       ),

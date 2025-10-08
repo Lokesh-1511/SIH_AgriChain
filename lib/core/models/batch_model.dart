@@ -1,14 +1,20 @@
 class Batch {
   final String id;
   final String farmerId;
+  final String farmerName;
   final String productName;
+  final String category;
   final double quantity;
   final String unit;
   final double basePrice;
   final double? currentPrice;
   final String status;
+  final String location;
+  final bool isOrganic;
   final DateTime createdAt;
   final DateTime? harvestedAt;
+  final DateTime? expiryDate;
+  final DateTime? updatedAt;
   final String? imageUrl;
   final Map<String, dynamic>? qualityMetrics;
   final String? distributorId;
@@ -18,14 +24,20 @@ class Batch {
   Batch({
     required this.id,
     required this.farmerId,
+    required this.farmerName,
     required this.productName,
+    required this.category,
     required this.quantity,
     required this.unit,
     required this.basePrice,
     this.currentPrice,
     required this.status,
+    required this.location,
+    required this.isOrganic,
     required this.createdAt,
     this.harvestedAt,
+    this.expiryDate,
+    this.updatedAt,
     this.imageUrl,
     this.qualityMetrics,
     this.distributorId,
@@ -35,17 +47,27 @@ class Batch {
 
   factory Batch.fromJson(Map<String, dynamic> json) {
     return Batch(
-      id: json['id'],
+      id: json['id'] ?? json['_id'],
       farmerId: json['farmer_id'],
+      farmerName: json['farmer_name'],
       productName: json['product_name'],
+      category: json['category'],
       quantity: json['quantity']?.toDouble() ?? 0.0,
       unit: json['unit'],
       basePrice: json['base_price']?.toDouble() ?? 0.0,
       currentPrice: json['current_price']?.toDouble(),
       status: json['status'],
+      location: json['location'],
+      isOrganic: json['is_organic'] ?? false,
       createdAt: DateTime.parse(json['created_at']),
       harvestedAt: json['harvested_at'] != null
           ? DateTime.parse(json['harvested_at'])
+          : null,
+      expiryDate: json['expiry_date'] != null
+          ? DateTime.parse(json['expiry_date'])
+          : null,
+      updatedAt: json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'])
           : null,
       imageUrl: json['image_url'],
       qualityMetrics: json['quality_metrics'],
@@ -61,14 +83,20 @@ class Batch {
     return {
       'id': id,
       'farmer_id': farmerId,
+      'farmer_name': farmerName,
       'product_name': productName,
+      'category': category,
       'quantity': quantity,
       'unit': unit,
       'base_price': basePrice,
       'current_price': currentPrice,
       'status': status,
+      'location': location,
+      'is_organic': isOrganic,
       'created_at': createdAt.toIso8601String(),
       'harvested_at': harvestedAt?.toIso8601String(),
+      'expiry_date': expiryDate?.toIso8601String(),
+      'updated_at': updatedAt?.toIso8601String(),
       'image_url': imageUrl,
       'quality_metrics': qualityMetrics,
       'distributor_id': distributorId,
@@ -80,14 +108,20 @@ class Batch {
   Batch copyWith({
     String? id,
     String? farmerId,
+    String? farmerName,
     String? productName,
+    String? category,
     double? quantity,
     String? unit,
     double? basePrice,
     double? currentPrice,
     String? status,
+    String? location,
+    bool? isOrganic,
     DateTime? createdAt,
     DateTime? harvestedAt,
+    DateTime? expiryDate,
+    DateTime? updatedAt,
     String? imageUrl,
     Map<String, dynamic>? qualityMetrics,
     String? distributorId,
@@ -97,14 +131,20 @@ class Batch {
     return Batch(
       id: id ?? this.id,
       farmerId: farmerId ?? this.farmerId,
+      farmerName: farmerName ?? this.farmerName,
       productName: productName ?? this.productName,
+      category: category ?? this.category,
       quantity: quantity ?? this.quantity,
       unit: unit ?? this.unit,
       basePrice: basePrice ?? this.basePrice,
       currentPrice: currentPrice ?? this.currentPrice,
       status: status ?? this.status,
+      location: location ?? this.location,
+      isOrganic: isOrganic ?? this.isOrganic,
       createdAt: createdAt ?? this.createdAt,
       harvestedAt: harvestedAt ?? this.harvestedAt,
+      expiryDate: expiryDate ?? this.expiryDate,
+      updatedAt: updatedAt ?? this.updatedAt,
       imageUrl: imageUrl ?? this.imageUrl,
       qualityMetrics: qualityMetrics ?? this.qualityMetrics,
       distributorId: distributorId ?? this.distributorId,
