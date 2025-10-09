@@ -1,4 +1,4 @@
-# AgriChain IVR Simulator
+# AgriChain IVR Simulation App
 
 A lightweight React + Vite project to prototype an agricultural IVR call flow with a split-screen UI.
 
