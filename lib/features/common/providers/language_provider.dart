@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/constants/app_constants.dart';
 
 class LanguageProvider extends ChangeNotifier {
-  Locale _currentLocale = const Locale('en', 'US');
+  Locale _currentLocale = const Locale('en');
   SharedPreferences? _prefs;
 
   Locale get currentLocale => _currentLocale;
@@ -19,29 +20,38 @@ class LanguageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> changeLanguage(String languageCode) async {
+  Future<void> changeLanguage(
+    String languageCode, [
+    BuildContext? context,
+  ]) async {
     _prefs ??= await SharedPreferences.getInstance();
     await _prefs!.setString(AppConstants.keyLanguage, languageCode);
     _currentLocale = _getLocaleFromCode(languageCode);
+
+    // Update easy_localization locale if context is provided
+    if (context != null) {
+      await context.setLocale(_currentLocale);
+    }
+
     notifyListeners();
   }
 
   Locale _getLocaleFromCode(String code) {
     switch (code) {
       case AppConstants.langHindi:
-        return const Locale('hi', 'IN');
+        return const Locale('hi');
       case AppConstants.langTamil:
-        return const Locale('ta', 'IN');
+        return const Locale('ta');
       case AppConstants.langOdia:
-        return const Locale('or', 'IN');
+        return const Locale('or');
       case AppConstants.langTelugu:
-        return const Locale('te', 'IN');
+        return const Locale('te');
       case AppConstants.langKannada:
-        return const Locale('kn', 'IN');
+        return const Locale('kn');
       case AppConstants.langMalayalam:
-        return const Locale('ml', 'IN');
+        return const Locale('ml');
       default:
-        return const Locale('en', 'US');
+        return const Locale('en');
     }
   }
 

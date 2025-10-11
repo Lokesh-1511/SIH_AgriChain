@@ -2,6 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+<<<<<<< HEAD
+=======
+import 'package:easy_localization/easy_localization.dart';
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
 import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/widgets/simple_aadhaar_widget.dart';
@@ -105,7 +109,11 @@ class _ConsumerRegistrationScreenState
       appBar: AppBar(
         backgroundColor: AppColors.consumerPrimary,
         foregroundColor: Colors.white,
+<<<<<<< HEAD
         title: const Text('Consumer Registration'),
+=======
+        title: Text('consumer.registration'.tr()),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
         elevation: 0,
       ),
       body: Column(
@@ -959,6 +967,18 @@ class _ConsumerRegistrationScreenState
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
+      // Prepare KYC details map
+      Map<String, dynamic> kycDetails = {
+        'aadhaarNumber': _kycDetails?['aadhaarNumber'] ?? '',
+        'aadhaarVerified': _aadhaarVerified,
+        'verifiedName': _kycDetails?['name'] ?? _nameController.text.trim(),
+        'dietaryPreferences': _dietaryPreferencesController.text.trim(),
+        'allergyInfo': _allergyInfoController.text.trim(),
+        'preferredDeliveryTime': _preferredDeliveryTime,
+        'organicPreference': _organicPreference,
+        'localProductsPreference': _localProductsPreference,
+      };
+
       // Prepare registration data
       Map<String, dynamic> userData = {
         'name': _nameController.text.trim(),
@@ -967,14 +987,11 @@ class _ConsumerRegistrationScreenState
         'address': _addressController.text.trim(),
         'password': _passwordController.text,
         'role': AppConstants.roleConsumer,
-        'dietaryPreferences': _dietaryPreferencesController.text.trim(),
-        'allergyInfo': _allergyInfoController.text.trim(),
-        'preferredDeliveryTime': _preferredDeliveryTime,
-        'organicPreference': _organicPreference,
-        'localProductsPreference': _localProductsPreference,
-        'aadhaarNumber': _kycDetails?['aadhaarNumber'] ?? '',
-        'aadhaarVerified': _aadhaarVerified,
-        'verifiedName': _kycDetails?['name'] ?? '',
+        'kycDetails': kycDetails,
+        'additionalInfo': {
+          'consumerId': _generateConsumerId(),
+          'registrationDate': DateTime.now().toIso8601String(),
+        },
       };
 
       final success = await authProvider.register(userData);
@@ -1010,16 +1027,6 @@ class _ConsumerRegistrationScreenState
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const ConsumerDashboard()),
       (route) => false,
-    );
-  }
-
-  void _showSuccessSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text(message),
-        backgroundColor: AppColors.success,
-      ),
     );
   }
 

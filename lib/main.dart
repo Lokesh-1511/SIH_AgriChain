@@ -1,23 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'core/theme/app_theme.dart';
 import 'core/services/mongodb_service.dart';
+<<<<<<< HEAD
+import 'core/services/firebase_service.dart';
+=======
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
 import 'features/auth/providers/auth_provider.dart';
 import 'features/common/providers/language_provider.dart';
 import 'features/onboarding/screens/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Initialize Firebase
-  await Firebase.initializeApp();
-  
+
+  // Initialize Easy Localization
+  await EasyLocalization.ensureInitialized();
+
+  // Initialize Firebase with SSL handling
+  await FirebaseService.initialize();
+
   // Initialize MongoDB
   await MongoDBService.connect();
-  
-  runApp(const AgriChainApp());
+
+  runApp(
+    EasyLocalization(
+      supportedLocales: const [
+        Locale('en'),
+        Locale('hi'),
+        Locale('ta'),
+        Locale('or'),
+        Locale('te'),
+        Locale('kn'),
+        Locale('ml'),
+      ],
+      path: 'assets/translations',
+      fallbackLocale: const Locale('en'),
+      child: const AgriChainApp(),
+    ),
+  );
 }
 
 // TODO: Change the verification in the Aadhar screen to OTP verification
@@ -33,33 +54,21 @@ class AgriChainApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => LanguageProvider()),
+<<<<<<< HEAD
+=======
+        ChangeNotifierProvider(create: (_) => BatchProvider()),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
       ],
-      child: Consumer<LanguageProvider>(
-        builder: (context, languageProvider, child) {
-          return MaterialApp(
-            title: 'AGRICHAIN',
-            debugShowCheckedModeBanner: false,
-            theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
-            themeMode: ThemeMode.system,
-            locale: languageProvider.currentLocale,
-            supportedLocales: const [
-              Locale('en', 'US'), // English
-              Locale('hi', 'IN'), // Hindi
-              Locale('ta', 'IN'), // Tamil
-              Locale('or', 'IN'), // Odia
-              Locale('te', 'IN'), // Telugu
-              Locale('kn', 'IN'), // Kannada
-              Locale('ml', 'IN'), // Malayalam
-            ],
-            localizationsDelegates: const [
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            home: const SplashScreen(),
-          );
-        },
+      child: MaterialApp(
+        title: 'AGRICHAIN',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: ThemeMode.system,
+        localizationsDelegates: context.localizationDelegates,
+        supportedLocales: context.supportedLocales,
+        locale: context.locale,
+        home: const SplashScreen(),
       ),
     );
   }

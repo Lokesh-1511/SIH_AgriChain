@@ -12,6 +12,12 @@
 .swiftpm/
 migrate_working_dir/
 
+<<<<<<< HEAD
+=======
+# Environment variables
+.env
+
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
 # IntelliJ related
 *.iml
 *.ipr
@@ -43,3 +49,4 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+node_modules

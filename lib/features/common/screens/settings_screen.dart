@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/models/agrichain_user.dart';
 import '../../auth/providers/auth_provider.dart';
 import 'about_screen.dart';
 import 'contact_screen.dart';
@@ -27,7 +28,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final authProvider = Provider.of<AuthProvider>(context);
     final user = authProvider.currentUser;
 
-    Color primaryColor = _getPrimaryColorForRole(user?.role ?? 'consumer');
+    Color primaryColor = _getPrimaryColorForRole(user?.role);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -365,18 +366,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Color _getPrimaryColorForRole(String role) {
-    switch (role.toLowerCase()) {
-      case 'farmer':
+  Color _getPrimaryColorForRole(UserRole? role) {
+    if (role == null) return AppColors.consumerPrimary;
+
+    switch (role) {
+      case UserRole.farmer:
         return AppColors.farmerPrimary;
-      case 'distributor':
+      case UserRole.distributor:
         return AppColors.distributorPrimary;
-      case 'retailer':
+      case UserRole.retailer:
         return AppColors.retailerPrimary;
-      case 'consumer':
+      case UserRole.consumer:
         return AppColors.consumerPrimary;
-      default:
-        return AppColors.primary;
     }
   }
 

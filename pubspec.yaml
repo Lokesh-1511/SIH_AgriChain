@@ -34,7 +34,7 @@ dependencies:
   
   # Authentication & Security
   crypto: ^3.0.3
-  firebase_core: ^3.6.0
+  firebase_core: ^3.15.2
   firebase_auth: ^5.3.1
   
   # Database & Backend
@@ -44,6 +44,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: ^0.20.2
+  easy_localization: ^3.0.7
   
   # QR Code
   qr_flutter: ^4.1.0
@@ -77,8 +78,7 @@ flutter:
   
   assets:
     - assets/images/
-    - assets/icons/
-    - assets/animations/
+    - assets/translations/
 
 flutter_intl:
   enabled: true

@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+<<<<<<< HEAD
+=======
+import 'package:easy_localization/easy_localization.dart';
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
 import '../../../core/theme/app_colors.dart';
-import '../../auth/providers/auth_provider.dart';
+import '../../../features/auth/providers/auth_provider.dart';
 import '../../common/screens/landing_screen.dart';
 import '../../common/screens/profile_screen.dart';
 import '../../common/screens/settings_screen.dart';
 import '../../common/screens/notifications_screen.dart';
 import '../widgets/retailer_stats_card.dart';
 import '../widgets/product_inventory_card.dart';
+<<<<<<< HEAD
 import '../../common/widgets/floating_chat_button.dart';
+=======
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
 import 'inventory_screen.dart';
 import 'price_calculator_screen.dart';
 import 'qr_generator_screen.dart';
@@ -30,6 +37,7 @@ class _RetailerDashboardState extends State<RetailerDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
+<<<<<<< HEAD
       body: Stack(
         children: [
           IndexedStack(
@@ -42,6 +50,15 @@ class _RetailerDashboardState extends State<RetailerDashboard> {
             ],
           ),
           const FloatingChatButton(),
+=======
+      body: IndexedStack(
+        index: _currentIndex,
+        children: [
+          RetailerHomeTab(),
+          InventoryScreen(),
+          PriceCalculatorScreen(),
+          CustomerAnalyticsScreen(),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -52,6 +69,7 @@ class _RetailerDashboardState extends State<RetailerDashboard> {
         unselectedItemColor: AppColors.textSecondary,
         backgroundColor: Colors.white,
         elevation: 8,
+<<<<<<< HEAD
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(
@@ -65,6 +83,24 @@ class _RetailerDashboardState extends State<RetailerDashboard> {
           BottomNavigationBarItem(
             icon: Icon(Icons.analytics),
             label: 'Analytics',
+=======
+        items: [
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.home),
+            label: 'common.home'.tr(),
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.inventory),
+            label: 'common.inventory'.tr(),
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.calculate),
+            label: 'retailer.pricing'.tr(),
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.analytics),
+            label: 'retailer.analytics'.tr(),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
           ),
         ],
       ),

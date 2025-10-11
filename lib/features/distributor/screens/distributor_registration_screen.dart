@@ -3,13 +3,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
+<<<<<<< HEAD
+=======
+import 'package:easy_localization/easy_localization.dart';
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
 import 'dart:io';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/widgets/simple_aadhaar_widget.dart';
 
 import '../../../core/services/aadhaar_state_service.dart';
-import '../../auth/providers/auth_provider.dart';
+import '../../../features/auth/providers/auth_provider.dart';
 import '../screens/distributor_dashboard.dart';
 
 class DistributorRegistrationScreen extends StatefulWidget {
@@ -113,7 +117,11 @@ class _DistributorRegistrationScreenState
       appBar: AppBar(
         backgroundColor: AppColors.distributorPrimary,
         foregroundColor: Colors.white,
+<<<<<<< HEAD
         title: const Text('Distributor Registration'),
+=======
+        title: Text('distributor.registration'.tr()),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
         elevation: 0,
       ),
       body: Column(
@@ -200,6 +208,7 @@ class _DistributorRegistrationScreenState
   String _getStepTitle() {
     switch (_currentStep) {
       case 0:
+<<<<<<< HEAD
         return 'Personal Information';
       case 1:
         return 'Aadhaar Verification';
@@ -209,6 +218,17 @@ class _DistributorRegistrationScreenState
         return 'Security Setup';
       case 4:
         return 'Registration Complete';
+=======
+        return 'distributor.personal_info'.tr();
+      case 1:
+        return 'distributor.aadhar_verification'.tr();
+      case 2:
+        return 'distributor.business_verification'.tr();
+      case 3:
+        return 'distributor.security_setup'.tr();
+      case 4:
+        return 'distributor.registration_complete'.tr();
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
       default:
         return '';
     }
@@ -1007,6 +1027,20 @@ class _DistributorRegistrationScreenState
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
+      // Prepare KYC details map
+      Map<String, dynamic> kycDetails = {
+        'aadhaarNumber': _kycDetails?['aadhaarNumber'] ?? '',
+        'aadhaarVerified': _aadhaarVerified,
+        'verifiedName': _kycDetails?['name'] ?? _nameController.text.trim(),
+        'businessName': _businessNameController.text.trim(),
+        'businessAddress': _businessAddressController.text.trim(),
+        'vehicleCount': int.tryParse(_vehicleCountController.text) ?? 0,
+        'warehouseCapacity': _warehouseCapacityController.text.trim(),
+        'serviceAreas': _serviceAreasController.text.trim(),
+        'licenseNumber': _licenseNumberController.text.trim(),
+        'licenseImagePath': _licenseImage?.path ?? '',
+      };
+
       // Prepare registration data
       Map<String, dynamic> userData = {
         'name': _nameController.text.trim(),
@@ -1015,16 +1049,11 @@ class _DistributorRegistrationScreenState
         'address': _addressController.text.trim(),
         'password': _passwordController.text,
         'role': AppConstants.roleDistributor,
-        'businessName': _businessNameController.text.trim(),
-        'businessAddress': _businessAddressController.text.trim(),
-        'vehicleCount': int.tryParse(_vehicleCountController.text) ?? 0,
-        'warehouseCapacity': _warehouseCapacityController.text.trim(),
-        'serviceAreas': _serviceAreasController.text.trim(),
-        'licenseNumber': _licenseNumberController.text.trim(),
-        'aadhaarNumber': _kycDetails?['aadhaarNumber'] ?? '',
-        'aadhaarVerified': _aadhaarVerified,
-        'verifiedName': _kycDetails?['name'] ?? '',
-        'licenseImagePath': _licenseImage?.path,
+        'kycDetails': kycDetails,
+        'additionalInfo': {
+          'distributorId': _generateDistributorId(),
+          'registrationDate': DateTime.now().toIso8601String(),
+        },
       };
 
       final success = await authProvider.register(userData);

@@ -1,3 +1,5 @@
 {
-    "cmake.sourceDirectory": "D:/SIH_AgriChain/linux"
+    "cmake.sourceDirectory": "D:/SIH_AgriChain/linux",
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "liveServer.settings.port": 5501
 }

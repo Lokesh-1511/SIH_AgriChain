@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../common/providers/language_provider.dart';
@@ -68,7 +69,7 @@ class _LandingScreenState extends State<LandingScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Select Language',
+              'common.select_language'.tr(),
               style: Theme.of(
                 context,
               ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -81,7 +82,7 @@ class _LandingScreenState extends State<LandingScreen>
                     ? const Icon(Icons.check, color: AppColors.primary)
                     : null,
                 onTap: () {
-                  languageProvider.changeLanguage(lang['code']!);
+                  languageProvider.changeLanguage(lang['code']!, context);
                   Navigator.pop(context);
                 },
               ),
@@ -161,7 +162,7 @@ class _LandingScreenState extends State<LandingScreen>
                     const SizedBox(height: 24),
 
                     Text(
-                      AppConstants.appName,
+                      'app.title'.tr(),
                       style: Theme.of(context).textTheme.displaySmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppColors.primary,
@@ -172,7 +173,7 @@ class _LandingScreenState extends State<LandingScreen>
                     const SizedBox(height: 16),
 
                     Text(
-                      AppConstants.appTagline,
+                      'app.subtitle'.tr(),
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: AppColors.textSecondary,
@@ -184,7 +185,7 @@ class _LandingScreenState extends State<LandingScreen>
 
                     // Role Selection Cards
                     Text(
-                      'Choose Your Role',
+                      'roles.select_role'.tr(),
                       style: Theme.of(context).textTheme.headlineSmall
                           ?.copyWith(
                             fontWeight: FontWeight.bold,
@@ -214,29 +215,29 @@ class _LandingScreenState extends State<LandingScreen>
   Widget _buildRoleGrid() {
     final roles = [
       {
-        'title': 'Farmer',
-        'subtitle': 'Post products & manage crops',
+        'title': 'roles.farmer'.tr(),
+        'subtitle': 'landing.farmer_desc'.tr(),
         'icon': Icons.agriculture,
         'color': AppColors.farmerPrimary,
         'role': AppConstants.roleFarmer,
       },
       {
-        'title': 'Distributor',
-        'subtitle': 'Transport & deliver goods',
+        'title': 'roles.distributor'.tr(),
+        'subtitle': 'landing.distributor_desc'.tr(),
         'icon': Icons.local_shipping,
         'color': AppColors.distributorPrimary,
         'role': AppConstants.roleDistributor,
       },
       {
-        'title': 'Retailer',
-        'subtitle': 'Sell to consumers',
+        'title': 'roles.retailer'.tr(),
+        'subtitle': 'landing.retailer_desc'.tr(),
         'icon': Icons.store,
         'color': AppColors.retailerPrimary,
         'role': AppConstants.roleRetailer,
       },
       {
-        'title': 'Consumer',
-        'subtitle': 'Buy fresh products',
+        'title': 'roles.consumer'.tr(),
+        'subtitle': 'landing.consumer_desc'.tr(),
         'icon': Icons.shopping_cart,
         'color': AppColors.consumerPrimary,
         'role': AppConstants.roleConsumer,
@@ -248,9 +249,9 @@ class _LandingScreenState extends State<LandingScreen>
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 24, // More spacing for title + description below
-        childAspectRatio: 0.75, // Taller to accommodate text below card
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 16,
+        childAspectRatio: 0.85, // Better ratio for multi-line text
       ),
       itemCount: roles.length,
       itemBuilder: (context, index) {
@@ -273,6 +274,14 @@ class _LandingScreenState extends State<LandingScreen>
     required Color color,
     required VoidCallback onTap,
   }) {
+    // Calculate font sizes based on text length
+    double titleFontSize = _calculateTitleFontSize(title);
+    double subtitleFontSize = _calculateSubtitleFontSize(subtitle);
+<<<<<<< HEAD
+    
+=======
+
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
     return GestureDetector(
       onTap: onTap,
       child: Card(
@@ -281,32 +290,44 @@ class _LandingScreenState extends State<LandingScreen>
         color: Colors.white,
         shadowColor: color.withOpacity(0.3),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(12),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon, size: 40, color: color),
+                child: Icon(icon, size: 32, color: color),
               ),
-              const SizedBox(height: 16),
-              Text(
-                title,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+              const SizedBox(height: 12),
+              Flexible(
+                child: Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                    fontSize: titleFontSize,
+                  ),
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                subtitle,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.textSecondary,
+              const SizedBox(height: 6),
+              Flexible(
+                child: Text(
+                  subtitle,
+                  textAlign: TextAlign.center,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppColors.textSecondary,
+                    fontSize: subtitleFontSize,
+                  ),
                 ),
               ),
             ],
@@ -316,12 +337,39 @@ class _LandingScreenState extends State<LandingScreen>
     );
   }
 
+  // Calculate dynamic font size for title based on text length
+  double _calculateTitleFontSize(String text) {
+<<<<<<< HEAD
+    if (text.length > 15) return 12.0;  // Very long text
+    if (text.length > 10) return 14.0;  // Long text
+    return 16.0;                        // Normal text
+=======
+    if (text.length > 15) return 12.0; // Very long text
+    if (text.length > 10) return 14.0; // Long text
+    return 16.0; // Normal text
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
+  }
+
+  // Calculate dynamic font size for subtitle based on text length
+  double _calculateSubtitleFontSize(String text) {
+<<<<<<< HEAD
+    if (text.length > 30) return 10.0;  // Very long text
+    if (text.length > 20) return 11.0;  // Long text
+    return 12.0;                        // Normal text
+=======
+    if (text.length > 30) return 10.0; // Very long text
+    if (text.length > 20) return 11.0; // Long text
+    return 12.0; // Normal text
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
+  }
+
   Widget _buildFooter() {
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+<<<<<<< HEAD
             TextButton(
               onPressed: () {
                 Navigator.push(
@@ -354,6 +402,48 @@ class _LandingScreenState extends State<LandingScreen>
                 );
               },
               child: const Text('Privacy Policy'),
+=======
+            Flexible(
+              child: TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AboutScreen(),
+                    ),
+                  );
+                },
+                child: Text('common.about'.tr()),
+              ),
+            ),
+            const Text(' • '),
+            Flexible(
+              child: TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ContactScreen(),
+                    ),
+                  );
+                },
+                child: Text('common.contact'.tr()),
+              ),
+            ),
+            const Text(' • '),
+            Flexible(
+              child: TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PrivacyPolicyScreen(),
+                    ),
+                  );
+                },
+                child: Text('common.privacy_policy'.tr()),
+              ),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
             ),
           ],
         ),
@@ -361,7 +451,11 @@ class _LandingScreenState extends State<LandingScreen>
         const SizedBox(height: 16),
 
         Text(
+<<<<<<< HEAD
           '© 2025 AGRICHAIN. All rights reserved.',
+=======
+          'common.copyright'.tr(),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
           style: Theme.of(
             context,
           ).textTheme.bodySmall?.copyWith(color: AppColors.textHint),

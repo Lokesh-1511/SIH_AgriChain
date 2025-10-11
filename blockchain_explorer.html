@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriChain Blockchain Explorer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .status-card {
+            background: #f8f9fa;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .error-card {
+            background: #f8f9fa;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .accounts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .account-card {
+            background: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .farmer { border-left: 4px solid #28a745; }
+        .distributor { border-left: 4px solid #ffc107; }
+        .retailer { border-left: 4px solid #17a2b8; }
+        .consumer { border-left: 4px solid #6f42c1; }
+        
+        .wallet-address {
+            font-family: monospace;
+            font-size: 12px;
+            background: #f1f3f4;
+            padding: 8px;
+            border-radius: 5px;
+            word-break: break-all;
+            margin: 10px 0;
+        }
+        .balance {
+            font-weight: bold;
+            color: #28a745;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .refresh-btn {
+            background: #28a745;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌾 AgriChain Blockchain Explorer</h1>
+        
+        <div id="status">
+            <div class="loading">Connecting to blockchain...</div>
+        </div>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <button onclick="refreshData()" class="refresh-btn">🔄 Refresh Data</button>
+            <button onclick="checkContracts()">📋 Check Contracts</button>
+            <button onclick="viewRecentBlocks()">🔗 Recent Blocks</button>
+            <button onclick="showUserRegistrationModal()">👤 Register Test User</button>
+            <button onclick="clearRegistrations()">🗑️ Clear All Registrations</button>
+        </div>
+
+        <!-- User Registration Modal -->
+        <div id="registrationModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+            <div style="background: white; margin: 50px auto; padding: 30px; border-radius: 10px; max-width: 500px;">
+                <h3>👤 Register Test User</h3>
+                <form onsubmit="registerTestUser(event)">
+                    <div style="margin: 15px 0;">
+                        <label>Name:</label><br>
+                        <input type="text" id="userName" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    <div style="margin: 15px 0;">
+                        <label>Email:</label><br>
+                        <input type="email" id="userEmail" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    <div style="margin: 15px 0;">
+                        <label>Role:</label><br>
+                        <select id="userRole" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                            <option value="">Select Role</option>
+                            <option value="farmer">🌾 Farmer</option>
+                            <option value="distributor">🚛 Distributor</option>
+                            <option value="retailer">🏪 Retailer</option>
+                            <option value="consumer">🛒 Consumer</option>
+                        </select>
+                    </div>
+                    <div style="margin: 15px 0;">
+                        <label>User ID (optional):</label><br>
+                        <input type="text" id="userId" placeholder="Will be auto-generated if empty" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    <div style="text-align: right; margin-top: 20px;">
+                        <button type="button" onclick="closeRegistrationModal()" style="background: #6c757d; margin-right: 10px;">Cancel</button>
+                        <button type="submit">Register User</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="accounts-section" style="display: none;">
+            <h2>👥 Role-Based Wallet Assignments</h2>
+            <div id="accounts-grid" class="accounts-grid"></div>
+        </div>
+
+        <div id="contracts-section" style="display: none;">
+            <h2>📋 Smart Contracts</h2>
+            <div id="contracts-info"></div>
+        </div>
+
+        <div id="blocks-section" style="display: none;">
+            <h2>🔗 Recent Blockchain Activity</h2>
+            <div id="blocks-info"></div>
+        </div>
+    </div>
+
+    <script>
+        const HARDHAT_URL = 'http://127.0.0.1:8545';
+        
+        // Role-based wallet mapping (from deployment)
+        const ROLE_WALLETS = {
+            farmers: [
+                "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+                "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+                "0x90F79bf6EB2c4f870365E785982E1f101E93b906",
+                "0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65",
+                "0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc"
+            ],
+            distributors: [
+                "0x976EA74026E726554dB657fA54763abd0C3a0aa9",
+                "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
+                "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
+                "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
+                "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
+            ],
+            retailers: [
+                "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
+                "0xFABB0ac9d68B0B445fB7357272Ff202C5651694a",
+                "0x1CBd3b2770909D4e10f157cABC84C7264073C9Ec",
+                "0xdF3e18d64BC6A983f673Ab319CCaE4f1a57C7097",
+                "0xcd3B766CCDd6AE721141F452C550Ca635964ce71"
+            ],
+            consumers: [
+                "0x2546BcD3c84621e976D8185a91A922aE77ECEc30",
+                "0xbDA5747bFD65F08deb54cb465eB87D40e51B197E",
+                "0xdD2FD4581271e230360230F9337D5c0430Bf44C0",
+                "0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199"
+            ]
+        };
+
+        // User registrations storage (persisted in localStorage)
+        function getUserRegistrations() {
+            const stored = localStorage.getItem('agrichain_user_registrations');
+            return stored ? JSON.parse(stored) : {};
+        }
+
+        function saveUserRegistration(walletAddress, userData) {
+            const registrations = getUserRegistrations();
+            registrations[walletAddress] = {
+                ...userData,
+                registeredAt: new Date().toISOString()
+            };
+            localStorage.setItem('agrichain_user_registrations', JSON.stringify(registrations));
+        }
+
+        function getUserByWallet(walletAddress) {
+            const registrations = getUserRegistrations();
+            return registrations[walletAddress] || null;
+        }
+
+        const CONTRACTS = {
+            "ProductRegistry": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+            "Traceability": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+            "EscrowPayment": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
+        };
+
+        async function rpcCall(method, params = []) {
+            try {
+                const response = await fetch(HARDHAT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        jsonrpc: '2.0',
+                        method: method,
+                        params: params,
+                        id: 1
+                    })
+                });
+                const data = await response.json();
+                return data.result;
+            } catch (error) {
+                console.error('RPC call failed:', error);
+                throw error;
+            }
+        }
+
+        function weiToEth(wei) {
+            return (parseInt(wei, 16) / Math.pow(10, 18)).toFixed(4);
+        }
+
+        async function checkBlockchainConnection() {
+            try {
+                const blockNumber = await rpcCall('eth_blockNumber');
+                const accounts = await rpcCall('eth_accounts');
+                
+                document.getElementById('status').innerHTML = `
+                    <div class="status-card">
+                        <strong>✅ Connected to Hardhat Network</strong><br>
+                        📊 Current Block: ${parseInt(blockNumber, 16)}<br>
+                        👥 Available Accounts: ${accounts.length}<br>
+                        🔗 Network: localhost:8545 (Chain ID: 1337)
+                    </div>
+                `;
+                return true;
+            } catch (error) {
+                document.getElementById('status').innerHTML = `
+                    <div class="error-card">
+                        <strong>❌ Connection Failed</strong><br>
+                        Make sure Hardhat node is running on port 8545<br>
+                        Error: ${error.message}
+                    </div>
+                `;
+                return false;
+            }
+        }
+
+        async function loadWalletAssignments() {
+            const accountsGrid = document.getElementById('accounts-grid');
+            accountsGrid.innerHTML = '';
+
+            for (const [role, wallets] of Object.entries(ROLE_WALLETS)) {
+                for (let i = 0; i < wallets.length; i++) {
+                    const wallet = wallets[i];
+                    try {
+                        const balance = await rpcCall('eth_getBalance', [wallet, 'latest']);
+                        const ethBalance = weiToEth(balance);
+                        const userData = getUserByWallet(wallet);
+
+                        const card = document.createElement('div');
+                        card.className = `account-card ${role.slice(0, -1)}`;
+                        
+                        let userInfoHtml = '';
+                        if (userData) {
+                            userInfoHtml = `
+                                <div style="background: #e8f5e8; padding: 10px; border-radius: 5px; margin: 10px 0;">
+                                    <strong>👤 Registered User:</strong><br>
+                                    📧 Email: ${userData.email || 'N/A'}<br>
+                                    👤 Name: ${userData.name || 'N/A'}<br>
+                                    📅 Registered: ${new Date(userData.registeredAt).toLocaleString()}<br>
+                                    🆔 User ID: ${userData.userId || 'N/A'}
+                                </div>
+                            `;
+                        } else {
+                            userInfoHtml = `
+                                <div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin: 10px 0;">
+                                    <strong>⏳ Available for Assignment</strong><br>
+                                    <small>This wallet will be assigned when a user registers as ${role.slice(0, -1)}</small>
+                                </div>
+                            `;
+                        }
+
+                        card.innerHTML = `
+                            <h4>${getRoleIcon(role)} ${role.charAt(0).toUpperCase() + role.slice(1, -1)} #${i + 1}</h4>
+                            <div class="wallet-address">${wallet}</div>
+                            <div class="balance">💰 Balance: ${ethBalance} ETH</div>
+                            ${userInfoHtml}
+                            <small>Role: ${role.slice(0, -1)}</small>
+                        `;
+                        accountsGrid.appendChild(card);
+                    } catch (error) {
+                        console.error(`Failed to load wallet ${wallet}:`, error);
+                    }
+                }
+            }
+
+            document.getElementById('accounts-section').style.display = 'block';
+        }
+
+        function getRoleIcon(role) {
+            const icons = {
+                farmers: '🌾',
+                distributors: '🚛',
+                retailers: '🏪',
+                consumers: '🛒'
+            };
+            return icons[role] || '👤';
+        }
+
+        // User registration functions
+        function showUserRegistrationModal() {
+            document.getElementById('registrationModal').style.display = 'block';
+        }
+
+        function closeRegistrationModal() {
+            document.getElementById('registrationModal').style.display = 'none';
+        }
+
+        function registerTestUser(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('userName').value;
+            const email = document.getElementById('userEmail').value;
+            const role = document.getElementById('userRole').value;
+            let userId = document.getElementById('userId').value;
+
+            if (!userId) {
+                userId = `user_${Date.now()}`;
+            }
+
+            // Simulate wallet assignment (same logic as Flutter app)
+            const walletAddress = assignWalletToUser(userId, role);
+            
+            if (walletAddress) {
+                const userData = {
+                    name: name,
+                    email: email,
+                    role: role,
+                    userId: userId
+                };
+
+                saveUserRegistration(walletAddress, userData);
+                
+                alert(`✅ User registered successfully!\n\n👤 Name: ${name}\n📧 Email: ${email}\n🎭 Role: ${role}\n💰 Wallet: ${walletAddress}`);
+                
+                closeRegistrationModal();
+                refreshData(); // Refresh the display
+            } else {
+                alert('❌ Failed to assign wallet. All wallets for this role might be taken.');
+            }
+        }
+
+        function assignWalletToUser(userId, role) {
+            const roleKey = role + 's'; // farmer -> farmers
+            const availableWallets = ROLE_WALLETS[roleKey];
+            
+            if (!availableWallets || availableWallets.length === 0) {
+                return null;
+            }
+
+            // Use same deterministic assignment as Flutter app
+            // Simple hash of userId to get consistent wallet assignment
+            let hash = 0;
+            for (let i = 0; i < userId.length; i++) {
+                const char = userId.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convert to 32-bit integer
+            }
+            
+            const walletIndex = Math.abs(hash) % availableWallets.length;
+            return availableWallets[walletIndex];
+        }
+
+        function clearRegistrations() {
+            if (confirm('Are you sure you want to clear all user registrations?')) {
+                localStorage.removeItem('agrichain_user_registrations');
+                alert('All registrations cleared!');
+                refreshData();
+            }
+        }
+
+        // API integration for Flutter app registrations
+        async function syncWithFlutterApp() {
+            try {
+                // This would connect to your Flutter app's backend if available
+                // For now, we'll check for any new registrations in localStorage
+                const registrations = getUserRegistrations();
+                console.log('Current registrations:', Object.keys(registrations).length);
+                return registrations;
+            } catch (error) {
+                console.log('No backend sync available, using local storage only');
+                return getUserRegistrations();
+            }
+        }
+
+        async function checkContracts() {
+            const contractsInfo = document.getElementById('contracts-info');
+            contractsInfo.innerHTML = '';
+
+            for (const [name, address] of Object.entries(CONTRACTS)) {
+                try {
+                    const code = await rpcCall('eth_getCode', [address, 'latest']);
+                    const hasCode = code !== '0x';
+
+                    const contractDiv = document.createElement('div');
+                    contractDiv.className = hasCode ? 'status-card' : 'error-card';
+                    contractDiv.innerHTML = `
+                        <h4>${hasCode ? '✅' : '❌'} ${name}</h4>
+                        <div class="wallet-address">${address}</div>
+                        <div>Status: ${hasCode ? 'Deployed & Active' : 'No contract code found'}</div>
+                    `;
+                    contractsInfo.appendChild(contractDiv);
+                } catch (error) {
+                    console.error(`Failed to check contract ${name}:`, error);
+                }
+            }
+
+            document.getElementById('contracts-section').style.display = 'block';
+        }
+
+        async function viewRecentBlocks() {
+            const blocksInfo = document.getElementById('blocks-info');
+            try {
+                const latestBlock = parseInt(await rpcCall('eth_blockNumber'), 16);
+                let blocksHtml = '';
+
+                for (let i = Math.max(0, latestBlock - 4); i <= latestBlock; i++) {
+                    const block = await rpcCall('eth_getBlockByNumber', [`0x${i.toString(16)}`, true]);
+                    if (block) {
+                        blocksHtml += `
+                            <div class="status-card">
+                                <h4>🔗 Block #${i}</h4>
+                                <div><strong>Hash:</strong> <span class="wallet-address">${block.hash}</span></div>
+                                <div><strong>Transactions:</strong> ${block.transactions.length}</div>
+                                <div><strong>Timestamp:</strong> ${new Date(parseInt(block.timestamp, 16) * 1000).toLocaleString()}</div>
+                            </div>
+                        `;
+                    }
+                }
+
+                blocksInfo.innerHTML = blocksHtml;
+                document.getElementById('blocks-section').style.display = 'block';
+            } catch (error) {
+                console.error('Failed to load blocks:', error);
+            }
+        }
+
+        async function refreshData() {
+            document.getElementById('accounts-section').style.display = 'none';
+            document.getElementById('contracts-section').style.display = 'none';
+            document.getElementById('blocks-section').style.display = 'none';
+            
+            const connected = await checkBlockchainConnection();
+            if (connected) {
+                await loadWalletAssignments();
+            }
+        }
+
+        // Enhanced user management functions with Flutter sync
+        async function loadFlutterRegistrations() {
+            try {
+                // Try to load from the JSON file created by Flutter app
+                const response = await fetch('./registered_users.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.users) {
+                        // Merge Flutter registrations with local registrations
+                        const localUsers = JSON.parse(localStorage.getItem('agrichain_registered_users') || '{}');
+                        const mergedUsers = { ...localUsers };
+                        
+                        Object.values(data.users).forEach(user => {
+                            mergedUsers[user.wallet] = user;
+                        });
+                        
+                        localStorage.setItem('agrichain_registered_users', JSON.stringify(mergedUsers));
+                        console.log(`✅ Loaded ${Object.keys(data.users).length} users from Flutter app`);
+                        return mergedUsers;
+                    }
+                }
+            } catch (error) {
+                console.log('ℹ️ No Flutter registrations file found (this is normal for first run)');
+            }
+            
+            // Fallback to localStorage only
+            return JSON.parse(localStorage.getItem('agrichain_registered_users') || '{}');
+        }
+
+        function getUserByWallet(wallet) {
+            const users = JSON.parse(localStorage.getItem('agrichain_registered_users') || '{}');
+            return Object.values(users).find(user => user.wallet === wallet);
+        }
+
+        function saveUser(userData) {
+            const users = JSON.parse(localStorage.getItem('agrichain_registered_users') || '{}');
+            users[userData.wallet] = {
+                ...userData,
+                registeredAt: new Date().toISOString(),
+                lastSeen: new Date().toISOString()
+            };
+            localStorage.setItem('agrichain_registered_users', JSON.stringify(users));
+        }
+
+        function getAllUsers() {
+            return JSON.parse(localStorage.getItem('agrichain_registered_users') || '{}');
+        }
+
+        function getRoleIcon(role) {
+            const icons = {
+                'farmers': '🌾',
+                'distributors': '🚛', 
+                'retailers': '🏪',
+                'consumers': '🛒'
+            };
+            return icons[role] || '👤';
+        }
+
+        // Function to simulate Flutter app registration
+        function simulateFlutterRegistration(name, email, role) {
+            const roleKey = role + 's';
+            const availableWallets = ROLE_WALLETS[roleKey];
+            
+            if (!availableWallets) {
+                alert('Invalid role specified');
+                return;
+            }
+
+            // Find first available wallet
+            let assignedWallet = null;
+            for (const wallet of availableWallets) {
+                if (!getUserByWallet(wallet)) {
+                    assignedWallet = wallet;
+                    break;
+                }
+            }
+
+            if (!assignedWallet) {
+                alert(`No available wallets for role: ${role}`);
+                return;
+            }
+
+            const userData = {
+                name,
+                email,
+                role,
+                wallet: assignedWallet,
+                userId: `user_${Date.now()}`,
+                source: 'manual_registration'
+            };
+
+            saveUser(userData);
+            console.log(`✅ User ${name} registered as ${role} with wallet ${assignedWallet}`);
+            refreshData(); // Reload the display
+            return assignedWallet;
+        }
+
+        // API endpoint simulation for Flutter integration
+        function handleFlutterRegistration(registrationData) {
+            try {
+                const { name, email, role, userId } = registrationData;
+                const wallet = simulateFlutterRegistration(name, email, role);
+                
+                return {
+                    success: true,
+                    wallet: wallet,
+                    message: `User registered successfully with wallet ${wallet}`
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    message: error.message
+                };
+            }
+        }
+
+        // Enhanced registration modal
+        function showQuickRegister() {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                background: rgba(0,0,0,0.5); display: flex; align-items: center; 
+                justify-content: center; z-index: 1000;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; padding: 30px; border-radius: 10px; max-width: 500px; width: 90%;">
+                    <h3>🚀 Quick User Registration</h3>
+                    <p>Register a new user to see real wallet assignment in action:</p>
+                    
+                    <div style="margin: 15px 0;">
+                        <label><strong>Name:</strong></label><br>
+                        <input type="text" id="quickName" placeholder="e.g., John Smith" 
+                               style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    
+                    <div style="margin: 15px 0;">
+                        <label><strong>Email:</strong></label><br>
+                        <input type="email" id="quickEmail" placeholder="e.g., john@example.com" 
+                               style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    
+                    <div style="margin: 15px 0;">
+                        <label><strong>Role:</strong></label><br>
+                        <select id="quickRole" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                            <option value="farmer">🌾 Farmer</option>
+                            <option value="distributor">🚛 Distributor</option>
+                            <option value="retailer">🏪 Retailer</option>
+                            <option value="consumer">🛒 Consumer</option>
+                        </select>
+                    </div>
+                    
+                    <div style="text-align: right; margin-top: 20px;">
+                        <button onclick="modal.remove()" style="background: #6c757d; margin-right: 10px;">Cancel</button>
+                        <button onclick="performQuickRegistration()" style="background: #28a745;">Register & Assign Wallet</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            window.modal = modal; // Make accessible to onclick handlers
+        }
+
+        function performQuickRegistration() {
+            const name = document.getElementById('quickName').value.trim();
+            const email = document.getElementById('quickEmail').value.trim();
+            const role = document.getElementById('quickRole').value;
+            
+            if (!name || !email || !role) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            const wallet = simulateFlutterRegistration(name, email, role);
+            if (wallet) {
+                alert(`✅ Success! ${name} registered as ${role}\nAssigned wallet: ${wallet}`);
+                window.modal.remove();
+            }
+        }
+
+        // Add statistics display
+        function showUserStatistics() {
+            const users = getAllUsers();
+            const stats = {
+                farmers: 0,
+                distributors: 0,
+                retailers: 0,
+                consumers: 0,
+                total: 0
+            };
+
+            Object.values(users).forEach(user => {
+                if (stats.hasOwnProperty(user.role + 's')) {
+                    stats[user.role + 's']++;
+                }
+                stats.total++;
+            });
+
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML += `
+                <div class="status-card" style="margin-top: 15px;">
+                    <h4>📊 Registration Statistics</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-top: 10px;">
+                        <div>🌾 Farmers: <strong>${stats.farmers}</strong></div>
+                        <div>🚛 Distributors: <strong>${stats.distributors}</strong></div>
+                        <div>🏪 Retailers: <strong>${stats.retailers}</strong></div>
+                        <div>🛒 Consumers: <strong>${stats.consumers}</strong></div>
+                    </div>
+                    <div style="margin-top: 10px; text-align: center;">
+                        <strong>Total Registered Users: ${stats.total}</strong>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Auto-refresh to check for new Flutter registrations
+        let autoRefreshInterval;
+        
+        function startAutoRefresh() {
+            // Check for new registrations every 10 seconds
+            autoRefreshInterval = setInterval(async () => {
+                const users = await loadFlutterRegistrations();
+                const currentCount = Object.keys(users).length;
+                const previousCount = parseInt(localStorage.getItem('user_count') || '0');
+                
+                if (currentCount !== previousCount) {
+                    console.log(`🔄 New registrations detected! Count: ${previousCount} → ${currentCount}`);
+                    localStorage.setItem('user_count', currentCount.toString());
+                    await refreshData(); // Refresh the display
+                }
+            }, 10000); // Check every 10 seconds
+        }
+
+        function stopAutoRefresh() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+            }
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', async function() {
+            await loadFlutterRegistrations(); // Load any existing Flutter data
+            refreshData();
+            showUserStatistics();
+            startAutoRefresh(); // Start monitoring for new registrations
+        });
+        
+        // Stop auto-refresh when page is hidden/closed
+        window.addEventListener('beforeunload', stopAutoRefresh);
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                stopAutoRefresh();
+            } else {
+                startAutoRefresh();
+            }
+        });
+    </script>
+</body>
+</html>

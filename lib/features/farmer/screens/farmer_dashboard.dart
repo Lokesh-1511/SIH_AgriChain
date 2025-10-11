@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+<<<<<<< HEAD
+=======
+import 'package:easy_localization/easy_localization.dart';
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
 import '../../../core/theme/app_colors.dart';
-import '../../auth/providers/auth_provider.dart';
+import '../../../features/auth/providers/auth_provider.dart';
 import '../../common/screens/landing_screen.dart';
+import '../../common/screens/profile_screen.dart';
 import '../widgets/farmer_stats_card.dart';
 import '../widgets/batch_status_card.dart';
 import '../widgets/ai_advisory_card.dart';
@@ -13,8 +18,8 @@ import '../screens/agri_score_screen.dart';
 import '../screens/insurance_screen.dart';
 import '../screens/loan_screen.dart';
 import '../screens/govt_schemes_screen.dart';
-import '../screens/wallet_screen.dart';
 import '../screens/crop_advisory_screen.dart';
+import '../screens/wallet_screen.dart';
 import '../../common/widgets/floating_chat_button.dart';
 
 class FarmerDashboard extends StatefulWidget {
@@ -40,9 +45,18 @@ class _FarmerDashboardState extends State<FarmerDashboard> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.farmerPrimary,
+<<<<<<< HEAD
         title: const Text(
           'Farmer Dashboard',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+=======
+        title: Text(
+          'farmer.title'.tr(),
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
         ),
         actions: [
           IconButton(
@@ -53,9 +67,21 @@ class _FarmerDashboardState extends State<FarmerDashboard> {
             icon: const Icon(Icons.more_vert, color: Colors.white),
             onSelected: _handleMenuAction,
             itemBuilder: (context) => [
+<<<<<<< HEAD
               const PopupMenuItem(value: 'profile', child: Text('Profile')),
               const PopupMenuItem(value: 'settings', child: Text('Settings')),
               const PopupMenuItem(value: 'logout', child: Text('Logout')),
+=======
+              PopupMenuItem(
+                value: 'profile',
+                child: Text('common.profile'.tr()),
+              ),
+              PopupMenuItem(
+                value: 'settings',
+                child: Text('common.settings'.tr()),
+              ),
+              PopupMenuItem(value: 'logout', child: Text('common.logout'.tr())),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
             ],
           ),
         ],
@@ -67,6 +93,7 @@ class _FarmerDashboardState extends State<FarmerDashboard> {
         type: BottomNavigationBarType.fixed,
         selectedItemColor: AppColors.farmerPrimary,
         unselectedItemColor: AppColors.textSecondary,
+<<<<<<< HEAD
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(
@@ -80,6 +107,24 @@ class _FarmerDashboardState extends State<FarmerDashboard> {
           BottomNavigationBarItem(
             icon: Icon(Icons.account_balance_wallet),
             label: 'Wallet',
+=======
+        items: [
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.home),
+            label: 'common.home'.tr(),
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.inventory),
+            label: 'farmer.my_batches'.tr(),
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.receipt_long),
+            label: 'farmer.transactions'.tr(),
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.account_balance_wallet),
+            label: 'farmer.wallet'.tr(),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
           ),
         ],
       ),
@@ -91,7 +136,11 @@ class _FarmerDashboardState extends State<FarmerDashboard> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+<<<<<<< HEAD
         title: const Text('Notifications'),
+=======
+        title: Text('common.notifications'.tr()),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -118,7 +167,11 @@ class _FarmerDashboardState extends State<FarmerDashboard> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
+<<<<<<< HEAD
             child: const Text('Close'),
+=======
+            child: Text('common.close'.tr()),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
           ),
         ],
       ),
@@ -145,6 +198,10 @@ class _FarmerDashboardState extends State<FarmerDashboard> {
     switch (action) {
       case 'profile':
         // Navigate to profile
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfileScreen()),
+        );
         break;
       case 'settings':
         // Navigate to settings
@@ -159,12 +216,21 @@ class _FarmerDashboardState extends State<FarmerDashboard> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+<<<<<<< HEAD
         title: const Text('Logout'),
         content: const Text('Are you sure you want to logout?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('Cancel'),
+=======
+        title: Text('common.logout'.tr()),
+        content: Text('common.logout_confirmation'.tr()),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('common.cancel'.tr()),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
           ),
           TextButton(
             onPressed: () {
@@ -174,7 +240,11 @@ class _FarmerDashboardState extends State<FarmerDashboard> {
                 (route) => false,
               );
             },
+<<<<<<< HEAD
             child: const Text('Logout'),
+=======
+            child: Text('common.logout'.tr()),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
           ),
         ],
       ),
@@ -211,19 +281,26 @@ class FarmerHomeTab extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
+<<<<<<< HEAD
                   'Welcome Back!',
+=======
+                  'farmer.welcome_back_farmer',
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
+<<<<<<< HEAD
                 ),
+=======
+                ).tr(),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
                 const SizedBox(height: 8),
                 Consumer<AuthProvider>(
                   builder: (context, authProvider, child) {
-                    final user = authProvider.currentUser;
                     return Text(
-                      user?.name ?? 'Farmer',
+                      'Farmer', // Placeholder until user data is available
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -238,9 +315,15 @@ class FarmerHomeTab extends StatelessWidget {
                     const Icon(Icons.eco, color: Colors.white, size: 20),
                     const SizedBox(width: 8),
                     const Text(
+<<<<<<< HEAD
                       'Growing sustainably with technology',
                       style: TextStyle(color: Colors.white, fontSize: 14),
                     ),
+=======
+                      'farmer.growing_sustainably',
+                      style: TextStyle(color: Colors.white, fontSize: 14),
+                    ).tr(),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
                   ],
                 ),
               ],
@@ -254,7 +337,11 @@ class FarmerHomeTab extends StatelessWidget {
             children: [
               Expanded(
                 child: FarmerStatsCard(
+<<<<<<< HEAD
                   title: 'Active Batches',
+=======
+                  title: 'farmer.active_batches'.tr(),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
                   value: '12',
                   icon: Icons.inventory,
                   color: AppColors.info,
@@ -263,7 +350,11 @@ class FarmerHomeTab extends StatelessWidget {
               const SizedBox(width: 16),
               Expanded(
                 child: FarmerStatsCard(
+<<<<<<< HEAD
                   title: 'Total Earnings',
+=======
+                  title: 'farmer.total_earnings'.tr(),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
                   value: '₹45,230',
                   icon: Icons.currency_rupee,
                   color: AppColors.success,
@@ -278,7 +369,11 @@ class FarmerHomeTab extends StatelessWidget {
             children: [
               Expanded(
                 child: FarmerStatsCard(
+<<<<<<< HEAD
                   title: 'Agri Score',
+=======
+                  title: 'farmer.agri_score'.tr(),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
                   value: '85%',
                   icon: Icons.star,
                   color: AppColors.warning,
@@ -287,7 +382,11 @@ class FarmerHomeTab extends StatelessWidget {
               const SizedBox(width: 16),
               Expanded(
                 child: FarmerStatsCard(
+<<<<<<< HEAD
                   title: 'Orders',
+=======
+                  title: 'farmer.orders'.tr(),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
                   value: '28',
                   icon: Icons.shopping_cart,
                   color: AppColors.farmerPrimary,
@@ -300,7 +399,11 @@ class FarmerHomeTab extends StatelessWidget {
 
           // Quick Actions
           Text(
+<<<<<<< HEAD
             'Quick Actions',
+=======
+            'farmer.quick_actions'.tr(),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
@@ -319,7 +422,11 @@ class FarmerHomeTab extends StatelessWidget {
             children: [
               _buildQuickActionCard(
                 context,
+<<<<<<< HEAD
                 'Post Product',
+=======
+                'farmer.post_product'.tr(),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
                 Icons.add_circle,
                 AppColors.farmerPrimary,
                 () => Navigator.push(
@@ -329,7 +436,11 @@ class FarmerHomeTab extends StatelessWidget {
               ),
               _buildQuickActionCard(
                 context,
+<<<<<<< HEAD
                 'Crop Advisory',
+=======
+                'farmer.crop_advisory'.tr(),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
                 Icons.lightbulb,
                 AppColors.info,
                 () => Navigator.push(
@@ -339,7 +450,11 @@ class FarmerHomeTab extends StatelessWidget {
               ),
               _buildQuickActionCard(
                 context,
+<<<<<<< HEAD
                 'Insurance',
+=======
+                'farmer.insurance'.tr(),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
                 Icons.security,
                 AppColors.warning,
                 () => Navigator.push(
@@ -349,7 +464,11 @@ class FarmerHomeTab extends StatelessWidget {
               ),
               _buildQuickActionCard(
                 context,
+<<<<<<< HEAD
                 'Loan Apply',
+=======
+                'farmer.loan_apply'.tr(),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
                 Icons.account_balance,
                 AppColors.success,
                 () => Navigator.push(
@@ -359,7 +478,11 @@ class FarmerHomeTab extends StatelessWidget {
               ),
               _buildQuickActionCard(
                 context,
+<<<<<<< HEAD
                 'Agri Score',
+=======
+                'farmer.agri_score'.tr(),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
                 Icons.assessment,
                 AppColors.farmerPrimary,
                 () => Navigator.push(
@@ -369,7 +492,11 @@ class FarmerHomeTab extends StatelessWidget {
               ),
               _buildQuickActionCard(
                 context,
+<<<<<<< HEAD
                 'Govt Schemes',
+=======
+                'farmer.govt_schemes'.tr(),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
                 Icons.account_balance,
                 AppColors.info,
                 () => Navigator.push(
@@ -384,7 +511,11 @@ class FarmerHomeTab extends StatelessWidget {
 
           // Recent Batch Status
           Text(
+<<<<<<< HEAD
             'Recent Batch Status',
+=======
+            'farmer.recent_batch_status'.tr(),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
@@ -443,6 +574,7 @@ class FarmerHomeTab extends StatelessWidget {
             ),
           ],
         ),
+<<<<<<< HEAD
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -468,6 +600,38 @@ class FarmerHomeTab extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
           ],
+=======
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 45,
+                height: 45,
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(22),
+                ),
+                child: Icon(icon, color: color, size: 24),
+              ),
+              const SizedBox(height: 8),
+              Flexible(
+                child: Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                    fontSize: 11, // Smaller font size to prevent overflow
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2, // Allow 2 lines for longer titles
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
         ),
       ),
     );

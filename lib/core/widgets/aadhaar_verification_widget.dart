@@ -194,9 +194,9 @@ class _AadhaarVerificationWidgetState extends State<AadhaarVerificationWidget>
         // Show OTP popup notification with debug OTP (development only)
         if (response.debugOtp != null && response.mobileNumber != null) {
           OtpNotificationPopup.show(
-            context: context,
-            otp: response.debugOtp!,
-            mobileNumber: response.mobileNumber!,
+            context,
+            response.debugOtp!,
+            response.mobileNumber!,
           );
         }
       }

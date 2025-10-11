@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
-import '../../auth/providers/auth_provider.dart';
+<<<<<<< HEAD
+=======
+import '../../../core/utils/database_seeder.dart';
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
+import '../../../features/auth/providers/auth_provider.dart';
 import '../../common/screens/landing_screen.dart';
 import '../../farmer/screens/farmer_dashboard.dart';
 import '../../distributor/screens/distributor_dashboard.dart';
@@ -53,6 +57,12 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _navigateToNextScreen() async {
+<<<<<<< HEAD
+=======
+    // Seed the database with mock data for testing
+    await DatabaseSeeder.seedDatabase();
+
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
     await Future.delayed(const Duration(seconds: 3));
 
     if (!mounted) return;
@@ -60,7 +70,8 @@ class _SplashScreenState extends State<SplashScreen>
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     if (authProvider.isLoggedIn && authProvider.currentUser != null) {
-      _navigateToRoleDashboard(authProvider.currentUser!.role);
+      // Navigate to the appropriate dashboard based on user role
+      _navigateToRoleDashboard(authProvider.currentUser!.role.name);
     } else {
       _navigateToLanding();
     }

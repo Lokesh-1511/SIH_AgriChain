@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_constants.dart';
 import '../providers/auth_provider.dart';
@@ -33,6 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+<<<<<<< HEAD
   String get _roleTitle {
     switch (widget.role) {
       case AppConstants.roleFarmer:
@@ -48,6 +50,8 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+=======
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
   Color get _roleColor {
     switch (widget.role) {
       case AppConstants.roleFarmer:
@@ -90,14 +94,46 @@ class _LoginScreenState extends State<LoginScreen> {
       widget.role,
     );
 
+    if (!mounted) return; // Check if widget is still mounted
+
     setState(() => _isLoading = false);
 
-    if (success) {
+    if (success && authProvider.currentUser != null) {
+      // Navigate to appropriate dashboard based on user role
+      Widget destination;
+      switch (authProvider.currentUser!.role.name) {
+        case AppConstants.roleFarmer:
+          destination = const FarmerDashboard();
+          break;
+        case AppConstants.roleDistributor:
+          destination = const DistributorDashboard();
+          break;
+        case AppConstants.roleRetailer:
+          destination = const RetailerDashboard();
+          break;
+        case AppConstants.roleConsumer:
+          destination = const ConsumerDashboard();
+          break;
+        default:
+          destination = _nextScreen;
+      }
+
       Navigator.of(
         context,
-      ).pushReplacement(MaterialPageRoute(builder: (_) => _nextScreen));
+      ).pushReplacement(MaterialPageRoute(builder: (_) => destination));
     } else {
+<<<<<<< HEAD
       _showErrorSnackBar(authProvider.error ?? 'Login failed');
+=======
+      // Check if it's a role validation error
+      if (authProvider.error != null &&
+          (authProvider.error!.contains('registered as') ||
+              authProvider.error!.contains('This account is'))) {
+        _showRoleValidationDialog(authProvider.error!);
+      } else {
+        _showErrorSnackBar(authProvider.error ?? 'auth.login_failed'.tr());
+      }
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
     }
   }
 
@@ -107,6 +143,216 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+<<<<<<< HEAD
+=======
+  void _showRoleValidationDialog(String errorMessage) {
+    // Extract the actual role from the error message with multiple patterns
+    String actualRole = 'unknown';
+
+    // Try different regex patterns to extract role
+    final patterns = [
+      RegExp(r'registered as (\w+)', caseSensitive: false),
+      RegExp(r'account is (\w+)', caseSensitive: false),
+      RegExp(r'role is (\w+)', caseSensitive: false),
+    ];
+
+    for (final pattern in patterns) {
+      final match = pattern.firstMatch(errorMessage);
+      if (match != null && match.group(1) != null) {
+        actualRole = match.group(1)!.toLowerCase();
+        break;
+      }
+    }
+
+    // Get role-specific colors
+    Color roleColor;
+    Color roleBackgroundColor;
+    IconData roleIcon;
+
+    switch (actualRole.toLowerCase()) {
+      case 'farmer':
+        roleColor = AppColors.farmerPrimary;
+        roleBackgroundColor = AppColors.farmerPrimary.withOpacity(0.1);
+        roleIcon = Icons.agriculture;
+        break;
+      case 'distributor':
+        roleColor = AppColors.distributorPrimary;
+        roleBackgroundColor = AppColors.distributorPrimary.withOpacity(0.1);
+        roleIcon = Icons.local_shipping;
+        break;
+      case 'retailer':
+        roleColor = AppColors.retailerPrimary;
+        roleBackgroundColor = AppColors.retailerPrimary.withOpacity(0.1);
+        roleIcon = Icons.store;
+        break;
+      case 'consumer':
+        roleColor = AppColors.consumerPrimary;
+        roleBackgroundColor = AppColors.consumerPrimary.withOpacity(0.1);
+        roleIcon = Icons.shopping_cart;
+        break;
+      default:
+        roleColor = AppColors.primary;
+        roleBackgroundColor = AppColors.primary.withOpacity(0.1);
+        roleIcon = Icons.person;
+    }
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          elevation: 10,
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Warning Icon
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: AppColors.warning.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.warning_amber_rounded,
+                    color: AppColors.warning,
+                    size: 40,
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Title
+                Text(
+                  'Wrong Login Type',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+
+                const SizedBox(height: 16),
+
+                // Description
+                Text(
+                  'This account is registered as:',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: AppColors.textSecondary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+
+                const SizedBox(height: 16),
+
+                // Role Badge
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 16,
+                  ),
+                  decoration: BoxDecoration(
+                    color: roleBackgroundColor,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: roleColor.withOpacity(0.3),
+                      width: 2,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(roleIcon, color: roleColor, size: 28),
+                      const SizedBox(width: 12),
+                      Text(
+                        actualRole.toUpperCase(),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: roleColor,
+                          fontSize: 20,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Instructions
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppColors.background,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.border),
+                  ),
+                  child: Text(
+                    'Please go back and use the correct ${actualRole.toUpperCase()} login option.',
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: AppColors.textPrimary,
+                      height: 1.4,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+
+                // Action Button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Close dialog
+                      Navigator.of(context).pop(); // Go back to landing screen
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: roleColor,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 2,
+                    ),
+                    child: Text(
+                      'Go Back to Login Selection',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
   void _navigateToRegister() {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => RegisterScreen(role: widget.role)),
@@ -119,7 +365,11 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: _roleColor,
+<<<<<<< HEAD
         title: Text('$_roleTitle Login'),
+=======
+        title: Text('auth.login_title'.tr()),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -144,7 +394,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
 
               Text(
-                'Welcome Back, $_roleTitle!',
+                'auth.login_title'.tr(),
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
@@ -155,7 +405,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 8),
 
               Text(
-                'Sign in to continue to your dashboard',
+                'auth.login_subtitle'.tr(),
                 style: Theme.of(
                   context,
                 ).textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
@@ -170,7 +420,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 keyboardType: TextInputType.emailAddress,
                 style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(
-                  labelText: 'Email',
+                  labelText: 'common.email'.tr(),
                   labelStyle: TextStyle(color: AppColors.textSecondary),
                   prefixIcon: Icon(Icons.email_outlined, color: _roleColor),
 
@@ -192,10 +442,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 validator: (value) {
                   if (value == null || value.isEmpty) {
+<<<<<<< HEAD
                     return 'Please enter your email';
                   }
                   if (!value.contains('@')) {
                     return 'Please enter a valid email';
+=======
+                    return 'auth.email_required'.tr();
+                  }
+                  if (!value.contains('@')) {
+                    return 'auth.invalid_email'.tr();
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
                   }
                   return null;
                 },
@@ -209,7 +466,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 obscureText: !_isPasswordVisible,
                 style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(
-                  labelText: 'Password',
+                  labelText: 'common.password'.tr(),
                   labelStyle: TextStyle(color: AppColors.textSecondary),
                   prefixIcon: Icon(Icons.lock_outline, color: _roleColor),
                   suffixIcon: IconButton(
@@ -242,10 +499,17 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
+<<<<<<< HEAD
                     return 'Please enter your password';
                   }
                   if (value.length < 6) {
                     return 'Password must be at least 6 characters';
+=======
+                    return 'auth.password_required'.tr();
+                  }
+                  if (value.length < 6) {
+                    return 'auth.password_too_short'.tr();
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
                   }
                   return null;
                 },
@@ -271,7 +535,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         )
                       : Text(
-                          'Login',
+                          'common.login'.tr(),
                           style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(
                                 color: Colors.white,
@@ -295,7 +559,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   );
                 },
                 child: Text(
+<<<<<<< HEAD
                   'Forgot Password?',
+=======
+                  'auth.forgot_password'.tr(),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
                   style: TextStyle(color: _roleColor),
                 ),
               ),
@@ -314,7 +582,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
+<<<<<<< HEAD
                       'OR',
+=======
+                      'common.or'.tr(),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
                       style: TextStyle(
                         color: AppColors.textSecondary,
                         fontWeight: FontWeight.w500,
@@ -343,7 +615,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
                 child: Text(
+<<<<<<< HEAD
                   'New $_roleTitle? Register Here',
+=======
+                  'auth.dont_have_account'.tr(),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
                   style: TextStyle(color: _roleColor),
                 ),
               ),
@@ -361,7 +637,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   children: [
                     Text(
+<<<<<<< HEAD
                       'Demo Login',
+=======
+                      'auth.demo_login'.tr(),
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: _roleColor,
@@ -369,7 +649,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
+<<<<<<< HEAD
                       'Email: demo@${widget.role}.com\nPassword: 123456',
+=======
+                      '${'auth.demo_email'.tr()}: demo@${widget.role}.com\n${'auth.demo_password'.tr()}: 123456',
+>>>>>>> 5b3ae447a7a6f15554647b4ed5c427121e8f156b
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: AppColors.textSecondary,
                       ),

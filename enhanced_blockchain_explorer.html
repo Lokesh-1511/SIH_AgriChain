@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriChain Blockchain Explorer - Live User Registrations</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .status-card {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .error-card {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .warning-card {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .user-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .user-card {
+            background: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .user-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .user-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+        .farmer::before { background: linear-gradient(90deg, #28a745, #20c997); }
+        .distributor::before { background: linear-gradient(90deg, #ffc107, #fd7e14); }
+        .retailer::before { background: linear-gradient(90deg, #17a2b8, #6610f2); }
+        .consumer::before { background: linear-gradient(90deg, #6f42c1, #e83e8c); }
+        
+        .user-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .user-email {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        .wallet-address {
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            word-break: break-all;
+            margin: 10px 0;
+            border: 1px solid #e9ecef;
+        }
+        .balance {
+            font-weight: bold;
+            color: #28a745;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        .role-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .badge-farmer { background: #d4edda; color: #155724; }
+        .badge-distributor { background: #fff3cd; color: #856404; }
+        .badge-retailer { background: #d1ecf1; color: #0c5460; }
+        .badge-consumer { background: #e2e3f0; color: #383d41; }
+        
+        .registration-info {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #666;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            margin: 5px;
+            transition: all 0.2s;
+        }
+        button:hover {
+            background: #0056b3;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,123,255,0.3);
+        }
+        .btn-success { background: #28a745; }
+        .btn-success:hover { background: #1e7e34; }
+        .btn-warning { background: #ffc107; color: #212529; }
+        .btn-warning:hover { background: #e0a800; }
+        .btn-danger { background: #dc3545; }
+        .btn-danger:hover { background: #c82333; }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007bff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+        .stat-number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌾 AgriChain Live Registration Monitor</h1>
+        
+        <div id="connection-status">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                Connecting to blockchain & checking for registrations...
+            </div>
+        </div>
+
+        <div id="statistics" style="display: none;">
+            <h2>📊 Registration Statistics</h2>
+            <div class="stats-grid" id="stats-grid"></div>
+        </div>
+
+        <div style="text-align: center; margin: 25px 0;">
+            <button onclick="refreshData()" class="btn-success">🔄 Refresh Data</button>
+            <button onclick="checkBlockchain()" class="btn-warning">⛓️ Check Blockchain</button>
+            <button onclick="simulateRegistration()">👤 Simulate Registration</button>
+            <button onclick="clearAllData()" class="btn-danger">🗑️ Clear All Data</button>
+            <button onclick="exportData()">📥 Export Data</button>
+            <br><br>
+            <span id="mongo-status" style="padding: 8px 15px; border-radius: 8px; font-size: 14px; background: #ffc107; color: #000; font-weight: bold;">📊 Checking MongoDB Connection...</span>
+        </div>
+
+        <div id="registrations-section" style="display: none;">
+            <h2>👥 Registered Users</h2>
+            <div id="users-grid" class="user-grid"></div>
+        </div>
+
+        <div id="wallet-assignments-section" style="display: none;">
+            <h2>💰 Persistent Wallet Assignments</h2>
+            <p style="color: #666; font-size: 14px; margin-bottom: 15px;">
+                These wallet addresses are permanently assigned to roles and will persist across Hardhat restarts.
+            </p>
+            <div id="assignments-grid" class="user-grid"></div>
+        </div>
+
+        <div id="available-wallets" style="display: none;">
+            <h2>🔓 Available Wallets (Unassigned)</h2>
+            <div id="available-grid" class="user-grid"></div>
+        </div>
+
+        <!-- Modal for simulating registration -->
+        <div id="simulation-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 15px; max-width: 500px; width: 90%;">
+                <h3>🧪 Simulate User Registration</h3>
+                <p>This simulates what happens when someone registers through your Flutter app:</p>
+                
+                <div style="margin: 15px 0;">
+                    <label><strong>Full Name:</strong></label>
+                    <input type="text" id="sim-name" placeholder="e.g., Ravi Kumar" style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+                
+                <div style="margin: 15px 0;">
+                    <label><strong>Email:</strong></label>
+                    <input type="email" id="sim-email" placeholder="e.g., ravi@farmer.com" style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+                
+                <div style="margin: 15px 0;">
+                    <label><strong>Role:</strong></label>
+                    <select id="sim-role" style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px;">
+                        <option value="farmer">🌾 Farmer</option>
+                        <option value="distributor">🚛 Distributor</option>
+                        <option value="retailer">🏪 Retailer</option>
+                        <option value="consumer">🛒 Consumer</option>
+                    </select>
+                </div>
+                
+                <div style="text-align: right; margin-top: 25px;">
+                    <button onclick="closeModal()" style="background: #6c757d;">Cancel</button>
+                    <button onclick="performSimulation()" class="btn-success">Register & Assign Wallet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const HARDHAT_URL = 'http://127.0.0.1:8545';
+        
+        // Hardhat wallet assignments by role
+        const ROLE_WALLETS = {
+            farmer: [
+                "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+                "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC", 
+                "0x90F79bf6EB2c4f870365E785982E1f101E93b906",
+                "0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65",
+                "0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc"
+            ],
+            distributor: [
+                "0x976EA74026E726554dB657fA54763abd0C3a0aa9",
+                "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
+                "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
+                "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
+                "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
+            ],
+            retailer: [
+                "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
+                "0xFABB0ac9d68B0B445fB7357272Ff202C5651694a",
+                "0x1CBd3b2770909D4e10f157cABC84C7264073C9Ec", 
+                "0xdF3e18d64BC6A983f673Ab319CCaE4f1a57C7097",
+                "0xcd3B766CCDd6AE721141F452C550Ca635964ce71"
+            ],
+            consumer: [
+                "0x2546BcD3c84621e976D8185a91A922aE77ECEc30",
+                "0xbDA5747bFD65F08deb54cb465eB87D40e51B197E",
+                "0xdD2FD4581271e230360230F9337D5c0430Bf44C0", 
+                "0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199"
+            ]
+        };
+
+        // User management
+        function getStoredUsers() {
+            return JSON.parse(localStorage.getItem('agrichain_users') || '{}');
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem('agrichain_users', JSON.stringify(users));
+            localStorage.setItem('agrichain_last_update', new Date().toISOString());
+        }
+
+        function registerUser(name, email, role) {
+            const users = getStoredUsers();
+            const availableWallets = ROLE_WALLETS[role] || [];
+            
+            // Find first unassigned wallet for this role
+            let assignedWallet = null;
+            for (const wallet of availableWallets) {
+                const isAssigned = Object.values(users).some(user => user.wallet === wallet);
+                if (!isAssigned) {
+                    assignedWallet = wallet;
+                    break;
+                }
+            }
+
+            if (!assignedWallet) {
+                throw new Error(`No available ${role} wallets remaining`);
+            }
+
+            const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            const userData = {
+                userId,
+                name,
+                email,
+                role,
+                wallet: assignedWallet,
+                registeredAt: new Date().toISOString(),
+                source: 'html_simulation'
+            };
+
+            users[userId] = userData;
+            saveUsers(users);
+            
+            console.log(`✅ ${name} registered as ${role} with wallet ${assignedWallet}`);
+            return userData;
+        }
+
+        // Blockchain communication
+        async function rpcCall(method, params = []) {
+            try {
+                const response = await fetch(HARDHAT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        jsonrpc: '2.0',
+                        method: method,
+                        params: params,
+                        id: Date.now()
+                    })
+                });
+                
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const data = await response.json();
+                if (data.error) throw new Error(data.error.message);
+                
+                return data.result;
+            } catch (error) {
+                console.error(`RPC ${method} failed:`, error);
+                throw error;
+            }
+        }
+
+        function weiToEth(wei) {
+            if (!wei) return '0.0000';
+            return (parseInt(wei, 16) / Math.pow(10, 18)).toFixed(4);
+        }
+
+        // UI Management
+        async function checkBlockchain() {
+            try {
+                const blockNumber = await rpcCall('eth_blockNumber');
+                const accounts = await rpcCall('eth_accounts');
+                
+                document.getElementById('connection-status').innerHTML = `
+                    <div class="status-card">
+                        <strong>✅ Blockchain Connected</strong><br>
+                        🔗 Network: Hardhat Local (localhost:8545)<br>
+                        📊 Current Block: ${parseInt(blockNumber, 16)}<br>
+                        👥 Total Accounts: ${accounts.length}<br>
+                        🕒 Last Check: ${new Date().toLocaleTimeString()}
+                    </div>
+                `;
+                return true;
+            } catch (error) {
+                document.getElementById('connection-status').innerHTML = `
+                    <div class="error-card">
+                        <strong>❌ Blockchain Connection Failed</strong><br>
+                        Make sure Hardhat node is running on port 8545<br>
+                        Error: ${error.message}
+                    </div>
+                `;
+                return false;
+            }
+        }
+
+        async function displayWalletAssignments() {
+            const assignmentsGrid = document.getElementById('assignments-grid');
+            const assignmentsSection = document.getElementById('wallet-assignments-section');
+            
+            assignmentsGrid.innerHTML = '';
+            
+            // First try to get assignments from MongoDB via API
+            let mongoAssignments = {};
+            try {
+                const response = await fetch('http://localhost:3001/api/wallet-assignments', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        mongoAssignments = data.assignments;
+                        console.log('✅ Loaded wallet assignments from MongoDB:', mongoAssignments);
+                        
+                        // Save to localStorage for offline access
+                        localStorage.setItem('mongoWalletAssignments', JSON.stringify(mongoAssignments));
+                    }
+                } else {
+                    console.log('⚠️ MongoDB API not available, using local data');
+                }
+            } catch (error) {
+                console.log('⚠️ Failed to connect to MongoDB API:', error.message);
+            }
+            
+            // Fallback to local storage if MongoDB is not available
+            if (Object.keys(mongoAssignments).length === 0) {
+                mongoAssignments = JSON.parse(localStorage.getItem('mongoWalletAssignments') || '{}');
+            }
+            
+            // Also include persistent assignments from Flutter
+            const persistentAssignments = JSON.parse(localStorage.getItem('persistentWalletAssignments') || '{}');
+            
+            // Merge both assignment sources
+            const allAssignments = { ...mongoAssignments };
+            for (const [role, assignments] of Object.entries(persistentAssignments)) {
+                if (!allAssignments[role]) {
+                    allAssignments[role] = {};
+                }
+                Object.assign(allAssignments[role], assignments);
+            }
+            
+            if (Object.keys(allAssignments).length === 0) {
+                assignmentsSection.style.display = 'none';
+                return;
+            }
+            
+            assignmentsSection.style.display = 'block';
+            
+            for (const [role, assignments] of Object.entries(allAssignments)) {
+                for (const [wallet, info] of Object.entries(assignments)) {
+                    try {
+                        const balance = await rpcCall('eth_getBalance', [wallet, 'latest']);
+                        const ethBalance = weiToEth(balance);
+                        
+                        const assignmentCard = document.createElement('div');
+                        assignmentCard.className = `user-card ${role}`;
+                        assignmentCard.innerHTML = `
+                            <div class="user-name">🔐 Persistent Assignment</div>
+                            
+                            <div class="wallet-address">
+                                <strong>💰 Wallet Address:</strong><br>
+                                ${wallet}
+                            </div>
+                            
+                            <div class="balance">💵 Balance: ${ethBalance} ETH</div>
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                                <span class="role-badge badge-${role}">🎭 ${role}</span>
+                                <span style="font-size: 12px; color: #007bff;">🔒 RESERVED</span>
+                            </div>
+                            
+                            <div class="registration-info">
+                                <strong>📅 Assigned:</strong> ${new Date(info.assignedAt).toLocaleString()}<br>
+                                <strong>🆔 User ID:</strong> ${info.userId}<br>
+                                <strong>📱 Source:</strong> Persistent Assignment
+                            </div>
+                        `;
+                        assignmentsGrid.appendChild(assignmentCard);
+                    } catch (error) {
+                        console.error(`Failed to get balance for ${wallet}:`, error);
+                    }
+                }
+            }
+        }
+
+        async function displayUsers() {
+            const users = getStoredUsers();
+            const usersList = Object.values(users);
+            const usersGrid = document.getElementById('users-grid');
+            const availableGrid = document.getElementById('available-grid');
+            
+            usersGrid.innerHTML = '';
+            availableGrid.innerHTML = '';
+
+            // Show persistent wallet assignments
+            displayWalletAssignments();
+
+            // Show statistics
+            updateStatistics(usersList);
+
+            if (usersList.length === 0) {
+                usersGrid.innerHTML = `
+                    <div class="warning-card" style="grid-column: 1/-1;">
+                        <strong>📭 No Registered Users Yet</strong><br>
+                        Users who register through your Flutter app will appear here automatically.<br>
+                        You can also simulate registrations using the button above.
+                    </div>
+                `;
+            }
+
+            // Display registered users
+            for (const user of usersList) {
+                try {
+                    const balance = await rpcCall('eth_getBalance', [user.wallet, 'latest']);
+                    const ethBalance = weiToEth(balance);
+
+                    const userCard = document.createElement('div');
+                    userCard.className = `user-card ${user.role}`;
+                    userCard.innerHTML = `
+                        <div class="user-name">👤 ${user.name}</div>
+                        <div class="user-email">📧 ${user.email}</div>
+                        
+                        <div class="wallet-address">
+                            <strong>💰 Wallet Address:</strong><br>
+                            ${user.wallet}
+                        </div>
+                        
+                        <div class="balance">💵 Balance: ${ethBalance} ETH</div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                            <span class="role-badge badge-${user.role}">🎭 ${user.role}</span>
+                            <span style="font-size: 12px; color: #28a745;">✅ REGISTERED</span>
+                        </div>
+                        
+                        <div class="registration-info">
+                            <strong>📅 Registered:</strong> ${new Date(user.registeredAt).toLocaleString()}<br>
+                            <strong>🆔 User ID:</strong> ${user.userId}<br>
+                            <strong>📱 Source:</strong> ${user.source === 'flutter_app' ? 'Flutter App' : 'HTML Simulation'}
+                        </div>
+                    `;
+                    usersGrid.appendChild(userCard);
+                } catch (error) {
+                    console.error(`Failed to get balance for ${user.wallet}:`, error);
+                }
+            }
+
+            // Show available wallets (exclude all assigned addresses)
+            const assignedWallets = new Set(usersList.map(u => u.wallet.toLowerCase()));
+            
+            // Also exclude wallets from MongoDB assignments
+            const mongoAssignments = JSON.parse(localStorage.getItem('mongoWalletAssignments') || '{}');
+            for (const [role, assignments] of Object.entries(mongoAssignments)) {
+                for (const wallet of Object.keys(assignments)) {
+                    assignedWallets.add(wallet.toLowerCase());
+                }
+            }
+            
+            // Also exclude wallets from persistent assignments
+            const persistentAssignments = JSON.parse(localStorage.getItem('persistentWalletAssignments') || '{}');
+            for (const [role, assignments] of Object.entries(persistentAssignments)) {
+                for (const wallet of Object.keys(assignments)) {
+                    assignedWallets.add(wallet.toLowerCase());
+                }
+            }
+            
+            for (const [role, wallets] of Object.entries(ROLE_WALLETS)) {
+                for (let i = 0; i < wallets.length; i++) {
+                    const wallet = wallets[i];
+                    if (!assignedWallets.has(wallet.toLowerCase())) {
+                        try {
+                            const balance = await rpcCall('eth_getBalance', [wallet, 'latest']);
+                            const ethBalance = weiToEth(balance);
+
+                            const availableCard = document.createElement('div');
+                            availableCard.className = `user-card ${role}`;
+                            availableCard.innerHTML = `
+                                <div class="user-name">🔓 Available ${role.charAt(0).toUpperCase() + role.slice(1)} Slot</div>
+                                <div class="user-email">Ready for assignment</div>
+                                
+                                <div class="wallet-address">
+                                    <strong>💰 Wallet Address:</strong><br>
+                                    ${wallet}
+                                </div>
+                                
+                                <div class="balance">💵 Balance: ${ethBalance} ETH</div>
+                                
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                                    <span class="role-badge badge-${role}">🎭 ${role}</span>
+                                    <span style="font-size: 12px; color: #6c757d;">⏳ AVAILABLE</span>
+                                </div>
+                                
+                                <div class="registration-info">
+                                    This wallet will be automatically assigned when someone registers as a ${role} through your Flutter app.
+                                </div>
+                            `;
+                            availableGrid.appendChild(availableCard);
+                        } catch (error) {
+                            console.error(`Failed to get balance for available wallet ${wallet}:`, error);
+                        }
+                    }
+                }
+            }
+
+            document.getElementById('registrations-section').style.display = 'block';
+            document.getElementById('wallet-assignments-section').style.display = 'block';
+            document.getElementById('available-wallets').style.display = 'block';
+        }
+
+        function updateStatistics(users) {
+            const stats = {
+                total: users.length,
+                farmer: users.filter(u => u.role === 'farmer').length,
+                distributor: users.filter(u => u.role === 'distributor').length,
+                retailer: users.filter(u => u.role === 'retailer').length,
+                consumer: users.filter(u => u.role === 'consumer').length,
+                today: users.filter(u => {
+                    const regDate = new Date(u.registeredAt);
+                    const today = new Date();
+                    return regDate.toDateString() === today.toDateString();
+                }).length
+            };
+
+            const statsGrid = document.getElementById('stats-grid');
+            statsGrid.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${stats.total}</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.farmer}</div>
+                    <div class="stat-label">🌾 Farmers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.distributor}</div>
+                    <div class="stat-label">🚛 Distributors</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.retailer}</div>
+                    <div class="stat-label">🏪 Retailers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.consumer}</div>
+                    <div class="stat-label">🛒 Consumers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.today}</div>
+                    <div class="stat-label">Today</div>
+                </div>
+            `;
+
+            document.getElementById('statistics').style.display = 'block';
+        }
+
+        // Modal functions
+        function simulateRegistration() {
+            document.getElementById('simulation-modal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('simulation-modal').style.display = 'none';
+        }
+
+        async function performSimulation() {
+            const name = document.getElementById('sim-name').value.trim();
+            const email = document.getElementById('sim-email').value.trim();
+            const role = document.getElementById('sim-role').value;
+
+            if (!name || !email || !role) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            try {
+                const userData = registerUser(name, email, role);
+                alert(`✅ Success!\n\n${userData.name} registered as ${userData.role}\nWallet assigned: ${userData.wallet}`);
+                closeModal();
+                await refreshData();
+            } catch (error) {
+                alert(`❌ Registration failed: ${error.message}`);
+            }
+        }
+
+        // Data management
+        async function refreshData() {
+            const connected = await checkBlockchain();
+            if (connected) {
+                await displayUsers();
+            }
+        }
+
+        function clearAllData() {
+            if (confirm('Are you sure you want to clear all registration data?\n\nThis will remove all simulated registrations but not affect real Flutter app users.')) {
+                localStorage.removeItem('agrichain_users');
+                localStorage.removeItem('agrichain_last_update');
+                alert('✅ All data cleared');
+                refreshData();
+            }
+        }
+
+        function exportData() {
+            const users = getStoredUsers();
+            const dataStr = JSON.stringify(users, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `agrichain_registrations_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Function to load Flutter registrations from API
+        async function loadFlutterRegistrations() {
+            try {
+                const response = await fetch('/api/registrations', {
+                    method: 'GET',
+                    cache: 'no-cache'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('📱 Flutter registrations loaded:', data);
+                    
+                    // Update statistics
+                    updateStatsFromFlutter(data.statistics || {});
+                    
+                    // Save persistent wallet assignments
+                    if (data.walletAssignments) {
+                        localStorage.setItem('persistentWalletAssignments', JSON.stringify(data.walletAssignments));
+                        console.log('💾 Saved persistent wallet assignments:', data.walletAssignments);
+                    }
+                    
+                    // Add new users to localStorage
+                    const existingUsers = JSON.parse(localStorage.getItem('registeredUsers') || '{}');
+                    let hasNewUsers = false;
+                    
+                    for (const [userId, userData] of Object.entries(data.users || {})) {
+                        if (!existingUsers[userId]) {
+                            existingUsers[userId] = userData;
+                            hasNewUsers = true;
+                            console.log('👤 New user from Flutter:', userData);
+                        }
+                    }
+                    
+                    if (hasNewUsers) {
+                        localStorage.setItem('registeredUsers', JSON.stringify(existingUsers));
+                        displayUsers(); // Refresh user display
+                        showNotification(`New registrations synced from Flutter app! Total users: ${Object.keys(existingUsers).length}`);
+                    }
+                } else {
+                    console.log('📱 No Flutter registrations file found yet');
+                }
+            } catch (error) {
+                console.log('📱 Flutter registrations not available:', error.message);
+            }
+        }
+
+        function updateStatsFromFlutter(flutterStats) {
+            const existingStats = JSON.parse(localStorage.getItem('roleStatistics') || '{"farmers": 0, "distributors": 0, "retailers": 0, "consumers": 0}');
+            
+            // Merge Flutter stats with existing stats
+            for (const [role, count] of Object.entries(flutterStats)) {
+                existingStats[role] = Math.max(existingStats[role] || 0, count);
+            }
+            
+            localStorage.setItem('roleStatistics', JSON.stringify(existingStats));
+            updateStatistics();
+        }
+
+        function showNotification(message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                           color: white; padding: 15px; border-radius: 10px; 
+                           position: fixed; top: 20px; right: 20px; 
+                           box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
+                           z-index: 10000; max-width: 300px;">
+                    <div style="font-weight: bold; margin-bottom: 5px;">🚀 Flutter Sync</div>
+                    <div>${message}</div>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 5000);
+        }
+
+        // Check MongoDB connection status
+        async function checkMongoConnection() {
+            const statusElement = document.getElementById('mongo-status');
+            try {
+                const response = await fetch('http://localhost:3001/api/health');
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('🔗 MongoDB API Status:', data);
+                    
+                    if (data.mongodb === 'connected') {
+                        statusElement.innerHTML = '✅ MongoDB Connected';
+                        statusElement.style.background = '#28a745';
+                        statusElement.style.color = '#fff';
+                        return true;
+                    } else {
+                        statusElement.innerHTML = '⚠️ MongoDB Disconnected';
+                        statusElement.style.background = '#ffc107';
+                        statusElement.style.color = '#000';
+                        return false;
+                    }
+                }
+            } catch (error) {
+                console.log('⚠️ MongoDB API not available:', error.message);
+                statusElement.innerHTML = '❌ MongoDB API Unavailable';
+                statusElement.style.background = '#dc3545';
+                statusElement.style.color = '#fff';
+            }
+            return false;
+        }
+
+        // Auto-refresh every 30 seconds to catch new Flutter registrations
+        setInterval(refreshData, 30000);
+        setInterval(loadFlutterRegistrations, 5000); // Check Flutter registrations every 5 seconds
+        setInterval(checkMongoConnection, 10000); // Check MongoDB connection every 10 seconds
+
+        // Initialize
+        window.addEventListener('load', function() {
+            refreshData();
+            loadFlutterRegistrations(); // Load Flutter registrations on startup
+            checkMongoConnection(); // Check MongoDB connection on startup
+        });
+        
+        // Handle clicks outside modal
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('simulation-modal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+
+        console.log('🌾 AgriChain Blockchain Explorer initialized');
+        console.log('👀 Monitoring for user registrations...');
+    </script>
+</body>
+</html>
