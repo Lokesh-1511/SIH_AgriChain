@@ -18,6 +18,7 @@ import Reports from './pages/Reports';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import ProtectedRoute from './components/common/ProtectedRoute';
+import Unauthorized from './pages/Unauthorized';
 
 function App() {
   return (
@@ -33,13 +34,14 @@ function App() {
             }>
               <Route index element={<Navigate to="/dashboard" replace />} />
               <Route path="dashboard" element={<Dashboard />} />
-              <Route path="roles" element={<RoleManagement />} />
+              <Route path="roles" element={<ProtectedRoute roles={["administrator"]}><RoleManagement /></ProtectedRoute>} />
               <Route path="supply-chain" element={<SupplyChainMonitoring />} />
               <Route path="blockchain" element={<BlockchainExplorer />} />
               <Route path="reports" element={<Reports />} />
               <Route path="profile" element={<Profile />} />
               <Route path="settings" element={<Settings />} />
             </Route>
+            <Route path="unauthorized" element={<Unauthorized />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </Router>

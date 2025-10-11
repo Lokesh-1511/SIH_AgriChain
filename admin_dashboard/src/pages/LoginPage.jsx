@@ -8,14 +8,16 @@ import './LoginPage.css';
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, authError } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
+    rememberMe: true
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  // Single-admin mode: no password reset UI
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -64,7 +66,7 @@ const LoginPage = () => {
       const result = await login({
         email: formData.email,
         password: formData.password,
-        rememberMe: true // You can get this from a checkbox if needed
+        rememberMe: formData.rememberMe
       });
       
       if (result.success) {
@@ -123,10 +125,10 @@ const LoginPage = () => {
                 </p>
               </div>
               
-              {errors.general && (
+              {(errors.general || authError) && (
                 <div className="error-banner">
                   <span className="error-icon">⚠️</span>
-                  <span className="error-text">{errors.general}</span>
+                  <span className="error-text">{errors.general || authError}</span>
                 </div>
               )}
               
@@ -156,14 +158,12 @@ const LoginPage = () => {
               
               <div className="form-options">
                 <label className="remember-me">
-                  <input type="checkbox" />
+                  <input type="checkbox" name="rememberMe" checked={formData.rememberMe} onChange={(e) => setFormData(p => ({...p, rememberMe: e.target.checked}))} />
                   <span className="checkmark"></span>
                   <span className="label-text">Remember me</span>
                 </label>
                 
-                <a href="#" className="forgot-password">
-                  Forgot password?
-                </a>
+                <span style={{ fontSize: 12, opacity: 0.7 }}>Single-admin mode</span>
               </div>
               
               <ModernButton
@@ -178,9 +178,8 @@ const LoginPage = () => {
               </ModernButton>
               
               <div className="demo-credentials">
-                <h4>Demo Credentials:</h4>
-                <p><strong>Email:</strong> admin@agrichain.com</p>
-                <p><strong>Password:</strong> password123</p>
+                <h4>Administrator Access</h4>
+                <p>Use the configured administrator credentials.</p>
               </div>
             </form>
           </div>
@@ -189,6 +188,7 @@ const LoginPage = () => {
           <div className="login-footer">
             <p>&copy; 2024 AgriChain. All rights reserved.</p>
           </div>
+          {/* Password reset removed in single-admin mode */}
         </div>
       </div>
     </PageContainer>
